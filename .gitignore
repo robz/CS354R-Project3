@@ -16,3 +16,11 @@ libtool
 ltmain.sh
 missing
 stamp-h1
+
+Ogre.log
+assignment2
+assignment2-Assignment2.o
+assignment2-Ball.o
+assignment2-BaseApplication.o
+assignment2-PlayingField.o
+ogre.cfg
