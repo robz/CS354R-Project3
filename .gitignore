@@ -26,4 +26,6 @@ assignment2-PlayingField.o
 ogre.cfg
 
 swilken-local/
+
 *.swp
+*.o
