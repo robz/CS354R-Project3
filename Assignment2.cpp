@@ -20,25 +20,7 @@ This source file is part of the
 //-------------------------------------------------------------------------------------
 Assignment2::Assignment2(void)
 {
-    // Build the broadphase
-    broadphase = new btDbvtBroadphase();
-
-    // Set up the collision configuration and dispatcher
-    collisionConfiguration = new btDefaultCollisionConfiguration();
-    dispatcher = new btCollisionDispatcher(collisionConfiguration);
-
-    // The actual physics solver
-    solver = new btSequentialImpulseConstraintSolver;
-
-    // The world.
-    dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
-    dynamicsWorld->setGravity(btVector3(0,-10,0));
-
-    // Do_everything_else_here
     groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);
-
-    fallShape = new btSphereShape(1);
-
     groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,-1,0)));
     btRigidBody::btRigidBodyConstructionInfo
             groundRigidBodyCI(0,groundMotionState,groundShape,btVector3(0,0,0));
@@ -49,6 +31,7 @@ Assignment2::Assignment2(void)
     dynamicsWorld->addRigidBody(groundRigidBody);
 
 
+    fallShape = new btSphereShape(1);
     fallMotionState =
             new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,100,0)));
     btScalar mass = 1;
@@ -74,17 +57,14 @@ Assignment2::~Assignment2(void)
     delete fallShape;
     delete groundShape;
 
-    // Clean up behind ourselves like good little programmers
-    delete dynamicsWorld;
-    delete solver;
-    delete dispatcher;
-    delete collisionConfiguration;
-    delete broadphase;
+    delete simulator;
 }
 
 //-------------------------------------------------------------------------------------
 void Assignment2::createScene(void)
 {
+    simulator = new Simulator();
+
     // Set the scene's ambient light
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
  

@@ -24,20 +24,9 @@ This source file is part of the
 class Assignment2 : public BaseApplication
 {
 protected:
+    Simulator* simulator;
     Ball* ball;
     
-    btBroadphaseInterface* broadphase;
-
-    // Set up the collision configuration and dispatcher
-    btDefaultCollisionConfiguration* collisionConfiguration;
-    btCollisionDispatcher* dispatcher;
-
-    // The actual physics solver
-    btSequentialImpulseConstraintSolver* solver;
-
-    // The world.
-    btDiscreteDynamicsWorld* dynamicsWorld;
-
     btCollisionShape *fallShape, *groundShape;
     btDefaultMotionState *fallMotionState, *groundMotionState;
     btRigidBody *fallRigidBody, *groundRigidBody;

@@ -2,23 +2,33 @@
 #include <OgreSceneManager.h>
 #include "Ball.h"
 
-Ball::Ball(Ogre::SceneManager* scnMgr) {
-    Ogre::Entity* ball = scnMgr->createEntity("Sphere", "sphere.mesh");
-    ball->setMaterialName("BallColor/CubeMap");
-    ball->setCastShadows(true);
+Ball::Ball(
+    Ogre::String nym, 
+    Ogre::SceneManager* mgr, 
+    Simulator* sim, 
+    float radius, 
+    float m, 
+    Ogre::Vector3 pos, 
+    float restitution, 
+    float friction
+    ) 
+: GameObject(nym, mgr, sim)
+{
+    geom = mgr->createEntity(name, "sphere.mesh");
+    geom->setMaterialName("BallColor/CubeMap");
+    geom->setCastShadows(true);
+    rootNode->attachObject(geom);
 
-    rootNode = scnMgr->createSceneNode("Ball");
-    rootNode->attachObject(ball);
-    rootNode->scale(0.1f,0.1f,0.1f); // sphere starts at 100 units radius
+    // sphere starts at 100 units radius
+    rootNode->scale(
+        radius * 0.01f,
+        radius * 0.01f,
+        radius * 0.01f
+        );
 
-    radius = 10.0f;
-}
+    rootNode->setPosition(pos);
 
-Ogre::SceneNode* Ball::getNode() { 
-    return rootNode; 
-}
-
-void Ball::setPlayingField(PlayingField * f) { 
-    field = f; 
+    shape = new btSphereShape(radius);
+    mass = m;
 }
 

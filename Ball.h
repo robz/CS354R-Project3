@@ -1,21 +1,20 @@
-// ball class, inspired by code presented in class
 #ifndef __ball__
 #define __ball__
 
 #include <Ogre.h>
-#include "PlayingField.h"
 
-class Ball {
-protected:
-    Ogre::SceneNode* rootNode;
-    Ogre::Real radius;
-    PlayingField* field;
-
+class Ball : public GameObject {
 public:
-    Ball(Ogre::SceneManager* scnMgr);
-    ~Ball();
-    Ogre::SceneNode* getNode();
-    void setPlayingField(PlayingField * f);
+    Ball(
+        Ogre::String nym, 
+        Ogre::SceneManager* mgr, 
+        Simulator* sim, 
+        float radius, 
+        float m, 
+        Ogre::Vector3 pos, 
+        float restitution, 
+        float friction
+        );
 };
 
 #endif
