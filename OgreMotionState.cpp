@@ -1,35 +1,29 @@
-class OgreMotionState : public btMotionState {
-protected:
-    Ogre::SceneNode* mVisibleobj;
-    btTransform mPos1;
+#include "OgreMotionState.h"
 
-public:
-    OgreMotionState(const btTransform& initialpos, Ogre::SceneNode* node) {
-        mVisibleobj = node;
-        mPos1 = initialpos;
-    }
-    
-    virtual ~OgreMotionState() {}
+OgreMotionState::OgreMotionState(const btTransform& initialpos, Ogre::SceneNode* node){
+	mVisibleobj = node;
+	mPosl = initialpos;
+}
 
-    void setNode(Ogre::SceneNode* node) {
-        mVisibleobj = node;
-    }
-    
-    void updateTransform(btTransform& newpos) {
-        mPos1 = newpos;
-    }
-    
-    virtual void getWorldTransform(btTransform& worldTrans) const {
-        worldTrans = mPos1;
-    }
+OgreMotionState::~OgreMotionState() {}
 
-    virtual void setWorldTransform(const btTransform& worldTrans) {
-        if(NULL == mVisibleobj)
-            return; // silently return before we set a node
-        btQuaternion rot = worldTrans.getRotation();
-        mVisibleobj->setOrientation(rot.w(), rot.x(), rot.y(), rot.z());
-        btVector3 pos = worldTrans.getOrigin();
-        mVisibleobj->setPosition(pos.x(), pos.y(), pos.z());
-    }
-}; 
+void OgreMotionState::setNode(Ogre::SceneNode* node) {
+	mVisibleobj = node;
+}
 
+void OgreMotionState::updateTransform(btTransform& newpos){
+	mPosl = newpos;
+}
+
+void OgreMotionState::getWorldTransform(btTransform& worldTrans) const {
+	worldTrans = mPosl;
+}
+
+void OgreMotionState::setWorldTransform(const btTransform& worldTrans) {
+	if (mVisibleobj == NULL)
+		return; //silently return before we set a node
+	btQuaternion rot = worldTrans.getRotation();
+	mVisibleobj->setOrientation(rot.w(), rot.x(), rot.y(), rot.z());
+	btVector3 pos = worldTrans.getOrigin();
+	mVisibleobj->setPosition(pos.x(), pos.y(), pos.z());
+}
