@@ -20,6 +20,7 @@ This source file is part of the
 //-------------------------------------------------------------------------------------
 Assignment2::Assignment2(void)
 {
+    /*
     groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);
     groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,-1,0)));
     btRigidBody::btRigidBodyConstructionInfo
@@ -42,10 +43,12 @@ Assignment2::Assignment2(void)
     fallRigidBodyCI.m_friction = 0.1f;
     fallRigidBody = new btRigidBody(fallRigidBodyCI);
     dynamicsWorld->addRigidBody(fallRigidBody);
+    */ 
 }
 //-------------------------------------------------------------------------------------
 Assignment2::~Assignment2(void)
 {
+    /*
     dynamicsWorld->removeRigidBody(fallRigidBody);
     delete fallRigidBody->getMotionState();
     delete fallRigidBody;
@@ -56,7 +59,7 @@ Assignment2::~Assignment2(void)
 
     delete fallShape;
     delete groundShape;
-
+    */
     delete simulator;
 }
 
@@ -69,10 +72,7 @@ void Assignment2::createScene(void)
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
  
     // Create a scene
-    PlayingField* bCourt = new PlayingField(mSceneMgr);
-    ball = new Ball(mSceneMgr);
-    bCourt->addChild(ball->getNode());
-    ball->setPlayingField(bCourt);
+    ball = new Ball("myball", mSceneMgr, simulator, 10, 1, Ogre::Vector3(0, 100, 0), .9f, .1f);
      
     // Create a Light and set its position
     Ogre::Light* light = mSceneMgr->createLight("MainLight");
@@ -96,8 +96,9 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         mCameraMan->frameRenderingQueued(evt);
     
         // Step the simulation
-        dynamicsWorld->stepSimulation(1/60.f,10);
-        
+        simulator->stepSimulation(1/60.f, 10, 1/60.f);
+       
+        /* TODO: this code should be replaced with ogremotionstate 
         // Set the ball's new position    
         btTransform trans;
         fallRigidBody->getMotionState()->getWorldTransform(trans);
@@ -106,7 +107,7 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             trans.getOrigin().getY(),
             trans.getOrigin().getZ()
             );
-            
+        */  
     }
     return true;
 }

@@ -1,6 +1,7 @@
 #ifndef __ball__
 #define __ball__
 
+#include "Simulator.h"
 #include <Ogre.h>
 
 class Ball : public GameObject {
