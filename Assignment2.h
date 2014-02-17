@@ -20,6 +20,7 @@ This source file is part of the
 #include <btBulletDynamicsCommon.h>
 #include "BaseApplication.h"
 #include "Ball.h"
+#include "Simulator.h"
 
 class Assignment2 : public BaseApplication
 {

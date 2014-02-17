@@ -20,10 +20,18 @@ Simulator::Simulator(){
 	btAlignedObjectArray<btCollisionShape*> collisionShapes;
 }
 
+Simulator::~Simulator() {
+
+}
+
 void Simulator::addObject (GameObject* o){
 	objList.push_back(o);
 	//use default collision group/mask values (dynamic/kinematic/static)
 	dynamicsWorld->addRigidBody(o->getBody());
+}
+
+bool Simulator::removeObject(GameObject* o) {
+
 }
 
 void Simulator::stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps, const Ogre::Real fixedTimestep){
