@@ -7,6 +7,7 @@ GameObject::GameObject(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim
 	simulator = sim;
 	rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
 	shape = NULL;
+	motionState = NULL;
 	tr.setIdentity();
 	mass = 0.0f;
 	inertia.setZero();
@@ -17,8 +18,9 @@ void GameObject::updateTransform() {
 	tr.setOrigin(btVector3(pos.x, pos.y, pos.z));
 	Ogre::Quaternion qt = rootNode->getOrientation();
 	tr.setRotation(btQuaternion(qt.x, qt.y, qt.z, qt.w));
-	if(motionState)
+	if(motionState){
 		motionState->updateTransform(tr);
+	}
 }
 
 void GameObject::addToSimulator() {
