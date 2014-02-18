@@ -22,6 +22,7 @@ This source file is part of the
 #include "Ball.h"
 #include "Box.h"
 #include "Simulator.h"
+#include "Surface.h"
 
 class Assignment2 : public BaseApplication
 {
@@ -29,6 +30,7 @@ protected:
     Simulator* simulator;
     Ball* ball;
     Box* box;
+    Surface* paddle;
     
     btCollisionShape *fallShape, *groundShape;
     btDefaultMotionState *fallMotionState, *groundMotionState;
