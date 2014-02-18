@@ -17,6 +17,7 @@ GameObject::GameObject(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim
 	tr.setIdentity();
 	mass = 0.0f;
 	inertia.setZero();
+    callback = NULL;
 }
 
 void GameObject::updateTransform() {
@@ -40,6 +41,9 @@ void GameObject::addToSimulator() {
 	rbInfo.m_restitution = 0.9f;
     rbInfo.m_friction = 0.1f;
 	body = new btRigidBody(rbInfo);
+
+    CollisionContext* context = new CollisionContext();
+    callback = new ContactSensorCallback(*body, *context);
 	simulator->addObject(this);
 }
 

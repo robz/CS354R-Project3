@@ -1,4 +1,6 @@
+#include <iostream>
 #include "Simulator.h"
+#include "ContactSensorCallback.h"
 
 Simulator::Simulator(){
 	// Collision configuration contains default setup for memory, collision setup.
@@ -25,8 +27,9 @@ Simulator::~Simulator() {
 }
 
 void Simulator::addObject (GameObject* o){
-	objList.push_back(o);
-	//use default collision group/mask values (dynamic/kinematic/static)
+	objList.push_back(o->callback);
+	
+    //use default collision group/mask values (dynamic/kinematic/static)
 	dynamicsWorld->addRigidBody(o->getBody());
 }
 
@@ -37,4 +40,22 @@ bool Simulator::removeObject(GameObject* o) {
 void Simulator::stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps, const Ogre::Real fixedTimestep){
 	//do we need to update positions in simulator for dynamic objects?
 	dynamicsWorld->stepSimulation(elapsedTime, maxSubSteps, fixedTimestep);
+
+    for (int i = 0; i < objList.size(); i++) {
+        for (int j = 0; j < objList.size(); j++) {
+            if (i == j) { continue; }
+            
+            objList[i]->ctxt.hit = false;
+
+            dynamicsWorld->contactPairTest(
+                &(objList[i]->body), 
+                &(objList[j]->body), 
+                *objList[i]
+                ); 
+            
+            if (objList[i]->ctxt.hit) {
+                std::cout << "bounce" << std::endl;
+            } 
+        }
+    }
 }

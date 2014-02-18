@@ -1,5 +1,5 @@
 #noinst_HEADERS = Assignment2.h Ball.h ControlListener.h GameObject.h OgreMotionState.h Overlay.h Player.h PlayerCamera.h PlayingField.h Simulator.h Wall.h
-noinst_HEADERS = Assignment2.h Ball.h PlayingField.h BaseApplication.h GameObject.h Simulator.h OgreMotionState.h Box.h
+noinst_HEADERS = Assignment2.h Ball.h PlayingField.h BaseApplication.h GameObject.h Simulator.h OgreMotionState.h Box.h ContactSensorCallback.h
 
 bin_PROGRAMS = assignment2
 assignment2_CPPFLAGS = -I$(top_srcdir)

@@ -18,7 +18,7 @@ class Simulator {
 		btCollisionWorld* mWorld;
 		Ogre::SceneManager* sceneMgr;
 	public:
-		std::deque<GameObject*> objList;
+		std::deque<ContactSensorCallback*> objList;
 		Simulator();
 		~Simulator();
 

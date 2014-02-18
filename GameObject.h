@@ -5,6 +5,7 @@
 #include <btBulletDynamicsCommon.h>
 #include "OgreMotionState.h"
 #include <Ogre.h>
+#include "ContactSensorCallback.h"
 
 class Simulator;
 
@@ -21,6 +22,8 @@ class GameObject {
 		btVector3 inertia;
 		OgreMotionState* motionState;
 	public:
+        ContactSensorCallback* callback;
+ 
 		btCollisionShape* shape;
 		GameObject(Ogre::String, Ogre::SceneManager*, Simulator*);
 		void updateTransform();
