@@ -6,6 +6,7 @@
 #include <btBulletDynamicsCommon.h>
 #include <Ogre.h>
 #include "GameObject.h"
+#include "SoundSystem.h"
 
 class Simulator {
 	protected:
@@ -17,6 +18,7 @@ class Simulator {
 		btConstraintSolver* mConstraintsolver;
 		btCollisionWorld* mWorld;
 		Ogre::SceneManager* sceneMgr;
+        SoundSystem* soundSystem;
 	public:
 		std::deque<ContactSensorCallback*> objList;
 		Simulator();

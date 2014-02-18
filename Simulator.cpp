@@ -20,6 +20,9 @@ Simulator::Simulator(){
 	//keep track of the shapes, we release memory at exit.
 	//make sure to re-use collision shapes among rigid bodies whenever possible!
 	btAlignedObjectArray<btCollisionShape*> collisionShapes;
+
+    // Initialize the sound system
+    soundSystem = new SoundSystem();
 }
 
 Simulator::~Simulator() {

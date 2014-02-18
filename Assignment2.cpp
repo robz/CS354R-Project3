@@ -103,7 +103,7 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         mCameraMan->frameRenderingQueued(evt);
     
         // Step the simulation
-        if(b){
+        if(mKeyboard->isKeyDown(OIS::KC_W)){
             paddle->move(0.0, 0.0, 0.5);
         }
         else{
@@ -130,6 +130,33 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     }
     return true;
 }
+
+bool Assignment2::keyPressed(const OIS::KeyEvent &arg)
+{   
+    return BaseApplication::keyPressed(arg);
+}
+
+bool Assignment2::keyReleased(const OIS::KeyEvent &arg)
+{
+    return BaseApplication::keyReleased(arg);
+}
+
+
+bool Assignment2::mouseMoved(const OIS::MouseEvent &arg)
+{
+    return BaseApplication::mouseMoved(arg);
+}
+
+bool Assignment2::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+    return BaseApplication::mousePressed(arg, id);
+}
+
+bool Assignment2::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+    return BaseApplication::mouseReleased(arg, id);
+}
+
 
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
