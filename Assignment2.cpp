@@ -72,7 +72,10 @@ void Assignment2::createScene(void)
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
  
     // Create a scene
-    ball = new Ball("myball", mSceneMgr, simulator, 10, 1, Ogre::Vector3(0, 100, 0), .9f, .1f);
+    ball = new Ball("myball", mSceneMgr, simulator, 10, 1, Ogre::Vector3(0, 200, 0), .9f, .1f);
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 1500, 1500, 1500);
+    ball->addToSimulator();
+    box->addToSimulator();
      
     // Create a Light and set its position
     Ogre::Light* light = mSceneMgr->createLight("MainLight");

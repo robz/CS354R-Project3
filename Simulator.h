@@ -17,8 +17,8 @@ class Simulator {
 		btConstraintSolver* mConstraintsolver;
 		btCollisionWorld* mWorld;
 		Ogre::SceneManager* sceneMgr;
-		std::deque<GameObject*> objList;
 	public:
+		std::deque<GameObject*> objList;
 		Simulator();
 		~Simulator();
 

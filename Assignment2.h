@@ -20,6 +20,7 @@ This source file is part of the
 #include <btBulletDynamicsCommon.h>
 #include "BaseApplication.h"
 #include "Ball.h"
+#include "Box.h"
 #include "Simulator.h"
 
 class Assignment2 : public BaseApplication
@@ -27,6 +28,7 @@ class Assignment2 : public BaseApplication
 protected:
     Simulator* simulator;
     Ball* ball;
+    Box* box;
     
     btCollisionShape *fallShape, *groundShape;
     btDefaultMotionState *fallMotionState, *groundMotionState;

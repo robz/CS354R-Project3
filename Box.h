@@ -3,9 +3,13 @@
 
 #include "GameObject.h"
 
-class Box : public GameObject {
+class Box {
+	protected:
+		GameObject* wall[6];
+
 	public:
 		Box(Ogre::String, Ogre::SceneManager*, Simulator*, Ogre::Real, Ogre::Real, Ogre::Real, Ogre::Real, Ogre::Real, Ogre::Real);
+		void addToSimulator();
 };
 
 #endif

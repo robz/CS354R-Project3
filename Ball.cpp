@@ -15,7 +15,7 @@ Ball::Ball(
 : GameObject(nym, mgr, sim)
 {
     geom = mgr->createEntity(name, "sphere.mesh");
-    geom->setMaterialName("BallColor/CubeMap");
+    //geom->setMaterialName("BallColor/CubeMap");
     geom->setCastShadows(true);
     rootNode->attachObject(geom);
 

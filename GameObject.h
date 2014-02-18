@@ -15,13 +15,13 @@ class GameObject {
 		Simulator* simulator;
 		Ogre::SceneNode* rootNode;
 		Ogre::Entity* geom;
-		btCollisionShape* shape;
 		btScalar mass;
 		btRigidBody* body;
 		btTransform tr;
 		btVector3 inertia;
 		OgreMotionState* motionState;
 	public:
+		btCollisionShape* shape;
 		GameObject(Ogre::String, Ogre::SceneManager*, Simulator*);
 		void updateTransform();
 		void addToSimulator();

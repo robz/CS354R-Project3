@@ -1,11 +1,17 @@
 #include "GameObject.h"
 #include "Simulator.h"
+#include <exception>
 
 GameObject::GameObject(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim){
 	name = nym;
 	sceneMgr = mgr;
 	simulator = sim;
-	rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
+	try{
+		rootNode = mgr->getSceneNode(name);
+	}
+	catch (std::exception& e) {
+		rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
+	}
 	shape = NULL;
 	motionState = NULL;
 	tr.setIdentity();
@@ -31,6 +37,8 @@ void GameObject::addToSimulator() {
 	if (mass != 0.0f) 
 		shape->calculateLocalInertia(mass, inertia);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, inertia);
+	rbInfo.m_restitution = 0.9f;
+    rbInfo.m_friction = 0.1f;
 	body = new btRigidBody(rbInfo);
 	simulator->addObject(this);
 }
