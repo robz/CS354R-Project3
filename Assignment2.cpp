@@ -17,6 +17,8 @@ This source file is part of the
 #include "Assignment2.h"
 #include "PlayingField.h"
 
+int i = 0;
+bool b = true;
 //-------------------------------------------------------------------------------------
 Assignment2::Assignment2(void)
 {
@@ -72,10 +74,12 @@ void Assignment2::createScene(void)
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
  
     // Create a scene
-    ball = new Ball("myball", mSceneMgr, simulator, 10, 1, Ogre::Vector3(0, 200, 0), .9f, .1f);
+    ball = new Ball("myball", mSceneMgr, simulator, 10, 1, Ogre::Vector3(0, 750, 750), .9f, .1f);
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 1500, 1500, 1500);
+    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 750, 0, 100, 100, 10);
     ball->addToSimulator();
     box->addToSimulator();
+    paddle->addToSimulator();
      
     // Create a Light and set its position
     Ogre::Light* light = mSceneMgr->createLight("MainLight");
@@ -99,6 +103,13 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         mCameraMan->frameRenderingQueued(evt);
     
         // Step the simulation
+        if(b){
+            paddle->move(0.0, 0.0, 0.5);
+        }
+        else{
+            paddle->move(0.0, 0.0, -0.5);
+        }
+        paddle->updateTransform();
         simulator->stepSimulation(1/60.f, 10, 1/60.f);
        
         /* TODO: this code should be replaced with ogremotionstate 
@@ -110,7 +121,12 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             trans.getOrigin().getY(),
             trans.getOrigin().getZ()
             );
-        */  
+        */
+        if(i == 1000){
+            i = 0;
+            b = !b;  
+        }
+        i++;
     }
     return true;
 }

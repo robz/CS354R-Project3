@@ -29,6 +29,7 @@ class GameObject {
 		void updateTransform();
 		void addToSimulator();
 		btRigidBody* getBody();
+		void move(Ogre::Real, Ogre::Real, Ogre::Real);
 }; 
 
 #endif

@@ -2,6 +2,7 @@
 #define __Box_h_
 
 #include "GameObject.h"
+#include "Surface.h"
 
 class Box {
 	protected:

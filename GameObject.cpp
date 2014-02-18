@@ -50,3 +50,10 @@ void GameObject::addToSimulator() {
 btRigidBody* GameObject::getBody(){
 	return this->body;
 }
+
+void GameObject::move(Ogre::Real x, Ogre::Real y, Ogre::Real z){
+	body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+	body->setActivationState(DISABLE_DEACTIVATION);
+	//body->setLinearVelocity(btVector3(x, y, z));
+	rootNode->setPosition(rootNode->getPosition() + Ogre::Vector3(x, y, z));
+}

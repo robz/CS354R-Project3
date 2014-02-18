@@ -3,8 +3,17 @@
 Box::Box(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim, Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Real width, Ogre::Real height, Ogre::Real depth) {
     mgr->getRootSceneNode()->createChildSceneNode(nym);
     mgr->getSceneNode(nym)->setPosition(x, y, z);
+
+    wall[0] = new Surface("floor", mgr, sim, 0, 0, 0, width, 0, depth);
+    wall[1] = new Surface("ceiling", mgr, sim, 0, height, 0, width, 0, depth);
+    wall[2] = new Surface("WallPosXNode", mgr, sim, width/2, height/2, 0, 0, height, depth);
+    wall[3] = new Surface("WallNegXNode", mgr, sim, -width/2, height/2, 0, 0, height, depth);
+    wall[4] = new Surface("WallPosZNode", mgr, sim, 0, height/2, depth/2, width, height, 0);
+    wall[5] = new Surface("WallNegZNode", mgr, sim, 0, height/2, -depth/2, width, height, 0);
+
+
     //setup Ogre
-	Ogre::Plane sceneFloor(Ogre::Vector3::UNIT_Y, 0);
+	/*Ogre::Plane sceneFloor(Ogre::Vector3::UNIT_Y, 0);
 
     Ogre::MeshManager::getSingleton().createPlane("floor", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
     sceneFloor, width, height, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
@@ -89,7 +98,7 @@ Box::Box(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim, Ogre::Real x
     wall[5]->shape = new btStaticPlaneShape(btVector3(0,0,-1),1);
 
     //setup bullet
-    //shape = new btBoxShape(btVector3(width,height,depth));
+    //shape = new btBoxShape(btVector3(width,height,depth));*/
 
 }
 

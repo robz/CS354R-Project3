@@ -16,7 +16,7 @@ Ball::Ball(
 {
     geom = mgr->createEntity(name, "sphere.mesh");
     //geom->setMaterialName("BallColor/CubeMap");
-    geom->setCastShadows(true);
+    geom->setCastShadows(false);
     rootNode->attachObject(geom);
 
     // sphere starts at 100 units radius
