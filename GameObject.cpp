@@ -51,9 +51,27 @@ btRigidBody* GameObject::getBody(){
 	return this->body;
 }
 
-void GameObject::move(Ogre::Real x, Ogre::Real y, Ogre::Real z){
+void GameObject::setKinematic(){
 	body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
 	body->setActivationState(DISABLE_DEACTIVATION);
+}
+
+void GameObject::move(Ogre::Real x, Ogre::Real y, Ogre::Real z){
 	//body->setLinearVelocity(btVector3(x, y, z));
-	rootNode->setPosition(rootNode->getPosition() + Ogre::Vector3(x, y, z));
+	
+	//translate based on current node's local axes
+	rootNode->translate(rootNode->getLocalAxes(), x, y, z);
+	
+	//translates based on parent axes
+	//rootNode->setPosition(rootNode->getPosition() + Ogre::Vector3(x, y, z));
+}
+
+void GameObject::rotate(Ogre::Real x, Ogre::Real y, Ogre::Real z){
+	rootNode->yaw(Ogre::Degree(x));
+	rootNode->pitch(Ogre::Degree(y));
+	rootNode->roll(Ogre::Degree(z));
+}
+
+Ogre::SceneNode& GameObject::getNode(){
+	return *(this->rootNode);
 }

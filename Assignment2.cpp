@@ -17,8 +17,6 @@ This source file is part of the
 #include "Assignment2.h"
 #include "PlayingField.h"
 
-int i = 0;
-bool b = true;
 //-------------------------------------------------------------------------------------
 Assignment2::Assignment2(void)
 {
@@ -80,7 +78,12 @@ void Assignment2::createScene(void)
     ball->addToSimulator();
     box->addToSimulator();
     paddle->addToSimulator();
-     
+    paddle->setKinematic();
+
+    //Setup player camera
+    (&(paddle->getNode()))->createChildSceneNode("camNode");
+    mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
+
     // Create a Light and set its position
     Ogre::Light* light = mSceneMgr->createLight("MainLight");
     light->setPosition(100.0f, 100.0f, 100.0f);
@@ -100,15 +103,30 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     mTrayMgr->frameRenderingQueued(evt);
     if (!mTrayMgr->isDialogVisible()) {
         // if dialog isn't up, then update the scene
-        mCameraMan->frameRenderingQueued(evt);
+        //mCameraMan->frameRenderingQueued(evt);
     
         // Step the simulation
         if(mKeyboard->isKeyDown(OIS::KC_W)){
-            paddle->move(0.0, 0.0, 0.5);
-        }
-        else{
             paddle->move(0.0, 0.0, -0.5);
         }
+        if (mKeyboard->isKeyDown(OIS::KC_S)){
+            paddle->move(0.0, 0.0, 0.5);
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_A)){
+            paddle->move(-0.5, 0.0, 0.0);
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_D)){
+            paddle->move(0.5, 0.0, 0.0);
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_Q)){
+            paddle->rotate(0.0, 0.0, 0.2);
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_E)){
+            paddle->rotate(0.0, 0.0, -0.2);
+        }
+        Ogre::Real xMove = mMouse->getMouseState().X.rel;
+        Ogre::Real yMove = mMouse->getMouseState().Y.rel;
+        paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0);
         paddle->updateTransform();
         simulator->stepSimulation(1/60.f, 10, 1/60.f);
        
@@ -122,11 +140,6 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             trans.getOrigin().getZ()
             );
         */
-        if(i == 1000){
-            i = 0;
-            b = !b;  
-        }
-        i++;
     }
     return true;
 }

@@ -30,6 +30,9 @@ class GameObject {
 		void addToSimulator();
 		btRigidBody* getBody();
 		void move(Ogre::Real, Ogre::Real, Ogre::Real);
+		void rotate(Ogre::Real, Ogre::Real, Ogre::Real);
+		Ogre::SceneNode& getNode();
+		void setKinematic();
 }; 
 
 #endif
