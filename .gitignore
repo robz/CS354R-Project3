@@ -29,3 +29,5 @@ swilken-local/
 
 *.swp
 *.o
+*~
+media/
