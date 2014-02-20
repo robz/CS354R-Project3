@@ -54,9 +54,9 @@ void Assignment2::createScene(void)
     light->setPosition(100.0f, 100.0f, 100.0f);
 }
 
-float PADDLE_X_SPEED = 100.f,
-      PADDLE_Z_SPEED = 100.f,
-      PADDLE_ROT_SPEED = 20.f;
+float PADDLE_X_SPEED = 600.f,
+      PADDLE_Z_SPEED = 600.f,
+      PADDLE_ROT_SPEED = 30.f;
 
 bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     if(mWindow->isClosed())
@@ -93,6 +93,7 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         if (mKeyboard->isKeyDown(OIS::KC_E)){
             paddle->rotate(0.0, 0.0, -PADDLE_ROT_SPEED * evt.timeSinceLastEvent);
         }
+        
         Ogre::Real xMove = mMouse->getMouseState().X.rel;
         Ogre::Real yMove = mMouse->getMouseState().Y.rel;
         paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0);
@@ -115,6 +116,12 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
 bool Assignment2::keyPressed(const OIS::KeyEvent &arg)
 {   
+    if (arg.key == OIS::KC_R) {
+        simulator->setGravity(simulator->gravity + 20.0);        
+    } else if (arg.key == OIS::KC_F) {
+        simulator->setGravity(simulator->gravity - 20.0);
+    }
+
     return BaseApplication::keyPressed(arg);
 }
 
