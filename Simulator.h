@@ -20,7 +20,7 @@ class Simulator {
 		Ogre::SceneManager* sceneMgr;
         SoundSystem* soundSystem;
 	public:
-		std::deque<ContactSensorCallback*> objList;
+		std::deque<GameObject*> objList;
 		Simulator();
 		~Simulator();
 
@@ -28,7 +28,7 @@ class Simulator {
 		bool removeObject(GameObject* o);
 		void stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps = 1, 
 			const Ogre::Real fixedTimestep = 1.0f/60.0f);
-        void Simulator::playHitSound(void);
+        void playHitSound(void);
 };
 
 #endif

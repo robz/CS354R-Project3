@@ -30,7 +30,7 @@ Simulator::~Simulator() {
 }
 
 void Simulator::addObject (GameObject* o){
-	objList.push_back(o->callback);
+	objList.push_back(o);
 	
     //use default collision group/mask values (dynamic/kinematic/static)
 	dynamicsWorld->addRigidBody(o->getBody());
@@ -48,15 +48,15 @@ void Simulator::stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps, co
         for (int j = 0; j < objList.size(); j++) {
             if (i == j) { continue; }
             
-            objList[i]->ctxt.hit = false;
+            objList[i]->callback->ctxt.hit = false;
 
             dynamicsWorld->contactPairTest(
-                &(objList[i]->body), 
-                &(objList[j]->body), 
-                *objList[i]
-                ); 
+                objList[i]->getBody(), 
+                objList[j]->getBody(), 
+                *(objList[i]->callback)
+                );
             
-            if (objList[i]->ctxt.hit) {
+            if (objList[i]->callback->ctxt.hit) {
             	//soundSystem->playWallHit();
                 //std::cout << "bounce" << std::endl;
             } 
@@ -70,4 +70,5 @@ void Simulator::stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps, co
 
 void Simulator::playHitSound(void) {
     soundSystem->playWallHit();
+    std::cout << "bounce" << std::endl;
 }

@@ -33,8 +33,8 @@ Ball::Ball(
     hitFlag = false;
 }
 
-void update() {
-    bool wasHit = callback->ctxt->hit;
+void Ball::update() {
+    bool wasHit = callback->ctxt.hit;
 
     // prevent multiple hits being noticed in a row
     if (!wasHit) {
