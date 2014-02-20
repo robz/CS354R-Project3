@@ -23,6 +23,7 @@ This source file is part of the
 #include "Box.h"
 #include "Simulator.h"
 #include "Surface.h"
+#include "Wall.h"
 
 class Assignment2 : public BaseApplication
 {

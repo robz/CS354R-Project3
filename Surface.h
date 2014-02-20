@@ -17,7 +17,8 @@ class Surface : public GameObject {
 			Ogre::Real, 
 			Ogre::Real, 
 			Ogre::Real, 
-			Ogre::Real);
+			Ogre::Real,
+			Ogre::String);
 };
 
 #endif

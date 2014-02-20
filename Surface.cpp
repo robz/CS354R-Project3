@@ -1,27 +1,21 @@
 #include "Surface.h"
 
 Surface::Surface(Ogre::String nym, 
-	Ogre::SceneManager* mgr, 
-	Simulator* sim, 
-	Ogre::Real x, 
-	Ogre::Real y, 
-	Ogre::Real z, 
-	Ogre::Real width, 
-	Ogre::Real height, 
-	Ogre::Real depth) 
+    Ogre::SceneManager* mgr, 
+    Simulator* sim, 
+    Ogre::Real x, 
+    Ogre::Real y, 
+    Ogre::Real z, 
+    Ogre::Real width, 
+    Ogre::Real height, 
+    Ogre::Real depth,
+    Ogre::String tex = "") 
 : GameObject(nym, mgr, sim) 
 {
     //setup Ogre
-	//Ogre::Box surf();
-	geom = mgr->createEntity(nym, "cube.mesh");
-
-    //Ogre::MeshManager::getSingleton().createPlane("floor", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-    //sceneFloor, width, height, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
-
-    //Ogre::Entity* entFloor = mgr->createEntity("FloorEntity", "floor");
-    //mgr->getSceneNode(nym)->createChildSceneNode("FloorNode")->attachObject(entFloor);
-
-    geom->setMaterialName("Examples/Rockwall");
+    geom = mgr->createEntity(nym, "cube.mesh");
+    if(tex != "")
+        geom->setMaterialName(tex);
     geom->setCastShadows(false);
 
     rootNode->attachObject(geom);

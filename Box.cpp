@@ -1,15 +1,33 @@
 #include "Box.h"
 
-Box::Box(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim, Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Real width, Ogre::Real height, Ogre::Real depth) {
+Box::Box(Ogre::String nym, 
+    Ogre::SceneManager* mgr, 
+    Simulator* sim, 
+    Ogre::Real x, 
+    Ogre::Real y, 
+    Ogre::Real z, 
+    Ogre::Real width, 
+    Ogre::Real height, 
+    Ogre::Real depth, 
+    Ogre::String wallTex = "", 
+    Ogre::String floorTex = "") 
+{
     mgr->getRootSceneNode()->createChildSceneNode(nym);
     mgr->getSceneNode(nym)->setPosition(x, y, z);
 
-    wall[0] = new Surface("floor", mgr, sim, 0, 0, 0, width, 0, depth);
+    /*wall[0] = new Surface("floor", mgr, sim, 0, 0, 0, width, 0, depth);
     wall[1] = new Surface("ceiling", mgr, sim, 0, height, 0, width, 0, depth);
     wall[2] = new Surface("WallPosXNode", mgr, sim, width/2, height/2, 0, 0, height, depth);
     wall[3] = new Surface("WallNegXNode", mgr, sim, -width/2, height/2, 0, 0, height, depth);
     wall[4] = new Surface("WallPosZNode", mgr, sim, 0, height/2, depth/2, width, height, 0);
-    wall[5] = new Surface("WallNegZNode", mgr, sim, 0, height/2, -depth/2, width, height, 0);
+    wall[5] = new Surface("WallNegZNode", mgr, sim, 0, height/2, -depth/2, width, height, 0);*/
+
+    wall[0] = new Wall("floor", mgr, sim, 0, 0, 0, width, height, Ogre::Vector3::UNIT_Y, Ogre::Vector3::UNIT_Z, floorTex);
+    wall[1] = new Wall("ceiling", mgr, sim, 0, height, 0, width, height, -Ogre::Vector3::UNIT_Y, Ogre::Vector3::UNIT_Z, wallTex);
+    wall[2] = new Wall("WallPosXNode", mgr, sim, width/2, height/2, 0, width, height, -Ogre::Vector3::UNIT_X, Ogre::Vector3::UNIT_Y, wallTex);
+    wall[3] = new Wall("WallNegXNode", mgr, sim, -width/2, height/2, 0, width, height, Ogre::Vector3::UNIT_X, Ogre::Vector3::UNIT_Y, wallTex);
+    wall[4] = new Wall("WallPosZNode", mgr, sim, 0, height/2, depth/2, width, height, -Ogre::Vector3::UNIT_Z, Ogre::Vector3::UNIT_Y, wallTex);
+    wall[5] = new Wall("WallNegZNode", mgr, sim, 0, height/2, -depth/2, width, height, Ogre::Vector3::UNIT_Z, Ogre::Vector3::UNIT_Y, wallTex);
 
 
     //setup Ogre

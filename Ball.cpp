@@ -5,17 +5,19 @@
 Ball::Ball(
     Ogre::String nym, 
     Ogre::SceneManager* mgr, 
-    Simulator* sim, 
+    Simulator* sim,
     float radius, 
     float m, 
     Ogre::Vector3 pos, 
     float restitution, 
-    float friction
+    float friction,
+    Ogre::String tex = ""
     ) 
 : GameObject(nym, mgr, sim)
 {
     geom = mgr->createEntity(name, "sphere.mesh");
-    //geom->setMaterialName("BallColor/CubeMap");
+    if(tex != "")
+        geom->setMaterialName(tex);
     geom->setCastShadows(false);
     rootNode->attachObject(geom);
 

@@ -37,9 +37,9 @@ void Assignment2::createScene(void)
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
  
     // Create a scene
-    ball = new Ball("myball", mSceneMgr, simulator, 10, 1, Ogre::Vector3(0, 750, 750), .9f, .1f);
-    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 1500, 1500, 1500);
-    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 750, 0, 100, 100, 10);
+    ball = new Ball("myball", mSceneMgr, simulator, 10, 1, Ogre::Vector3(0, 750, 750), .9f, .1f, "Examples/BeachStones");
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 1500, 1500, 1500, "Examples/Rockwall", "Examples/Frost");
+    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 750, 0, 100, 100, 10, "Examples/BumpyMetal");
     ball->addToSimulator();
     box->addToSimulator();
     paddle->addToSimulator();

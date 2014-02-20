@@ -17,7 +17,8 @@ public:
         float m, 
         Ogre::Vector3 pos, 
         float restitution, 
-        float friction
+        float friction,
+        Ogre::String
         );
 
     // void update();
