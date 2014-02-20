@@ -19,11 +19,15 @@ class Simulator {
 		btCollisionWorld* mWorld;
 		Ogre::SceneManager* sceneMgr;
         SoundSystem* soundSystem;
-	public:
+
+    public:
 		std::deque<GameObject*> objList;
-		Simulator();
+        float gravity;	    
+		
+        Simulator();
 		~Simulator();
 
+        void setGravity(float g);
 		void addObject(GameObject* o);
 		bool removeObject(GameObject* o);
 		void stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps = 1, 
