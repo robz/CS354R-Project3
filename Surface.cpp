@@ -33,7 +33,7 @@ Surface::Surface(Ogre::String nym,
         );
     shape = new btBoxShape(btVector3(width/2,height/2,depth/2));
 }
-
+/*
 void Surface::update() {
     bool wasHit = callback->ctxt.hit;
     
@@ -41,4 +41,4 @@ void Surface::update() {
         // simulator->playHitSound();
     }
 }
-
+*/

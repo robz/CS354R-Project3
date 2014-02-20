@@ -34,7 +34,7 @@ class GameObject {
 		Ogre::SceneNode& getNode();
 		void setKinematic();
 
-        virtual void update() {}
+        virtual void update();
 }; 
 
 #endif

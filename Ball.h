@@ -20,7 +20,7 @@ public:
         float friction
         );
 
-    void update();
+    // void update();
 };
 
 #endif

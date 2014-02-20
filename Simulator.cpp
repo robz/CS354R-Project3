@@ -45,20 +45,16 @@ void Simulator::stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps, co
 	dynamicsWorld->stepSimulation(elapsedTime, maxSubSteps, fixedTimestep);
 
     for (int i = 0; i < objList.size(); i++) {
+        objList[i]->callback->ctxt.hit = false;
+        
         for (int j = 0; j < objList.size(); j++) {
             if (i == j) { continue; }
-            
-            objList[i]->callback->ctxt.hit = false;
 
             dynamicsWorld->contactPairTest(
                 objList[i]->getBody(), 
                 objList[j]->getBody(), 
                 *(objList[i]->callback)
                 );
-            
-            if (objList[i]->callback->ctxt.hit) {
-            	soundSystem->playWallHit();
-            } 
         }
     }
 
@@ -71,3 +67,4 @@ void Simulator::playHitSound(void) {
     soundSystem->playWallHit();
     std::cout << "bounce" << std::endl;
 }
+

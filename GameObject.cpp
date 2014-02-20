@@ -75,3 +75,10 @@ void GameObject::rotate(Ogre::Real x, Ogre::Real y, Ogre::Real z){
 Ogre::SceneNode& GameObject::getNode(){
 	return *(this->rootNode);
 }
+
+void GameObject::update() {
+    if (callback->ctxt.hit) {
+        simulator->playHitSound();
+    }
+}
+

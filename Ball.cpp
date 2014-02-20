@@ -32,7 +32,7 @@ Ball::Ball(
     mass = m;
     hitFlag = false;
 }
-
+/*
 void Ball::update() {
     bool wasHit = callback->ctxt.hit;
     
@@ -40,4 +40,4 @@ void Ball::update() {
         // simulator->playHitSound();
     }
 }
-
+*/

@@ -54,6 +54,10 @@ void Assignment2::createScene(void)
     light->setPosition(100.0f, 100.0f, 100.0f);
 }
 
+float PADDLE_X_SPEED = 100.f,
+      PADDLE_Z_SPEED = 100.f,
+      PADDLE_ROT_SPEED = 20.f;
+
 bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     if(mWindow->isClosed())
         return false;
@@ -72,28 +76,28 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     
         // Step the simulation
         if(mKeyboard->isKeyDown(OIS::KC_W)){
-            paddle->move(0.0, 0.0, -0.5);
+            paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastEvent);
         }
         if (mKeyboard->isKeyDown(OIS::KC_S)){
-            paddle->move(0.0, 0.0, 0.5);
+            paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastEvent);
         }
         if (mKeyboard->isKeyDown(OIS::KC_A)){
-            paddle->move(-0.5, 0.0, 0.0);
+            paddle->move(-PADDLE_X_SPEED * evt.timeSinceLastEvent, 0.0, 0.0);
         }
         if (mKeyboard->isKeyDown(OIS::KC_D)){
-            paddle->move(0.5, 0.0, 0.0);
+            paddle->move(PADDLE_X_SPEED * evt.timeSinceLastEvent, 0.0, 0.0);
         }
         if (mKeyboard->isKeyDown(OIS::KC_Q)){
-            paddle->rotate(0.0, 0.0, 0.2);
+            paddle->rotate(0.0, 0.0, PADDLE_ROT_SPEED * evt.timeSinceLastEvent);
         }
         if (mKeyboard->isKeyDown(OIS::KC_E)){
-            paddle->rotate(0.0, 0.0, -0.2);
+            paddle->rotate(0.0, 0.0, -PADDLE_ROT_SPEED * evt.timeSinceLastEvent);
         }
         Ogre::Real xMove = mMouse->getMouseState().X.rel;
         Ogre::Real yMove = mMouse->getMouseState().Y.rel;
         paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0);
         paddle->updateTransform();
-        simulator->stepSimulation(1/60.f, 10, 1/60.f);
+        simulator->stepSimulation(evt.timeSinceLastEvent, 10, 1/60.f);
        
         /* TODO: this code should be replaced with ogremotionstate 
         // Set the ball's new position    
