@@ -57,8 +57,7 @@ void Simulator::stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps, co
                 );
             
             if (objList[i]->callback->ctxt.hit) {
-            	//soundSystem->playWallHit();
-                //std::cout << "bounce" << std::endl;
+            	soundSystem->playWallHit();
             } 
         }
     }

@@ -35,13 +35,9 @@ Ball::Ball(
 
 void Ball::update() {
     bool wasHit = callback->ctxt.hit;
-
-    // prevent multiple hits being noticed in a row
-    if (!wasHit) {
-        hitFlag = false;
-    } else if (wasHit && !hitFlag) {
-        simulator->playHitSound();
-        hitFlag = true;
+    
+    if (wasHit) {
+        // simulator->playHitSound();
     }
 }
 

@@ -18,6 +18,8 @@ class Surface : public GameObject {
 			Ogre::Real, 
 			Ogre::Real, 
 			Ogre::Real);
+    
+        void update();
 };
 
 #endif
