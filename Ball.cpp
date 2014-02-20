@@ -30,5 +30,18 @@ Ball::Ball(
 
     shape = new btSphereShape(radius);
     mass = m;
+    hitFlag = false;
+}
+
+void update() {
+    bool wasHit = callback->ctxt->hit;
+
+    // prevent multiple hits being noticed in a row
+    if (!wasHit) {
+        hitFlag = false;
+    } else if (wasHit && !hitFlag) {
+        simulator->playHitSound();
+        hitFlag = true;
+    }
 }
 

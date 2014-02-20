@@ -62,4 +62,12 @@ void Simulator::stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps, co
             } 
         }
     }
+
+    for (int i = 0; i < objList.size(); i++) {
+        objList[i]->update();
+    }
+}
+
+void Simulator::playHitSound(void) {
+    soundSystem->playWallHit();
 }

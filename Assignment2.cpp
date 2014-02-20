@@ -20,46 +20,11 @@ This source file is part of the
 //-------------------------------------------------------------------------------------
 Assignment2::Assignment2(void)
 {
-    /*
-    groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);
-    groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,-1,0)));
-    btRigidBody::btRigidBodyConstructionInfo
-            groundRigidBodyCI(0,groundMotionState,groundShape,btVector3(0,0,0));
-
-    groundRigidBodyCI.m_restitution = 0.9f;
-    groundRigidBodyCI.m_friction = 0.1f;
-    groundRigidBody = new btRigidBody(groundRigidBodyCI);
-    dynamicsWorld->addRigidBody(groundRigidBody);
-
-
-    fallShape = new btSphereShape(1);
-    fallMotionState =
-            new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,100,0)));
-    btScalar mass = 1;
-    btVector3 fallInertia(0,0,0);
-    fallShape->calculateLocalInertia(mass,fallInertia);
-    btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass,fallMotionState,fallShape,fallInertia);
-    fallRigidBodyCI.m_restitution = 0.9f;
-    fallRigidBodyCI.m_friction = 0.1f;
-    fallRigidBody = new btRigidBody(fallRigidBodyCI);
-    dynamicsWorld->addRigidBody(fallRigidBody);
-    */ 
 }
+
 //-------------------------------------------------------------------------------------
 Assignment2::~Assignment2(void)
 {
-    /*
-    dynamicsWorld->removeRigidBody(fallRigidBody);
-    delete fallRigidBody->getMotionState();
-    delete fallRigidBody;
-
-    dynamicsWorld->removeRigidBody(groundRigidBody);
-    delete groundRigidBody->getMotionState();
-    delete groundRigidBody;
-
-    delete fallShape;
-    delete groundShape;
-    */
     delete simulator;
 }
 

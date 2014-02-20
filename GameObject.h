@@ -33,6 +33,8 @@ class GameObject {
 		void rotate(Ogre::Real, Ogre::Real, Ogre::Real);
 		Ogre::SceneNode& getNode();
 		void setKinematic();
+
+        virtual void update() {}
 }; 
 
 #endif

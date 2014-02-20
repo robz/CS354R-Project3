@@ -5,6 +5,9 @@
 #include <Ogre.h>
 
 class Ball : public GameObject {
+protected:
+    bool hitFlag;
+
 public:
     Ball(
         Ogre::String nym, 
@@ -16,6 +19,8 @@ public:
         float restitution, 
         float friction
         );
+
+    void update();
 };
 
 #endif
