@@ -15,17 +15,29 @@ Target::Target(
 : GameObject(nym, mgr, sim), radius(radius), boxWidth(boxWidth), boxHeight(boxHeight), boxDepth(boxDepth)
 {
     Ogre::ManualObject* circle = mgr->createManualObject("Circle");
-    circle->begin("BaseWhite", Ogre::RenderOperation::OT_LINE_STRIP);
+    circle->begin("BaseWhite", Ogre::RenderOperation::OT_TRIANGLE_LIST);
 
-    const float accuracy = 30;
+    float accuracy = 30;
+    const float thickness = radius/4;
     unsigned int index = 0;
-    
-    for(float theta = 0; theta <= 2 * Ogre::Math::PI; theta += Ogre::Math::PI / accuracy)
-    {
-       circle->position(cos(theta)*radius, 0, sin(theta)*radius);
-       circle->index(index++);
-    }
      
+    for(float theta = 0; theta <= 2 * Ogre::Math::PI; theta += Ogre::Math::PI / accuracy) 
+    {
+        circle->position(radius * cos(theta),
+                         0,
+                         radius * sin(theta));
+        circle->position(radius * cos(theta - Ogre::Math::PI / accuracy),
+                         0,
+                         radius * sin(theta - Ogre::Math::PI / accuracy));
+        circle->position((radius - thickness) * cos(theta - Ogre::Math::PI / accuracy),
+                         0,
+                         (radius - thickness) * sin(theta - Ogre::Math::PI / accuracy));
+        circle->position((radius - thickness) * cos(theta),
+                         0,
+                         (radius - thickness) * sin(theta));
+        circle->quad(index, index + 1, index + 2, index + 3);
+        index += 4;
+    }
     circle->end();
     
     rootNode->attachObject(circle);
@@ -53,6 +65,8 @@ void Target::setPose(int wall, float xOffset, float yOffset) {
         z = yOffset;
         yaw = M_PI/2.0;
     }
+
+    z -= boxHeight/2.0;
 
     this->move(x, y, z);
     this->rotate(yaw, pitch, 0);
