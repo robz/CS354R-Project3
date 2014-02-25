@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Target.h"
 
 Target::Target(
@@ -42,9 +43,10 @@ Target::Target(
     
     rootNode->attachObject(circle);
 
-    shape = new btCylinderShape(btVector3(radius, radius, .1)); 
+    shape = new btCylinderShape(btVector3(radius, radius, .01)); 
 
-    setPose(0, 0, 0);
+    wall = 0;
+    setPose(wall++, 0, 0);
 }
 
 void Target::setPose(int wall, float xOffset, float yOffset) {
@@ -70,5 +72,12 @@ void Target::setPose(int wall, float xOffset, float yOffset) {
 
     this->move(x, y, z);
     this->rotate(yaw, pitch, 0);
+}
+
+void Target::update() {
+    if (callback->ctxt.hit && callback->ctxt.theObject->name == "myball") {
+        std::cout << "hit target: " << wall << std::endl;
+        setPose((wall++)%6, 0, 0);
+    }
 }
 

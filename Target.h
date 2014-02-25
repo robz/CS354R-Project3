@@ -8,6 +8,7 @@
 
 class Target : public GameObject {
     protected:
+        int wall;
         Ogre::Real radius;
         Ogre::Real boxWidth;
         Ogre::Real boxHeight; 
@@ -27,6 +28,8 @@ class Target : public GameObject {
             Ogre::Real boxDepth,
             Ogre::Real radius
             );
+        
+        virtual void update();
 
     protected:
         void setPose(int wall, float x, float y);

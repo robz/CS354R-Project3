@@ -11,7 +11,6 @@ class Simulator;
 
 class GameObject {
 	protected:
-		Ogre::String name;
 		Ogre::SceneManager* sceneMgr;
 		Simulator* simulator;
 		Ogre::SceneNode* rootNode;
@@ -23,6 +22,7 @@ class GameObject {
 		OgreMotionState* motionState;
 	public:
         ContactSensorCallback* callback;
+		Ogre::String name;
  
 		btCollisionShape* shape;
 		GameObject(Ogre::String, Ogre::SceneManager*, Simulator*);
