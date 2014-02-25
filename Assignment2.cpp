@@ -37,9 +37,9 @@ void Assignment2::createScene(void)
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
  
     // Create a scene
-    ball = new Ball("myball", mSceneMgr, simulator, 10, 1, Ogre::Vector3(0, 750, 750), .9f, .1f, "Examples/BeachStones");
-    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 1500, 1500, 1500, "Examples/Rockwall", "Examples/Frost");
-    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 750, 0, 100, 100, 10, "Examples/BumpyMetal");
+    ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 75.0, -50.0), .9f, .1f, "Examples/BeachStones");
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, "Examples/Rockwall", "Examples/Frost");
+    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 0, 10.0, 10.0, 2.5, "Examples/BumpyMetal");
     ball->addToSimulator();
     box->addToSimulator();
     paddle->addToSimulator();
@@ -51,12 +51,12 @@ void Assignment2::createScene(void)
 
     // Create a Light and set its position
     Ogre::Light* light = mSceneMgr->createLight("MainLight");
-    light->setPosition(100.0f, 100.0f, 100.0f);
+    light->setPosition(10.0f, 10.0f, 10.0f);
 }
 
-float PADDLE_X_SPEED = 600.f,
-      PADDLE_Z_SPEED = 600.f,
-      PADDLE_ROT_SPEED = 30.f;
+float PADDLE_X_SPEED = 60.0f,
+      PADDLE_Z_SPEED = 60.0f,
+      PADDLE_ROT_SPEED = 30.0f;
 
 bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     if(mWindow->isClosed())
@@ -76,29 +76,29 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     
         // Step the simulation
         if(mKeyboard->isKeyDown(OIS::KC_W)){
-            paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastEvent);
+            paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastFrame);
         }
         if (mKeyboard->isKeyDown(OIS::KC_S)){
-            paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastEvent);
+            paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastFrame);
         }
         if (mKeyboard->isKeyDown(OIS::KC_A)){
-            paddle->move(-PADDLE_X_SPEED * evt.timeSinceLastEvent, 0.0, 0.0);
+            paddle->move(-PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
         }
         if (mKeyboard->isKeyDown(OIS::KC_D)){
-            paddle->move(PADDLE_X_SPEED * evt.timeSinceLastEvent, 0.0, 0.0);
+            paddle->move(PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
         }
         if (mKeyboard->isKeyDown(OIS::KC_Q)){
-            paddle->rotate(0.0, 0.0, PADDLE_ROT_SPEED * evt.timeSinceLastEvent);
+            paddle->rotate(0.0, 0.0, PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
         }
         if (mKeyboard->isKeyDown(OIS::KC_E)){
-            paddle->rotate(0.0, 0.0, -PADDLE_ROT_SPEED * evt.timeSinceLastEvent);
+            paddle->rotate(0.0, 0.0, -PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
         }
         
         Ogre::Real xMove = mMouse->getMouseState().X.rel;
         Ogre::Real yMove = mMouse->getMouseState().Y.rel;
         paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0);
         paddle->updateTransform();
-        simulator->stepSimulation(evt.timeSinceLastEvent, 10, 1/60.f);
+        simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
        
         /* TODO: this code should be replaced with ogremotionstate 
         // Set the ball's new position    

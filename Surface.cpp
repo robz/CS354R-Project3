@@ -25,7 +25,7 @@ Surface::Surface(Ogre::String nym,
         height * 0.01f,
         depth * 0.01f
         );
-    shape = new btBoxShape(btVector3(width/2,height/2,depth/2));
+    shape = new btBoxShape(btVector3(width/2.0,height/2.0,depth/2.0));
 }
 /*
 void Surface::update() {

@@ -67,9 +67,9 @@ void GameObject::move(Ogre::Real x, Ogre::Real y, Ogre::Real z){
 }
 
 void GameObject::rotate(Ogre::Real x, Ogre::Real y, Ogre::Real z){
-	rootNode->yaw(Ogre::Degree(x));
+	rootNode->yaw(Ogre::Degree(x), Ogre::Node::TS_WORLD);
 	rootNode->pitch(Ogre::Degree(y));
-	rootNode->roll(Ogre::Degree(z));
+	//rootNode->roll(Ogre::Degree(z));
 }
 
 Ogre::SceneNode& GameObject::getNode(){
