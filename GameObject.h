@@ -21,16 +21,18 @@ class GameObject {
 		btTransform tr;
 		btVector3 inertia;
 		OgreMotionState* motionState;
+		Ogre::Real restitution;
+    	Ogre::Real friction;
 	public:
         ContactSensorCallback* callback;
  
 		btCollisionShape* shape;
-		GameObject(Ogre::String, Ogre::SceneManager*, Simulator*);
+		GameObject(Ogre::String, Ogre::SceneManager*, Simulator*, Ogre::Real, Ogre::Real);
 		void updateTransform();
 		void addToSimulator();
 		btRigidBody* getBody();
 		void move(Ogre::Real, Ogre::Real, Ogre::Real);
-		void rotate(Ogre::Real, Ogre::Real, Ogre::Real);
+		void rotate(Ogre::Real, Ogre::Real, Ogre::Real, Ogre::Node::TransformSpace val_x = Ogre::Node::TS_LOCAL, Ogre::Node::TransformSpace val_y = Ogre::Node::TS_LOCAL, Ogre::Node::TransformSpace val_z = Ogre::Node::TS_LOCAL);
 		Ogre::SceneNode& getNode();
 		void setKinematic();
 

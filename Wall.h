@@ -19,6 +19,8 @@ class Wall : public GameObject {
 			Ogre::Real, 
 			Ogre::Vector3,
 			Ogre::Vector3,
+			Ogre::Real,
+			Ogre::Real,
 			Ogre::String
 			);
 };

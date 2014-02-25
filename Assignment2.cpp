@@ -37,9 +37,9 @@ void Assignment2::createScene(void)
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
  
     // Create a scene
-    ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 75.0, -50.0), .9f, .1f, "Examples/BeachStones");
-    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, "Examples/Rockwall", "Examples/Frost");
-    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 0, 10.0, 10.0, 2.5, "Examples/BumpyMetal");
+    ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 75.0, -50.0), .9f, .1f, "Examples/RustySteel");
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
+    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 0, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
     ball->addToSimulator();
     box->addToSimulator();
     paddle->addToSimulator();
@@ -55,10 +55,14 @@ void Assignment2::createScene(void)
 }
 
 float PADDLE_X_SPEED = 60.0f,
+      PADDLE_Y_SPEED = 60.0f,
       PADDLE_Z_SPEED = 60.0f,
       PADDLE_ROT_SPEED = 30.0f;
 
 bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
+
+    static Ogre::Real z_time = 0.0;
+
     if(mWindow->isClosed())
         return false;
 
@@ -75,11 +79,29 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         //mCameraMan->frameRenderingQueued(evt);
     
         // Step the simulation
-        if(mKeyboard->isKeyDown(OIS::KC_W)){
-            paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastFrame);
+        if(mKeyboard->isKeyDown(OIS::KC_Z) && z_time == 0.0){
+            paddle->rotate(180, 0.0, 0.0);
+            z_time += evt.timeSinceLastFrame;
         }
-        if (mKeyboard->isKeyDown(OIS::KC_S)){
-            paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastFrame);
+        if(z_time > 0.0 && z_time < 1.0)
+            z_time += evt.timeSinceLastFrame;
+        else
+            z_time = 0.0;
+        if(mKeyboard->isKeyDown(OIS::KC_LSHIFT)){
+            if(mKeyboard->isKeyDown(OIS::KC_W)){
+                paddle->move(0.0, PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
+            }
+            if (mKeyboard->isKeyDown(OIS::KC_S)){
+                paddle->move(0.0, -PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
+            }
+        }
+        else{
+            if(mKeyboard->isKeyDown(OIS::KC_W)){
+                paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastFrame);
+            }
+            if (mKeyboard->isKeyDown(OIS::KC_S)){
+                paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastFrame);
+            }
         }
         if (mKeyboard->isKeyDown(OIS::KC_A)){
             paddle->move(-PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
@@ -96,7 +118,7 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         
         Ogre::Real xMove = mMouse->getMouseState().X.rel;
         Ogre::Real yMove = mMouse->getMouseState().Y.rel;
-        paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0);
+        paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
         paddle->updateTransform();
         simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
        
@@ -120,8 +142,6 @@ bool Assignment2::keyPressed(const OIS::KeyEvent &arg)
         simulator->setGravity(simulator->gravity + 20.0);        
     } else if (arg.key == OIS::KC_F) {
         simulator->setGravity(simulator->gravity - 20.0);
-    } else if (arg.key == OIS::KC_P) {
-        simulator->soundOn = !simulator->soundOn;
     }
 
     return BaseApplication::keyPressed(arg);

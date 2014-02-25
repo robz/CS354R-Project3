@@ -17,6 +17,8 @@ class Box {
 			Ogre::Real, 
 			Ogre::Real, 
 			Ogre::Real, 
+			Ogre::Real,
+			Ogre::Real,
 			Ogre::Real, 
 			Ogre::String, 
 			Ogre::String
