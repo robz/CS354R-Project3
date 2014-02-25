@@ -28,11 +28,11 @@ Wall::Wall(Ogre::String nym,
     geom->setCastShadows(false);
 
     if(normal == Ogre::Vector3::UNIT_Y || normal == -Ogre::Vector3::UNIT_Y)
-        shape = new btBoxShape(btVector3(width/2, 0.0, height/2));
+        shape = new btBoxShape(btVector3(width/2, 5.0, height/2));
     else if(normal == Ogre::Vector3::UNIT_X || normal == -Ogre::Vector3::UNIT_X)
-        shape = new btBoxShape(btVector3(0.0, width/2, height/2));
+        shape = new btBoxShape(btVector3(5.0, width/2, height/2));
     else if(normal == Ogre::Vector3::UNIT_Z || normal == -Ogre::Vector3::UNIT_Z)
-        shape = new btBoxShape(btVector3(width/2, height/2, 0.0));
+        shape = new btBoxShape(btVector3(width/2, height/2, 5.0));
     else
         shape = NULL;
 }

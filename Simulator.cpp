@@ -15,8 +15,8 @@ Simulator::Simulator(){
 	//the default constraint solver. For parallel processing you can use different solver.
 	solver = new btSequentialImpulseConstraintSolver();
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,solver,collisionConfiguration);
-	gravity = -20.f;
-    dynamicsWorld->setGravity(btVector3(0.0f, 0.0f, gravity));
+	gravity = -9.8f;
+    dynamicsWorld->setGravity(btVector3(0.0f, gravity, 0.0));
 
 	//keep track of the shapes, we release memory at exit.
 	//make sure to re-use collision shapes among rigid bodies whenever possible!
@@ -35,7 +35,7 @@ void Simulator::setGravity(float g) {
 	if (g > 100.f || g < -100.f) return;
 
     gravity = g;
-    dynamicsWorld->setGravity(btVector3(0.0f, 0.0f, gravity));
+    dynamicsWorld->setGravity(btVector3(0.0f, gravity, 0.0f));
 }
 
 void Simulator::addObject (GameObject* o){
