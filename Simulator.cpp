@@ -70,9 +70,3 @@ void Simulator::stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps, co
         objList[i]->update();
     }
 }
-
-void Simulator::playHitSound(void) {
-    soundSystem->playWallHit();
-    std::cout << "bounce" << std::endl;
-}
-

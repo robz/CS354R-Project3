@@ -18,12 +18,12 @@ class Simulator {
 		btConstraintSolver* mConstraintsolver;
 		btCollisionWorld* mWorld;
 		Ogre::SceneManager* sceneMgr;
-        SoundSystem* soundSystem;
 
     public:
 		std::deque<GameObject*> objList;
         float gravity;	    
-		
+        SoundSystem* soundSystem;
+
         Simulator();
 		~Simulator();
 

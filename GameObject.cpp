@@ -78,7 +78,12 @@ Ogre::SceneNode& GameObject::getNode(){
 
 void GameObject::update() {
     if (callback->ctxt.hit) {
-        simulator->playHitSound();
+        if (name == "myball")  {
+            simulator->soundSystem->playWallHit();
+        }
+        if (name == "mypaddle") {
+            simulator->soundSystem->playRaquetHit();
+        }
     }
 }
-
+                     
