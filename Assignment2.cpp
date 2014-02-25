@@ -40,10 +40,13 @@ void Assignment2::createScene(void)
     ball = new Ball("myball", mSceneMgr, simulator, 10, 1, Ogre::Vector3(0, 750, 750), .9f, .1f, "Examples/BeachStones");
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 1500, 1500, 1500, "Examples/Rockwall", "Examples/Frost");
     paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 750, 0, 100, 100, 10, "Examples/BumpyMetal");
+    target = new Target("target", mSceneMgr, simulator, 0, 0, 0, 1500, 1500, 1500, 400);
+
     ball->addToSimulator();
     box->addToSimulator();
     paddle->addToSimulator();
     paddle->setKinematic();
+    target->addToSimulator();
 
     //Setup player camera
     (&(paddle->getNode()))->createChildSceneNode("camNode");
@@ -99,17 +102,6 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0);
         paddle->updateTransform();
         simulator->stepSimulation(evt.timeSinceLastEvent, 10, 1/60.f);
-       
-        /* TODO: this code should be replaced with ogremotionstate 
-        // Set the ball's new position    
-        btTransform trans;
-        fallRigidBody->getMotionState()->getWorldTransform(trans);
-        ball->getNode()->setPosition(
-            trans.getOrigin().getX(),
-            trans.getOrigin().getY(),
-            trans.getOrigin().getZ()
-            );
-        */
     }
     return true;
 }

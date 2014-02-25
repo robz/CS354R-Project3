@@ -24,6 +24,7 @@ This source file is part of the
 #include "Simulator.h"
 #include "Surface.h"
 #include "Wall.h"
+#include "Target.h"
 
 class Assignment2 : public BaseApplication
 {
@@ -32,11 +33,8 @@ protected:
     Ball* ball;
     Box* box;
     Surface* paddle;
+    Target* target;
     
-    btCollisionShape *fallShape, *groundShape;
-    btDefaultMotionState *fallMotionState, *groundMotionState;
-    btRigidBody *fallRigidBody, *groundRigidBody;
-
     // OIS::KeyListener
     virtual bool keyPressed(const OIS::KeyEvent &arg);
     virtual bool keyReleased(const OIS::KeyEvent &arg);
