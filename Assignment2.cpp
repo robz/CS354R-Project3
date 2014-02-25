@@ -120,6 +120,8 @@ bool Assignment2::keyPressed(const OIS::KeyEvent &arg)
         simulator->setGravity(simulator->gravity + 20.0);        
     } else if (arg.key == OIS::KC_F) {
         simulator->setGravity(simulator->gravity - 20.0);
+    } else if (arg.key == OIS::KC_P) {
+        simulator->soundOn = !simulator->soundOn;
     }
 
     return BaseApplication::keyPressed(arg);

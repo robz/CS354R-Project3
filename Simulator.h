@@ -23,6 +23,7 @@ class Simulator {
 		std::deque<GameObject*> objList;
         float gravity;	    
         SoundSystem* soundSystem;
+        bool soundOn;
 
         Simulator();
 		~Simulator();
