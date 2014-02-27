@@ -2,10 +2,12 @@
 #include "Simulator.h"
 #include <exception>
 
-GameObject::GameObject(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim){
+GameObject::GameObject(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim, Ogre::Real res, Ogre::Real fric){
 	name = nym;
 	sceneMgr = mgr;
 	simulator = sim;
+	restitution = res;
+	friction = fric;
 	try{
 		rootNode = mgr->getSceneNode(name);
 	}
@@ -38,8 +40,8 @@ void GameObject::addToSimulator() {
 	if (mass != 0.0f) 
 		shape->calculateLocalInertia(mass, inertia);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, inertia);
-	rbInfo.m_restitution = 0.9f;
-    rbInfo.m_friction = 0.1f;
+	rbInfo.m_restitution = this->restitution;
+    rbInfo.m_friction = this->friction;
 	body = new btRigidBody(rbInfo);
 
     CollisionContext* context = new CollisionContext();
@@ -66,10 +68,10 @@ void GameObject::move(Ogre::Real x, Ogre::Real y, Ogre::Real z){
 	//rootNode->setPosition(rootNode->getPosition() + Ogre::Vector3(x, y, z));
 }
 
-void GameObject::rotate(Ogre::Real x, Ogre::Real y, Ogre::Real z){
-	rootNode->yaw(Ogre::Degree(x), Ogre::Node::TS_WORLD);
-	rootNode->pitch(Ogre::Degree(y));
-	//rootNode->roll(Ogre::Degree(z));
+void GameObject::rotate(Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Node::TransformSpace val_x, Ogre::Node::TransformSpace val_y, Ogre::Node::TransformSpace val_z){
+	rootNode->yaw(Ogre::Degree(x), val_x);
+	rootNode->pitch(Ogre::Degree(y), val_y);
+	//rootNode->roll(Ogre::Degree(z), val_z);
 }
 
 Ogre::SceneNode& GameObject::getNode(){
@@ -88,4 +90,4 @@ void GameObject::update() {
         }
     }
 }
-                     
+

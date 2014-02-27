@@ -9,8 +9,10 @@ Surface::Surface(Ogre::String nym,
     Ogre::Real width, 
     Ogre::Real height, 
     Ogre::Real depth,
+    Ogre::Real restitution,
+    Ogre::Real friction,
     Ogre::String tex = "") 
-: GameObject(nym, mgr, sim) 
+: GameObject(nym, mgr, sim, restitution, friction) 
 {
     //setup Ogre
     geom = mgr->createEntity(nym, "cube.mesh");

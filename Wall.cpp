@@ -10,8 +10,10 @@ Wall::Wall(Ogre::String nym,
 	Ogre::Real height,
 	Ogre::Vector3 normal,
     Ogre::Vector3 texVect,
+    Ogre::Real restitution,
+    Ogre::Real friction,
     Ogre::String tex = "") 
-: GameObject(nym, mgr, sim) 
+: GameObject(nym, mgr, sim, restitution, friction) 
 {
     //setup Ogre
 	Ogre::Plane sceneWall(normal, 0);
