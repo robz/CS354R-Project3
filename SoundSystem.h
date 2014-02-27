@@ -12,17 +12,17 @@
 class SoundSystem
 {
 protected:
+    Mix_Music *music;
     Mix_Chunk *wallHit;
     Mix_Chunk *raquetHit;
     Mix_Chunk *targetHit;
-    Mix_Chunk *heliHit;
 
 public:
     SoundSystem(void);
+    void playMusic(void);
     void playWallHit(void);
     void playRaquetHit(void);
     void playTargetHit(void);
-    void playHeliHit(void);
 };
 
 #endif //#ifndef __SoundSystem_h_

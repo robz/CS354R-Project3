@@ -142,6 +142,10 @@ bool Assignment2::keyPressed(const OIS::KeyEvent &arg)
         simulator->setGravity(simulator->gravity + 20.0);        
     } else if (arg.key == OIS::KC_F) {
         simulator->setGravity(simulator->gravity - 20.0);
+    } else if (arg.key == OIS::KC_X) {
+        simulator->soundOn = !(simulator->soundOn);
+    } else if (arg.key == OIS::KC_C) {
+        simulator->soundSystem->playMusic();
     }
 
     return BaseApplication::keyPressed(arg);
@@ -166,6 +170,11 @@ bool Assignment2::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id
 bool Assignment2::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
     return BaseApplication::mouseReleased(arg, id);
+}
+
+bool Assignment2::quit(const CEGUI::EventArgs &e)
+{
+    return true;
 }
 
 

@@ -24,10 +24,13 @@ This source file is part of the
 #include "Simulator.h"
 #include "Surface.h"
 #include "Wall.h"
+#include <CEGUI/CEGUI.h>
+#include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
 
 class Assignment2 : public BaseApplication
 {
 protected:
+    CEGUI::OgreRenderer* mRenderer;
     Simulator* simulator;
     Ball* ball;
     Box* box;
@@ -45,6 +48,8 @@ protected:
     virtual bool mouseMoved(const OIS::MouseEvent &arg);
     virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
     virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
+    
+    bool quit(const CEGUI::EventArgs &e);
 
 public:
     Assignment2(void);
