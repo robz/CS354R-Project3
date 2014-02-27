@@ -11,9 +11,10 @@ Target::Target(
     Ogre::Real boxWidth, 
     Ogre::Real boxHeight, 
     Ogre::Real boxDepth,
-    Ogre::Real radius
+    Ogre::Real radius,
+    btCollisionObject* ballObject
     )
-: GameObject(nym, mgr, sim), radius(radius), boxWidth(boxWidth), boxHeight(boxHeight), boxDepth(boxDepth)
+: GameObject(nym, mgr, sim, 1.0, 0.0), radius(radius), boxWidth(boxWidth), boxHeight(boxHeight), boxDepth(boxDepth), ballObject(ballObject)
 {
     Ogre::ManualObject* circle = mgr->createManualObject("Circle");
     circle->begin("BaseWhite", Ogre::RenderOperation::OT_TRIANGLE_LIST);
@@ -43,7 +44,7 @@ Target::Target(
     
     rootNode->attachObject(circle);
 
-    shape = new btCylinderShape(btVector3(radius, radius, .01)); 
+    shape = new btCylinderShape(btVector3(radius, 10, radius)); 
 
     wall = 0;
     setPose(wall++, 0, 0);
@@ -72,12 +73,5 @@ void Target::setPose(int wall, float xOffset, float yOffset) {
 
     this->move(x, y, z);
     this->rotate(yaw, pitch, 0);
-}
-
-void Target::update() {
-    if (callback->ctxt.hit && callback->ctxt.theObject->name == "myball") {
-        std::cout << "hit target: " << wall << std::endl;
-        setPose((wall++)%6, 0, 0);
-    }
 }
 

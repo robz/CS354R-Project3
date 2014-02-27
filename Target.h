@@ -14,6 +14,7 @@ class Target : public GameObject {
         Ogre::Real boxHeight; 
         Ogre::Real boxDepth;
         Ogre::ManualObject* circle;
+        btCollisionObject* ballObject;
 
     public: 
         Target(
@@ -26,11 +27,10 @@ class Target : public GameObject {
             Ogre::Real boxWidth, 
             Ogre::Real boxHeight, 
             Ogre::Real boxDepth,
-            Ogre::Real radius
+            Ogre::Real radius,
+            btCollisionObject* ballObject
             );
         
-        virtual void update();
-
     protected:
         void setPose(int wall, float x, float y);
 };

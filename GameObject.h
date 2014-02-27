@@ -16,7 +16,6 @@ class GameObject {
 		Ogre::SceneNode* rootNode;
 		Ogre::Entity* geom;
 		btScalar mass;
-		btRigidBody* body;
 		btTransform tr;
 		btVector3 inertia;
 		OgreMotionState* motionState;
@@ -25,9 +24,10 @@ class GameObject {
 	public:
         ContactSensorCallback* callback;
 		Ogre::String name;
- 
+        btRigidBody* body;
 		btCollisionShape* shape;
-		GameObject(Ogre::String, Ogre::SceneManager*, Simulator*, Ogre::Real, Ogre::Real);
+		
+        GameObject(Ogre::String, Ogre::SceneManager*, Simulator*, Ogre::Real, Ogre::Real);
 		void updateTransform();
 		void addToSimulator();
 		btRigidBody* getBody();

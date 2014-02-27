@@ -6,6 +6,7 @@ class GameObject;
 
 struct CollisionContext {
     bool hit;
+    int objectHitIndex;
     const btCollisionObject* body;
     const btCollisionObject* lastBody;
     GameObject* theObject;
@@ -14,6 +15,7 @@ struct CollisionContext {
     btVector3 point;
     btVector3 normal;
     btVector3 velocity;
+    const btCollisionObject* objectHit;
     
     CollisionContext() {
         reset();
@@ -28,6 +30,7 @@ struct CollisionContext {
         point.setZero();
         normal.setZero();
         velocity.setZero();
+        objectHit = NULL;
     }
 };
 
@@ -58,19 +61,21 @@ struct ContactSensorCallback : public btCollisionWorld::ContactResultCallback {
         const btCollisionObject* colObj0,int partId0,int index0,
         const btCollisionObject* colObj1,int partId1,int index1)
     {
-        btVector3 pt; // will be set to point of collision relative to body
-        
+        ctxt.hit = true;
+        ctxt.lastBody = ctxt.body;
         if(colObj0 == &body) {
-            pt = cp.m_localPointA;
+            ctxt.point = cp.m_localPointA;
+            ctxt.body = colObj1;
         } else {
             assert(colObj1 == &body && "body does not match either collision object");
-            pt = cp.m_localPointB;
+            ctxt.point = cp.m_localPointB;
+            ctxt.body = colObj0;
         }
-        
-        // do stuff with the collision point
-        ctxt.hit = true;
 
-        return 0; // not actually sure if return value is used for anything...?
+        ctxt.theObject = static_cast<GameObject*>(ctxt.body->getUserPointer());
+        ctxt.normal = cp.m_normalWorldOnB;
+        ctxt.velocity = body.getLinearVelocity();
+        ctxt.velNorm = ctxt.normal.dot(ctxt.velocity);
     }
 };
 
