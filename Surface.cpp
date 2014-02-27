@@ -37,12 +37,10 @@ Surface::Surface(Ogre::String nym,
         );
     shape = new btBoxShape(btVector3(width/2.0,height/2.0,depth/2.0));
 }
-/*
+
 void Surface::update() {
-    bool wasHit = callback->ctxt.hit;
-    
-    if (wasHit) {
-        // simulator->playHitSound();
-    }
+    if (callback->ctxt.hit)
+        if (simulator->soundOn)
+            if (name == "mypaddle" && callback->ctxt.theObject->name == "myball")
+                simulator->soundSystem->playRaquetHit();
 }
-*/

@@ -23,6 +23,7 @@ class Wall : public GameObject {
 			Ogre::Real,
 			Ogre::String
 			);
+        void update();
 };
 
 #endif

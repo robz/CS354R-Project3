@@ -21,7 +21,7 @@ public:
         Ogre::String
         );
 
-    // void update();
+    void update();
 };
 
 #endif

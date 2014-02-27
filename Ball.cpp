@@ -34,12 +34,8 @@ Ball::Ball(
     mass = m;
     hitFlag = false;
 }
-/*
+
 void Ball::update() {
-    bool wasHit = callback->ctxt.hit;
-    
-    if (wasHit) {
-        // simulator->playHitSound();
-    }
+  //collision sounds handled by the class the ball collides with
 }
-*/
+
