@@ -19,6 +19,14 @@ Surface::Surface(Ogre::String nym,
     if(tex != "")
         geom->setMaterialName(tex);
     geom->setCastShadows(false);
+    Ogre::MaterialPtr mat = geom->getSubEntity(0)->getMaterial();
+    /*Ogre::MaterialPtr alphamat = Ogre::MaterialManager::getSingleton().create("testy", 
+         Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);*/
+    Ogre::Pass* pass = mat->getTechnique(0)->getPass(0);
+    pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+    pass->setDepthWriteEnabled(false);
+    Ogre::TextureUnitState* t = pass->createTextureUnitState();
+    t->setAlphaOperation(Ogre::LBX_SOURCE1, Ogre::LBS_MANUAL, Ogre::LBS_TEXTURE, 0.7);
 
     rootNode->attachObject(geom);
     rootNode->setPosition(x, y, z);
