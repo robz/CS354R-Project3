@@ -43,6 +43,7 @@ void GameObject::addToSimulator() {
 	rbInfo.m_restitution = this->restitution;
     rbInfo.m_friction = this->friction;
 	body = new btRigidBody(rbInfo);
+    body->setUserPointer(this);
 
     CollisionContext* context = new CollisionContext();
     callback = new ContactSensorCallback(*body, *context);
@@ -78,15 +79,22 @@ Ogre::SceneNode& GameObject::getNode(){
 	return *(this->rootNode);
 }
 
+int bcount = 0;
+
 void GameObject::update() {
     if (callback->ctxt.hit) {
         if (simulator->soundOn) {
              if (name == "myball")  {
                  simulator->soundSystem->playWallHit();
              }
-             if (name == "mypaddle") {
+             
+            if (name == "mypaddle") {
                  simulator->soundSystem->playRaquetHit();
              }
+            
+            if (name == "myball" && callback->ctxt.theObject->name == "mytarget") {
+                std::cout << bcount++ << " ball hit target" << std::endl;
+            }
         }
     }
 }

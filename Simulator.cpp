@@ -55,7 +55,7 @@ void Simulator::stepSimulation(const Ogre::Real elapsedTime, int maxSubSteps, co
 
     for (int i = 0; i < objList.size(); i++) {
         objList[i]->callback->ctxt.hit = false;
-        
+
         for (int j = 0; j < objList.size(); j++) {
             if (i == j) { continue; }
 
