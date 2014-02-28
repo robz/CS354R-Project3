@@ -1,0 +1,34 @@
+Assignment 2 User Manual
+
+Team 7
+Robby Nevels
+Thomas Custer
+Steven Wilken
+
+DESCRIPTION:
+We have made a game that involves hitting a ball into targets placed on the walls of a cube. The user controls a paddle with the mouse and keyboard in order to hit the wall. We rely on SDL mixer in order to play background music and collision sound effects. 
+
+Overall, we successfully completed what we set out to do, aside from a couple of unresolved issues. The first is that we had to enlarge the hitbox of the walls in order to ensure that the ball doesn’t fly through them. We’re not sure how better to fix this problem. The second issue arose when we tried to change the alpha value of the floor and the paddle textures. For some odd reason, yellow and black diagonal stripes appeared as soon as we made the shapes transparent. We decided to keep this odd feature for aesthetic value.
+
+To run the program, simply run the “buildit” executable, and then run the “assignment2” executable.
+
+CONTROLS:
+Mouse/WASD - move paddle
+R - turn gravity up
+F - turn gravity down
+X - turn off sound effects
+C - turn off music
+
+GOAL:
+Try to hit the ball into the target circle to increase your score. The faster you hit the ball into the target, the more points you get for the hit.
+
+PROJECT UPDATE:
+Better than planned:
+-Background music was added
+-Ability to change gravity was implemented
+
+Worse than planned:
+-The hitboxes could use work
+-Paddle can move through walls
+-No helicopter obstacle :(
+
