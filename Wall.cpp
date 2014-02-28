@@ -38,3 +38,11 @@ Wall::Wall(Ogre::String nym,
     else
         shape = NULL;
 }
+
+
+void Wall::update() {
+    if (callback->ctxt.hit)
+        if (simulator->soundOn)
+            if (callback->ctxt.theObject->name == "myball")
+                ;//simulator->soundSystem->playWallHit();
+}

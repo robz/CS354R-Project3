@@ -44,7 +44,11 @@ void Ball::update() {
 
         if (objName == "mytarget") {
             std::cout << bcount++ << " ball hit target" << std::endl;
-            simulator->soundSystem->playWallHit();
+
+            if (simulator->soundOn) {
+                simulator->soundSystem->playWallHit();
+            }
+
             Target* target = static_cast<Target*>(callback->ctxt.theObject);
             target->movePlacement();
         }

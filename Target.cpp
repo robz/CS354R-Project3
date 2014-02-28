@@ -44,7 +44,7 @@ Target::Target(
     
     rootNode->attachObject(circle);
 
-    shape = new btCylinderShape(btVector3(radius, 10, radius)); 
+    shape = new btCylinderShape(btVector3(radius, 5.0, radius)); 
 
     wall = 0;
 }
@@ -77,5 +77,5 @@ void Target::setPose(int wall, float xOffset, float yOffset) {
 }
 
 void Target::movePlacement(void) {
-    setPose(wall++, 0, 0);
+    //setPose(wall++, 0, 0);
 }
