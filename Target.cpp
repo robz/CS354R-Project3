@@ -47,31 +47,35 @@ Target::Target(
     shape = new btCylinderShape(btVector3(radius, 10, radius)); 
 
     wall = 0;
-    setPose(wall++, 0, 0);
 }
 
 void Target::setPose(int wall, float xOffset, float yOffset) {
-    float x, y, z, pitch = 0, yaw = 0;
+    float x, y, z, yaw = 0, pitch = 0;
     
     if (wall == 0 || wall == 1) {
         x = xOffset;
-        y = yOffset;
-        z = (wall == 0) ? boxDepth/2.0 : -boxDepth/2.0;
-        pitch = M_PI/2.0;
+        y = (wall == 0) ? -boxHeight/2.0 : boxHeight/2.0;
+        z = yOffset;
+        if (wall == 1) { pitch = 180; };
     } else if (wall == 2 || wall == 3) {
         x = xOffset;
-        y = (wall == 2) ? boxHeight/2.0 : -boxHeight/2.0;
-        z = yOffset;
+        y = yOffset;
+        z = (wall == 2) ? boxDepth/2.0 : -boxDepth/2.0;
+        pitch = (wall == 2) ? 270 : 90;
     } else if (wall == 4 || wall == 5) {
         x = (wall == 4) ? boxWidth/2.0 : -boxWidth/2.0;
         y = xOffset;
         z = yOffset;
-        yaw = M_PI/2.0;
+        yaw = (wall == 4) ? 270 : 90;
+        pitch = (wall == 4) ? 90 : 90;
     }
 
-    z -= boxHeight/2.0;
+    y += boxHeight/2.0;
 
     this->move(x, y, z);
     this->rotate(yaw, pitch, 0);
 }
 
+void Target::movePlacement(void) {
+    setPose(wall++, 0, 0);
+}

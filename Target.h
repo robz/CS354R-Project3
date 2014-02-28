@@ -31,6 +31,7 @@ class Target : public GameObject {
             btCollisionObject* ballObject
             );
         
-    protected:
+        void movePlacement(void);
+        
         void setPose(int wall, float x, float y);
 };

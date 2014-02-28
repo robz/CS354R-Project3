@@ -28,6 +28,9 @@ Assignment2::~Assignment2(void)
     delete simulator;
 }
 
+
+int startingFace = 0;
+
 //-------------------------------------------------------------------------------------
 void Assignment2::createScene(void)
 {
@@ -41,12 +44,16 @@ void Assignment2::createScene(void)
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
     paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
     target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 150, 150, 150, 50, ball->body);
-    
+
+    target->setPose(startingFace, 0, 0);
+
+ 
     ball->addToSimulator();
     box->addToSimulator();
     paddle->addToSimulator();
     paddle->setKinematic();
     target->addToSimulator();
+    target->setKinematic();
 
     //Setup player camera
     (&(paddle->getNode()))->createChildSceneNode("camNode");
@@ -186,6 +193,10 @@ extern "C" {
     int main(int argc, char *argv[])
 #endif
     {
+        if (argc == 2) {
+            startingFace = atoi(argv[1]);
+        }
+
         // Create application object
         Assignment2 app;
 
