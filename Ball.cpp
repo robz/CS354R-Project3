@@ -36,6 +36,9 @@ Ball::Ball(
 }
 
 void Ball::update() {
-  //collision sounds handled by the class the ball collides with
+    if (callback->ctxt.hit)
+        if (simulator->soundOn)
+            if (callback->ctxt.theObject->name == "mytarget")
+                simulator->soundSystem->playTargetHit();
 }
 
