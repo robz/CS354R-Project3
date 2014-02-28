@@ -30,8 +30,8 @@ class Target : public GameObject {
             Ogre::Real radius,
             btCollisionObject* ballObject
             );
-        void update();
         
-    protected:
+        void movePlacement(void);
+        
         void setPose(int wall, float x, float y);
 };

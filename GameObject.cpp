@@ -79,8 +79,3 @@ Ogre::SceneNode& GameObject::getNode(){
 	return *(this->rootNode);
 }
 
-int bcount = 0;
-
-void GameObject::update() {
-  //overriden by all object classes
-}

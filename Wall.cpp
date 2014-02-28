@@ -44,6 +44,5 @@ void Wall::update() {
     if (callback->ctxt.hit)
         if (simulator->soundOn)
             if (callback->ctxt.theObject->name == "myball")
-
-                simulator->soundSystem->playWallHit();
+                ;//simulator->soundSystem->playWallHit();
 }

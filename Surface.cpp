@@ -42,5 +42,5 @@ void Surface::update() {
     if (callback->ctxt.hit)
         if (simulator->soundOn)
             if (name == "mypaddle" && callback->ctxt.theObject->name == "myball")
-                simulator->soundSystem->playRaquetHit();
+                ;//simulator->soundSystem->playRaquetHit();
 }
