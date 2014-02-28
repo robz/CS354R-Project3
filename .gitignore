@@ -31,3 +31,4 @@ swilken-local/
 *.o
 *~
 media/
+CEGUI.log
