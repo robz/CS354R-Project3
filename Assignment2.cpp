@@ -33,6 +33,14 @@ void Assignment2::createScene(void)
 {
     simulator = new Simulator();
 
+    mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
+    CEGUI::Imageset::setDefaultResourceGroup("Imagesets");
+    CEGUI::Font::setDefaultResourceGroup("Fonts");
+    CEGUI::Scheme::setDefaultResourceGroup("Schemes");
+    CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
+    CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
+    CEGUI::SchemeManager::getSingleton().create("TaharezLook.scheme");
+
     // Set the scene's ambient light
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
  
@@ -55,6 +63,15 @@ void Assignment2::createScene(void)
     // Create a Light and set its position
     Ogre::Light* light = mSceneMgr->createLight("MainLight");
     light->setPosition(10.0f, 10.0f, 10.0f);
+   
+    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+    CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "CEGUIDemo/Sheet");
+
+    CEGUI::Window *score = wmgr.createWindow("TaharezLook/Button", "CEGUIDemo/QuitButton");
+    score->setText("SCORE!");
+    score->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
+    sheet->addChildWindow(score);
+    CEGUI::System::getSingleton().setGUISheet(sheet);
 }
 
 float PADDLE_X_SPEED = 60.0f,
@@ -76,7 +93,8 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     mKeyboard->capture();
     mMouse->capture();
 
-    mTrayMgr->frameRenderingQueued(evt);
+    CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
+    //mTrayMgr->frameRenderingQueued(evt);
     if (!mTrayMgr->isDialogVisible()) {
         // if dialog isn't up, then update the scene
         //mCameraMan->frameRenderingQueued(evt);
