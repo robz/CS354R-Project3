@@ -14,7 +14,7 @@ Target::Target(
     Ogre::Real radius,
     btCollisionObject* ballObject
     )
-: GameObject(nym, mgr, sim, 1.0, 0.0), radius(radius), boxWidth(boxWidth), boxHeight(boxHeight), boxDepth(boxDepth), ballObject(ballObject)
+: GameObject(nym, mgr, sim, .25, .1), radius(radius), boxWidth(boxWidth), boxHeight(boxHeight), boxDepth(boxDepth), ballObject(ballObject)
 {
     Ogre::ManualObject* circle = mgr->createManualObject("Circle");
     circle->begin("BaseWhite", Ogre::RenderOperation::OT_TRIANGLE_LIST);
@@ -72,10 +72,12 @@ void Target::setPose(int wall, float xOffset, float yOffset) {
 
     y += boxHeight/2.0;
 
-    this->move(x, y, z);
-    this->rotate(yaw, pitch, 0);
+    rootNode->resetToInitialState();
+    move(x, y, z);
+    rotate(yaw, pitch, 0);
+    updateTransform();
 }
 
 void Target::movePlacement(void) {
-    //setPose(wall++, 0, 0);
+    setPose((wall++)%6, 0, 0);
 }

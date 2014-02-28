@@ -43,10 +43,9 @@ void Assignment2::createScene(void)
     ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 20.0, 0), .9f, .1f, "Examples/RustySteel");
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
     paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
-    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 150, 150, 150, 50, ball->body);
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50, ball->body);
 
     target->setPose(startingFace, 0, 0);
-
  
     ball->addToSimulator();
     box->addToSimulator();
