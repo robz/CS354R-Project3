@@ -32,6 +32,7 @@ class Assignment2 : public BaseApplication
 {
 protected:
     CEGUI::OgreRenderer* mRenderer;
+    CEGUI::Window *score;
     Simulator* simulator;
     Ball* ball;
     Box* box;

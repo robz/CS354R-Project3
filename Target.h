@@ -8,7 +8,6 @@
 
 class Target : public GameObject {
     protected:
-        int wall;
         Ogre::Real radius;
         Ogre::Real boxWidth;
         Ogre::Real boxHeight; 
@@ -17,6 +16,8 @@ class Target : public GameObject {
         btCollisionObject* ballObject;
 
     public: 
+        int wall;
+        
         Target(
             Ogre::String nym, 
             Ogre::SceneManager* mgr, 

@@ -73,7 +73,7 @@ void Assignment2::createScene(void)
     CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::Window *sheet = wmgr.createWindow("DefaultWindow", "CEGUIDemo/Sheet");
 
-    CEGUI::Window *score = wmgr.createWindow("TaharezLook/Button", "CEGUIDemo/QuitButton");
+    score = wmgr.createWindow("TaharezLook/Button", "CEGUIDemo/QuitButton");
     score->setText("SCORE!");
     score->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
     sheet->addChildWindow(score);
@@ -148,6 +148,11 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
         paddle->updateTransform();
         simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
+        
+        std::ostringstream stream;
+        stream << "score: " << target->wall;
+        score->setText(stream.str());
+        
     }
     return true;
 }

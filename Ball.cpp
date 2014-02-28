@@ -36,15 +36,11 @@ Ball::Ball(
     hitFlag = false;
 }
 
-int bcount = 0;
-
 void Ball::update() {
     if (callback->ctxt.hit) {
         Ogre::String& objName = callback->ctxt.theObject->name;
 
         if (objName == "mytarget") {
-            std::cout << bcount++ << " ball hit target" << std::endl;
-
             if (simulator->soundOn) {
                 simulator->soundSystem->playWallHit();
             }
@@ -53,10 +49,14 @@ void Ball::update() {
             target->movePlacement();
         }
         else if (objName == "mypaddle") {                
-            simulator->soundSystem->playRaquetHit();
+            if (simulator->soundOn) {
+                simulator->soundSystem->playRaquetHit();
+            }
         }
         else {
-            simulator->soundSystem->playWallHit();
+            if (simulator->soundOn) {
+                simulator->soundSystem->playWallHit();
+            }
         }
     }
 }
