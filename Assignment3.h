@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-Filename:    Assignment2.h
+Filename:    Assignment3.h
 -----------------------------------------------------------------------------
 
 This source file is part of the
@@ -14,8 +14,8 @@ This source file is part of the
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
-#ifndef __Assignment2_h_
-#define __Assignment2_h_
+#ifndef __Assignment3_h_
+#define __Assignment3_h_
 
 #include <btBulletDynamicsCommon.h>
 #include "BaseApplication.h"
@@ -28,7 +28,7 @@ This source file is part of the
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
 
-class Assignment2 : public BaseApplication
+class Assignment3 : public BaseApplication
 {
 protected:
     CEGUI::OgreRenderer* mRenderer;
@@ -51,12 +51,12 @@ protected:
     bool quit(const CEGUI::EventArgs &e);
 
 public:
-    Assignment2(void);
-    virtual ~Assignment2(void);
+    Assignment3(void);
+    virtual ~Assignment3(void);
 
 protected:
     virtual void createScene(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 };
 
-#endif // #ifndef __Assignment2_h_
+#endif // #ifndef __Assignment3_h_

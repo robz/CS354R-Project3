@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-Filename:    Assignment2.cpp
+Filename:    Assignment3.cpp
 -----------------------------------------------------------------------------
 
 This source file is part of the
@@ -14,16 +14,15 @@ This source file is part of the
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
-#include "Assignment2.h"
-#include "PlayingField.h"
+#include "Assignment3.h"
 
 //-------------------------------------------------------------------------------------
-Assignment2::Assignment2(void)
+Assignment3::Assignment3(void)
 {
 }
 
 //-------------------------------------------------------------------------------------
-Assignment2::~Assignment2(void)
+Assignment3::~Assignment3(void)
 {
     delete simulator;
 }
@@ -32,7 +31,7 @@ Assignment2::~Assignment2(void)
 int startingFace = 0;
 
 //-------------------------------------------------------------------------------------
-void Assignment2::createScene(void)
+void Assignment3::createScene(void)
 {
     simulator = new Simulator();
 
@@ -85,7 +84,7 @@ float PADDLE_X_SPEED = 60.0f,
       PADDLE_Z_SPEED = 60.0f,
       PADDLE_ROT_SPEED = 30.0f;
 
-bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
+bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
     static Ogre::Real z_time = 0.0;
 
@@ -157,7 +156,7 @@ bool Assignment2::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     return true;
 }
 
-bool Assignment2::keyPressed(const OIS::KeyEvent &arg)
+bool Assignment3::keyPressed(const OIS::KeyEvent &arg)
 {   
     if (arg.key == OIS::KC_R) {
         simulator->setGravity(simulator->gravity + 20.0);        
@@ -172,28 +171,28 @@ bool Assignment2::keyPressed(const OIS::KeyEvent &arg)
     return BaseApplication::keyPressed(arg);
 }
 
-bool Assignment2::keyReleased(const OIS::KeyEvent &arg)
+bool Assignment3::keyReleased(const OIS::KeyEvent &arg)
 {
     return BaseApplication::keyReleased(arg);
 }
 
 
-bool Assignment2::mouseMoved(const OIS::MouseEvent &arg)
+bool Assignment3::mouseMoved(const OIS::MouseEvent &arg)
 {
     return BaseApplication::mouseMoved(arg);
 }
 
-bool Assignment2::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+bool Assignment3::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
     return BaseApplication::mousePressed(arg, id);
 }
 
-bool Assignment2::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+bool Assignment3::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
     return BaseApplication::mouseReleased(arg, id);
 }
 
-bool Assignment2::quit(const CEGUI::EventArgs &e)
+bool Assignment3::quit(const CEGUI::EventArgs &e)
 {
     return true;
 }
@@ -220,7 +219,7 @@ extern "C" {
         }
 
         // Create application object
-        Assignment2 app;
+        Assignment3 app;
 
         try {
             app.go();
