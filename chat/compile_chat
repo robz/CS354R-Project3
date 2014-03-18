@@ -1,0 +1,1 @@
+g++ chat.cpp -D_GNU_SOURCE=1 -D_REENTRANT -I/usr/include/SDL  -lSDL -lSDL_net -o runchat
