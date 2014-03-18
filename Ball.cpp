@@ -42,7 +42,7 @@ void Ball::update() {
 
         if (objName == "mytarget") {
             if (simulator->soundOn) {
-                simulator->soundSystem->playWallHit();
+                simulator->soundSystem->playTargetHit();
             }
 
             Target* target = static_cast<Target*>(callback->ctxt.theObject);
