@@ -17,6 +17,7 @@ This source file is part of the
 #ifndef __Assignment3_h_
 #define __Assignment3_h_
 
+#include "Client.h"
 #include <btBulletDynamicsCommon.h>
 #include "BaseApplication.h"
 #include "Ball.h"
@@ -38,6 +39,7 @@ protected:
     Box* box;
     Surface* paddle;
     Target* target;
+    Client* client;
     
     // OIS::KeyListener
     virtual bool keyPressed(const OIS::KeyEvent &arg);

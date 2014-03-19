@@ -15,7 +15,6 @@ This source file is part of the
 -----------------------------------------------------------------------------
 */
 #include "Assignment3.h"
-#include "SDL_net.h"
 
 //-------------------------------------------------------------------------------------
 Assignment3::Assignment3(void)
@@ -34,7 +33,8 @@ int startingFace = 0;
 //-------------------------------------------------------------------------------------
 void Assignment3::createScene(void)
 {
-    simulator = new Simulator();
+    client = new Client(2000);
+    //simulator = new Simulator();
 
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
     CEGUI::Imageset::setDefaultResourceGroup("Imagesets");
@@ -54,13 +54,15 @@ void Assignment3::createScene(void)
     target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50, ball->body);
 
     target->setPose(startingFace, 0, 0);
- 
+    
+    /*
     ball->addToSimulator();
     box->addToSimulator();
     paddle->addToSimulator();
     paddle->setKinematic();
     target->addToSimulator();
     target->setKinematic();
+    */
 
     //Setup player camera
     (&(paddle->getNode()))->createChildSceneNode("camNode");
@@ -147,8 +149,19 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         Ogre::Real yMove = mMouse->getMouseState().Y.rel;
         paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
         paddle->updateTransform();
-        simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
         
+        //simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
+        
+        // get a packet from the server, then set the ball's position
+        btTransform trans;
+        client->recMsg(reinterpret_cast<char*>(&trans));
+        ball->getNode().resetToInitialState();
+        ball->move(
+            trans.getOrigin().getX(),
+            trans.getOrigin().getY(),
+            trans.getOrigin().getZ()
+            );
+
         std::ostringstream stream;
         stream << "score: " << target->wall;
         score->setText(stream.str());

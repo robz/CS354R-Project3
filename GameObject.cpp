@@ -8,13 +8,17 @@ GameObject::GameObject(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim
 	simulator = sim;
 	restitution = res;
 	friction = fric;
-	try{
-		rootNode = mgr->getSceneNode(name);
-	}
-	catch (std::exception& e) {
-		rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
-	}
-	shape = NULL;
+	
+    if (sceneMgr) {
+        try{
+            rootNode = mgr->getSceneNode(name);
+        }
+        catch (std::exception& e) {
+            rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
+        }
+    }
+	
+    shape = NULL;
 	motionState = NULL;
 	tr.setIdentity();
 	mass = 0.0f;
@@ -23,6 +27,8 @@ GameObject::GameObject(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim
 }
 
 void GameObject::updateTransform() {
+    if (!rootNode) return;
+
 	Ogre::Vector3 pos = rootNode->getPosition();
 	tr.setOrigin(btVector3(pos.x, pos.y, pos.z));
 	Ogre::Quaternion qt = rootNode->getOrientation();
@@ -60,6 +66,7 @@ void GameObject::setKinematic(){
 }
 
 void GameObject::move(Ogre::Real x, Ogre::Real y, Ogre::Real z){
+    if (!rootNode) return;
 	//body->setLinearVelocity(btVector3(x, y, z));
 	
 	//translate based on current node's local axes
@@ -70,6 +77,7 @@ void GameObject::move(Ogre::Real x, Ogre::Real y, Ogre::Real z){
 }
 
 void GameObject::rotate(Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Node::TransformSpace val_x, Ogre::Node::TransformSpace val_y, Ogre::Node::TransformSpace val_z){
+    if (!rootNode) return;
 	rootNode->yaw(Ogre::Degree(x), val_x);
 	rootNode->pitch(Ogre::Degree(y), val_y);
 	//rootNode->roll(Ogre::Degree(z), val_z);

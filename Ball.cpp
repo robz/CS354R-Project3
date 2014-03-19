@@ -16,20 +16,22 @@ Ball::Ball(
     ) 
 : GameObject(nym, mgr, sim, restitution, friction)
 {
-    geom = mgr->createEntity(name, "sphere.mesh");
-    if(tex != "")
-        geom->setMaterialName(tex);
-    geom->setCastShadows(false);
-    rootNode->attachObject(geom);
+    if (mgr) {
+        geom = mgr->createEntity(name, "sphere.mesh");
+        if(tex != "")
+            geom->setMaterialName(tex);
+        geom->setCastShadows(false);
+        rootNode->attachObject(geom);
 
-    // sphere starts at 100 units radius
-    rootNode->scale(
-        radius * 0.01f,
-        radius * 0.01f,
-        radius * 0.01f
-        );
+        // sphere starts at 100 units radius
+        rootNode->scale(
+            radius * 0.01f,
+            radius * 0.01f,
+            radius * 0.01f
+            );
 
-    rootNode->setPosition(pos);
+        rootNode->setPosition(pos);
+    }
 
     shape = new btSphereShape(radius);
     mass = m;
