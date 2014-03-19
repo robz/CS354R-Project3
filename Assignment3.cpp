@@ -154,13 +154,17 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         
         // get a packet from the server, then set the ball's position
         btTransform trans;
-        client->recMsg(reinterpret_cast<char*>(&trans));
-        ball->getNode().resetToInitialState();
-        ball->move(
-            trans.getOrigin().getX(),
-            trans.getOrigin().getY(),
-            trans.getOrigin().getZ()
-            );
+        if (client->recMsg(reinterpret_cast<char*>(&trans))) {
+            ball->getNode().resetToInitialState();
+        
+            ball->getNode().scale(0.01f, 0.01f, 0.01f);
+            
+            ball->move(
+                trans.getOrigin().getX(),
+                trans.getOrigin().getY(),
+                trans.getOrigin().getZ()
+                );
+        }
 
         std::ostringstream stream;
         stream << "score: " << target->wall;
