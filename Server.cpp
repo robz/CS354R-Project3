@@ -39,7 +39,7 @@ void onlineTutorial(int argc, char* argv[]) {
     Server server(argv[1], atoi(argv[2]));
     btTransform trans;
     
-    for (;;) {
+    for (int i = 0; i < 300; i++) {
             dynamicsWorld->stepSimulation(1/60.f,10);
 
             btTransform trans;
@@ -51,11 +51,30 @@ void onlineTutorial(int argc, char* argv[]) {
     }
 
     dynamicsWorld->removeRigidBody(fallRigidBody);
+    delete fallRigidBody->getMotionState();
+    delete fallRigidBody;
+
+    dynamicsWorld->removeRigidBody(groundRigidBody);
+    delete groundRigidBody->getMotionState();
+    delete groundRigidBody;
+
+
+    delete fallShape;
+
+    delete groundShape;
+
+
+    delete dynamicsWorld;
+    delete solver;
+    delete collisionConfiguration;
+    delete dispatcher;
+    delete broadphase;
 }
 
-
 int main(int argc, char* argv[]) {
-    onlineTutorial(argc, argv);
+    while (true) {
+        onlineTutorial(argc, argv);
+    }
     /*
     Simulator* simulator = new Simulator();
     

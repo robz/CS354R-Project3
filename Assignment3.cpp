@@ -15,6 +15,8 @@ This source file is part of the
 -----------------------------------------------------------------------------
 */
 #include "Assignment3.h"
+#include "Server.h"
+#include <unistd.h>
 
 //-------------------------------------------------------------------------------------
 Assignment3::Assignment3(void)
@@ -155,10 +157,12 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         // get a packet from the server, then set the ball's position
         btTransform trans;
         if (client->recMsg(reinterpret_cast<char*>(&trans))) {
+            std::cout << 
+                trans.getOrigin().getX() << ", " <<
+                trans.getOrigin().getY() << ", " <<
+                trans.getOrigin().getZ() << std::endl;
             ball->getNode().resetToInitialState();
-        
             ball->getNode().scale(0.01f, 0.01f, 0.01f);
-            
             ball->move(
                 trans.getOrigin().getX(),
                 trans.getOrigin().getY(),
@@ -216,6 +220,79 @@ bool Assignment3::quit(const CEGUI::EventArgs &e)
 }
 
 
+void runServer(int argc, char* argv[]) {
+    btBroadphaseInterface* broadphase = new btDbvtBroadphase();
+
+    btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
+    btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
+
+    btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
+
+    btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,collisionConfiguration);
+
+    dynamicsWorld->setGravity(btVector3(0,-10,0));
+
+
+    btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0,1,0),1);
+
+    btCollisionShape* fallShape = new btSphereShape(1);
+
+
+    btDefaultMotionState* groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,-1,0)));
+    btRigidBody::btRigidBodyConstructionInfo
+            groundRigidBodyCI(0,groundMotionState,groundShape,btVector3(0,0,0));
+    btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
+    dynamicsWorld->addRigidBody(groundRigidBody);
+
+
+    btDefaultMotionState* fallMotionState =
+            new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,50,0)));
+    btScalar mass = 1;
+    btVector3 fallInertia(0,0,0);
+    fallShape->calculateLocalInertia(mass,fallInertia);
+    btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass,fallMotionState,fallShape,fallInertia);
+    btRigidBody* fallRigidBody = new btRigidBody(fallRigidBodyCI);
+    dynamicsWorld->addRigidBody(fallRigidBody);
+
+
+    Server server(argv[2], atoi(argv[3]));
+    btTransform trans;
+    
+    for (int i = 0; i < 300; i++) {
+            dynamicsWorld->stepSimulation(1/60.f,10);
+
+            btTransform trans;
+            fallRigidBody->getMotionState()->getWorldTransform(trans);
+            std::cout << "sphere height: " << trans.getOrigin().getY() << std::endl;
+        
+            server.sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
+            usleep(1000000/60);
+    }
+
+    dynamicsWorld->removeRigidBody(fallRigidBody);
+    delete fallRigidBody->getMotionState();
+    delete fallRigidBody;
+
+    dynamicsWorld->removeRigidBody(groundRigidBody);
+    delete groundRigidBody->getMotionState();
+    delete groundRigidBody;
+
+
+    delete fallShape;
+
+    delete groundShape;
+
+
+    delete dynamicsWorld;
+    delete solver;
+    delete collisionConfiguration;
+    delete dispatcher;
+    delete broadphase;
+}
+
+
+
+
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -232,23 +309,43 @@ extern "C" {
     int main(int argc, char *argv[])
 #endif
     {
-        if (argc == 2) {
-            startingFace = atoi(argv[1]);
+        if (argc < 2) {
+            printf("usage: %s [0 for server, 1 for client]\n", argv[0]); 
+            exit(1);
+        } 
+
+        int state = atoi(argv[1]);
+
+        if (state != 0 && state != 1) {
+            printf("usage: %s {0 for server, 1 for client}\n", argv[0]); 
+            exit(1);
         }
 
-        // Create application object
-        Assignment3 app;
+        if (state == 0) {
+            // Create application object
+            Assignment3 app;
 
-        try {
-            app.go();
-        } catch( Ogre::Exception& e ) {
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-            MessageBox( NULL, e.getFullDescription().c_str(), "An exception has occured!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
-#else
-            std::cerr << "An exception has occured: " <<
-                e.getFullDescription().c_str() << std::endl;
-#endif
+            try {
+                app.go();
+            } catch( Ogre::Exception& e ) {
+    #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+                MessageBox( NULL, e.getFullDescription().c_str(), "An exception has occured!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+    #else
+                std::cerr << "An exception has occured: " <<
+                    e.getFullDescription().c_str() << std::endl;
+    #endif
+            }
         }
+        
+        if (state == 1 && argc != 4) {
+            printf("usage: %s {1 for client} address port\n", argv[0]); 
+            exit(1);
+        } else if (state == 1) {
+            while (true) {
+                runServer(argc, argv);
+            }
+        }
+        
 
         return 0;
     }
