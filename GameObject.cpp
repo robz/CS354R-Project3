@@ -36,17 +36,16 @@ void GameObject::updateTransform() {
 	Ogre::Quaternion qt = rootNode->getOrientation();
 	tr.setRotation(btQuaternion(qt.x, qt.y, qt.z, qt.w));
 	// BREAKING EVERYTHING WHOOOO
-    /*
     if(motionState){
 		motionState->updateTransform(tr);
-	}*/
+	}
 }
 
 void GameObject::addToSimulator() {
 	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 	updateTransform();
-	//motionState = new OgreMotionState(tr, rootNode);
-	motionState = new btDefaultMotionState(tr);
+	motionState = new OgreMotionState(tr, rootNode);
+	//motionState = new btDefaultMotionState(tr);
 
     //rigidbody is dynamic if and only if mass is non zero, otherwise static
 	if (mass != 0.0f) 

@@ -15,13 +15,18 @@ This source file is part of the
 -----------------------------------------------------------------------------
 */
 #include "Assignment3.h"
-#include "Server.h"
 #include <unistd.h>
 
 //-------------------------------------------------------------------------------------
-Assignment3::Assignment3(int port)
+Assignment3::Assignment3(bool beClient, int port, char* address)
 {
-    client = new Client(port);
+    if (beClient) {
+        client = new Client(port);
+        server = NULL;
+    } else {
+        client = NULL;
+        server = new Server(address, port);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -36,7 +41,9 @@ int startingFace = 0;
 //-------------------------------------------------------------------------------------
 void Assignment3::createScene(void)
 {
-    //simulator = new Simulator();
+    if (server) {
+        simulator = new Simulator();
+    }
 
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
     CEGUI::Imageset::setDefaultResourceGroup("Imagesets");
@@ -57,14 +64,14 @@ void Assignment3::createScene(void)
 
     target->setPose(startingFace, 0, 0);
     
-    /*
-    ball->addToSimulator();
-    box->addToSimulator();
-    paddle->addToSimulator();
-    paddle->setKinematic();
-    target->addToSimulator();
-    target->setKinematic();
-    */
+    if (server) {
+        ball->addToSimulator();
+        box->addToSimulator();
+        paddle->addToSimulator();
+        paddle->setKinematic();
+        target->addToSimulator();
+        target->setKinematic();
+    }
 
     //Setup player camera
     (&(paddle->getNode()))->createChildSceneNode("camNode");
@@ -152,22 +159,30 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
         paddle->updateTransform();
         
-        //simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
-        
         // get a packet from the server, then set the ball's position
-        btTransform trans;
-        if (client->recMsg(reinterpret_cast<char*>(&trans))) {
-            std::cout << 
-                trans.getOrigin().getX() << ", " <<
-                trans.getOrigin().getY() << ", " <<
-                trans.getOrigin().getZ() << std::endl;
-            ball->getNode().resetToInitialState();
-            ball->getNode().scale(0.01f, 0.01f, 0.01f);
-            ball->move(
-                trans.getOrigin().getX(),
-                trans.getOrigin().getY(),
-                trans.getOrigin().getZ()
-                );
+        if (client) {
+            btTransform trans;
+            if (client->recMsg(reinterpret_cast<char*>(&trans))) {
+                std::cout << 
+                    trans.getOrigin().getX() << ", " <<
+                    trans.getOrigin().getY() << ", " <<
+                    trans.getOrigin().getZ() << std::endl;
+                ball->getNode().resetToInitialState();
+                ball->getNode().scale(0.01f, 0.01f, 0.01f);
+                ball->move(
+                    trans.getOrigin().getX(),
+                    trans.getOrigin().getY(),
+                    trans.getOrigin().getZ()
+                    );
+            }
+        } else if (server) {
+            simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
+        
+            btTransform trans;
+            ball->body->getMotionState()->getWorldTransform(trans);
+            std::cout << "sphere height: " << trans.getOrigin().getY() << std::endl;
+    
+            server->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
         }
 
         std::ostringstream stream;
@@ -346,36 +361,40 @@ extern "C" {
             printf("usage: %s {0 for client, 1 for server}\n", argv[0]); 
             exit(1);
         }
+
+        bool isClient = (state == 0);
+        int port = -1;
+        char* address = NULL;
         
-        if (state == 0 && argc != 3) {
+        if (isClient && argc != 3) {
             printf("usage: %s {0 for client} port\n", argv[0]); 
             exit(1);
-        } else if (state == 0) {
-            // Create application object
-            Assignment3 app(atoi(argv[2]));
-
-            try {
-                app.go();
-            } catch( Ogre::Exception& e ) {
-    #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-                MessageBox( NULL, e.getFullDescription().c_str(), "An exception has occured!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
-    #else
-                std::cerr << "An exception has occured: " <<
-                    e.getFullDescription().c_str() << std::endl;
-    #endif
-            }
+        } else {
+            port = atoi(argv[2]);
         }
-        
-        if (state == 1 && argc != 4) {
+            
+        if (!isClient && argc != 4) {
             printf("usage: %s {1 for server} client_address client_port\n", argv[0]); 
             exit(1);
         } else if (state == 1) {
-            for (int i = 0;; i++) {
-                std::cout << "iteration " << i << std::endl;
-                runServer2(argc, argv);
-            }
+            address = argv[2];
+            port = atoi(argv[3]);
         }
         
+        // Create application object
+        Assignment3 app(isClient, port, address);
+
+        try {
+            app.go();
+        } catch( Ogre::Exception& e ) {
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+            MessageBox( NULL, e.getFullDescription().c_str(), "An exception has occured!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+#else
+            std::cerr << "An exception has occured: " <<
+                e.getFullDescription().c_str() << std::endl;
+#endif
+        }
+    
 
         return 0;
     }
