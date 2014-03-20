@@ -19,8 +19,9 @@ This source file is part of the
 #include <unistd.h>
 
 //-------------------------------------------------------------------------------------
-Assignment3::Assignment3(void)
+Assignment3::Assignment3(int port)
 {
+    client = new Client(port);
 }
 
 //-------------------------------------------------------------------------------------
@@ -35,7 +36,6 @@ int startingFace = 0;
 //-------------------------------------------------------------------------------------
 void Assignment3::createScene(void)
 {
-    client = new Client(2000);
     //simulator = new Simulator();
 
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
@@ -310,20 +310,23 @@ extern "C" {
 #endif
     {
         if (argc < 2) {
-            printf("usage: %s [0 for server, 1 for client]\n", argv[0]); 
+            printf("usage: %s {0 for client, 1 for server}\n", argv[0]); 
             exit(1);
         } 
 
         int state = atoi(argv[1]);
 
         if (state != 0 && state != 1) {
-            printf("usage: %s {0 for server, 1 for client}\n", argv[0]); 
+            printf("usage: %s {0 for client, 1 for server}\n", argv[0]); 
             exit(1);
         }
-
-        if (state == 0) {
+        
+        if (state == 0 && argc != 3) {
+            printf("usage: %s {0 for client} port\n", argv[0]); 
+            exit(1);
+        } else if (state == 0) {
             // Create application object
-            Assignment3 app;
+            Assignment3 app(atoi(argv[2]));
 
             try {
                 app.go();
@@ -338,7 +341,7 @@ extern "C" {
         }
         
         if (state == 1 && argc != 4) {
-            printf("usage: %s {1 for client} address port\n", argv[0]); 
+            printf("usage: %s {1 for server} client_address client_port\n", argv[0]); 
             exit(1);
         } else if (state == 1) {
             while (true) {

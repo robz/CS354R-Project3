@@ -53,7 +53,7 @@ protected:
     bool quit(const CEGUI::EventArgs &e);
 
 public:
-    Assignment3(void);
+    Assignment3(int port);
     virtual ~Assignment3(void);
 
 protected:
