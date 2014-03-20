@@ -220,6 +220,34 @@ bool Assignment3::quit(const CEGUI::EventArgs &e)
 }
 
 
+void runServer2(int argc, char* argv[]) {
+    Simulator* simulator = new Simulator();
+    
+    Ball* ball = new Ball("myball", NULL, simulator, 1.0, 1.0, Ogre::Vector3(0, 20.0, 0), .9f, .1f, "Examples/RustySteel");
+    Box* box = new Box("mybox", NULL, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
+    
+    ball->addToSimulator();
+    box->addToSimulator();
+
+    Server server(argv[2], atoi(argv[3]));
+    btTransform trans;
+    
+    for (int i = 0; i < 300; i++) {
+        simulator->stepSimulation(1/60.f, 10);
+
+        btTransform trans;
+        ball->body->getMotionState()->getWorldTransform(trans);
+        std::cout << "sphere height: " << trans.getOrigin().getY() << std::endl;
+    
+        server.sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
+        usleep(1000000/60);
+    }
+    
+    delete box;
+    delete ball;
+    delete simulator;
+}
+
 void runServer(int argc, char* argv[]) {
     btBroadphaseInterface* broadphase = new btDbvtBroadphase();
 
@@ -292,8 +320,6 @@ void runServer(int argc, char* argv[]) {
 
 
 
-
-
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
@@ -344,8 +370,9 @@ extern "C" {
             printf("usage: %s {1 for server} client_address client_port\n", argv[0]); 
             exit(1);
         } else if (state == 1) {
-            while (true) {
-                runServer(argc, argv);
+            for (int i = 0;; i++) {
+                std::cout << "iteration " << i << std::endl;
+                runServer2(argc, argv);
             }
         }
         

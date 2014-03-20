@@ -18,7 +18,7 @@ class GameObject {
 		btScalar mass;
 		btTransform tr;
 		btVector3 inertia;
-		OgreMotionState* motionState;
+		btDefaultMotionState* motionState;
 		Ogre::Real restitution;
     	Ogre::Real friction;
 	public:

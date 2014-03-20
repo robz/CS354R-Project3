@@ -31,6 +31,9 @@ Ball::Ball(
             );
 
         rootNode->setPosition(pos);
+    } else {
+        // updateTransform aint gonna work so we have to set the transform ourselves
+        tr.setOrigin(btVector3(pos.x, pos.y, pos.z));
     }
 
     shape = new btSphereShape(radius);

@@ -16,6 +16,8 @@ GameObject::GameObject(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim
         catch (std::exception& e) {
             rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
         }
+    } else {
+        rootNode = NULL;
     }
 	
     shape = NULL;
@@ -33,16 +35,20 @@ void GameObject::updateTransform() {
 	tr.setOrigin(btVector3(pos.x, pos.y, pos.z));
 	Ogre::Quaternion qt = rootNode->getOrientation();
 	tr.setRotation(btQuaternion(qt.x, qt.y, qt.z, qt.w));
-	if(motionState){
+	// BREAKING EVERYTHING WHOOOO
+    /*
+    if(motionState){
 		motionState->updateTransform(tr);
-	}
+	}*/
 }
 
 void GameObject::addToSimulator() {
 	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 	updateTransform();
-	motionState = new OgreMotionState(tr, rootNode);
-	//rigidbody is dynamic if and only if mass is non zero, otherwise static
+	//motionState = new OgreMotionState(tr, rootNode);
+	motionState = new btDefaultMotionState(tr);
+
+    //rigidbody is dynamic if and only if mass is non zero, otherwise static
 	if (mass != 0.0f) 
 		shape->calculateLocalInertia(mass, inertia);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, inertia);
