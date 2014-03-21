@@ -106,6 +106,8 @@ void Server::sendMsg(char *data, int len) {
                 SDLNet_GetError());
             exit(EXIT_FAILURE);
         }
+        else
+            resolved = true;
     }
 
     p->address.host = ip.host;  /* Set the destination host */
