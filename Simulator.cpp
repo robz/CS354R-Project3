@@ -43,6 +43,7 @@ void Simulator::addObject (GameObject* o){
 	
     //use default collision group/mask values (dynamic/kinematic/static)
 	dynamicsWorld->addRigidBody(o->getBody());
+    std::cout << "ridig body: " << o->getBody() << std::endl;
 }
 
 bool Simulator::removeObject(GameObject* o) {

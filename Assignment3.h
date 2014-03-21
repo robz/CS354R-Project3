@@ -17,6 +17,7 @@ This source file is part of the
 #ifndef __Assignment3_h_
 #define __Assignment3_h_
 
+#include "UDPNetEnt.h"
 #include <btBulletDynamicsCommon.h>
 #include "BaseApplication.h"
 #include "Ball.h"
@@ -49,6 +50,9 @@ protected:
     Surface* paddle;
     Target* target;
     
+    UDPNetEnt* netEnt;
+    bool isClient;
+
     // OIS::KeyListener
     virtual bool keyPressed(const OIS::KeyEvent &arg);
     virtual bool keyReleased(const OIS::KeyEvent &arg);
@@ -70,7 +74,7 @@ protected:
 	char* CEGUIStringToString(CEGUI::String cestr);
 
 public:
-    Assignment3(void);
+    Assignment3(UDPNetEnt* netNet, bool isClient);
     virtual ~Assignment3(void);
 };
 

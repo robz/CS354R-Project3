@@ -18,11 +18,11 @@ class GameObject {
 		btScalar mass;
 		btTransform tr;
 		btVector3 inertia;
-		OgreMotionState* motionState;
 		Ogre::Real restitution;
     	Ogre::Real friction;
 	public:
         ContactSensorCallback* callback;
+		OgreMotionState* motionState;
 		Ogre::String name;
         btRigidBody* body;
 		btCollisionShape* shape;

@@ -15,17 +15,20 @@ This source file is part of the
 -----------------------------------------------------------------------------
 */
 #include "Assignment3.h"
-#include "SDL_net.h"
 
 //-------------------------------------------------------------------------------------
-Assignment3::Assignment3(void)
+Assignment3::Assignment3(UDPNetEnt* netEnt, bool isClient)
+: netEnt(netEnt), isClient(isClient)
 {
+    simulator = NULL;
+    if (!isClient) {
+        simulator = new Simulator();
+    }
 }
 
 //-------------------------------------------------------------------------------------
 Assignment3::~Assignment3(void)
 {
-    delete simulator;
 }
 
 
@@ -35,8 +38,6 @@ bool gameplay = false;
 //-------------------------------------------------------------------------------------
 void Assignment3::createScene(void)
 {
-    simulator = new Simulator();
-
 	// Initialize CEGUI
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
 	// Set CEGUI resource groups
@@ -131,13 +132,15 @@ void Assignment3::createScene(void)
     target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50, ball->body);
 
     target->setPose(startingFace, 0, 0);
- 
-    ball->addToSimulator();
-    box->addToSimulator();
-    paddle->addToSimulator();
-    paddle->setKinematic();
-    target->addToSimulator();
-    target->setKinematic();
+    
+    if (!isClient) {
+        ball->addToSimulator();
+        box->addToSimulator();
+        paddle->addToSimulator();
+        paddle->setKinematic();
+        target->addToSimulator();
+        target->setKinematic();
+    }
 
     //Setup player camera
     (&(paddle->getNode()))->createChildSceneNode("camNode");
@@ -196,57 +199,102 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     mMouse->capture();
 
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
+
 	if (gameplay) {
-   // mTrayMgr->frameRenderingQueued(evt);
-    // Step the simulation
-	if(mKeyboard->isKeyDown(OIS::KC_Z) && z_time == 0.0){
-			paddle->rotate(180, 0.0, 0.0);
-			z_time += evt.timeSinceLastFrame;
-	}
-	if(z_time > 0.0 && z_time < 1.0)
-			z_time += evt.timeSinceLastFrame;
-	else
-			z_time = 0.0;
-	if(mKeyboard->isKeyDown(OIS::KC_LSHIFT)){
-			if(mKeyboard->isKeyDown(OIS::KC_W)){
-					paddle->move(0.0, PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
-			}
-			if (mKeyboard->isKeyDown(OIS::KC_S)){
-					paddle->move(0.0, -PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
-			}
-	}
-	else{
-			if(mKeyboard->isKeyDown(OIS::KC_W)){
-					paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastFrame);
-			}
-			if (mKeyboard->isKeyDown(OIS::KC_S)){
-					paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastFrame);
-			}
-	}
-	if (mKeyboard->isKeyDown(OIS::KC_A)){
-			paddle->move(-PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
-	}
-	if (mKeyboard->isKeyDown(OIS::KC_D)){
-			paddle->move(PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
-	}
-	if (mKeyboard->isKeyDown(OIS::KC_Q)){
-			paddle->rotate(0.0, 0.0, PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
-	}
-	if (mKeyboard->isKeyDown(OIS::KC_E)){
-			paddle->rotate(0.0, 0.0, -PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
-	}
+        if (isClient) {
+            if(mKeyboard->isKeyDown(OIS::KC_Z) && z_time == 0.0){
+                paddle->rotate(180, 0.0, 0.0);
+                z_time += evt.timeSinceLastFrame;
+            }
+            if(z_time > 0.0 && z_time < 1.0)
+                z_time += evt.timeSinceLastFrame;
+            else
+                z_time = 0.0;
+            if(mKeyboard->isKeyDown(OIS::KC_LSHIFT)){
+                if(mKeyboard->isKeyDown(OIS::KC_W)){
+                    paddle->move(0.0, PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
+                }
+                if (mKeyboard->isKeyDown(OIS::KC_S)){
+                    paddle->move(0.0, -PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
+                }
+            }
+            else{
+                if(mKeyboard->isKeyDown(OIS::KC_W)){
+                    paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastFrame);
+                }
+                if (mKeyboard->isKeyDown(OIS::KC_S)){
+                    paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastFrame);
+                }
+            }
+            if (mKeyboard->isKeyDown(OIS::KC_A)){
+                paddle->move(-PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
+            }
+            if (mKeyboard->isKeyDown(OIS::KC_D)){
+                paddle->move(PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
+            }
+            if (mKeyboard->isKeyDown(OIS::KC_Q)){
+                paddle->rotate(0.0, 0.0, PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
+            }
+            if (mKeyboard->isKeyDown(OIS::KC_E)){
+                paddle->rotate(0.0, 0.0, -PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
+            }
+            
+            Ogre::Real xMove = mMouse->getMouseState().X.rel;
+            Ogre::Real yMove = mMouse->getMouseState().Y.rel;
+            paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
+            paddle->updateTransform();
+        }        
 
-	Ogre::Real xMove = mMouse->getMouseState().X.rel;
-	Ogre::Real yMove = mMouse->getMouseState().Y.rel;
-	paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
-	paddle->updateTransform();
-	simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
+        // get a packet from the server, then set the ball's position
+        if (isClient) {
+            btTransform trans;
+            
+            // get the state of the ball from the server
+            if (netEnt->recMsg(reinterpret_cast<char*>(&trans))) {
+                std::cout << "y: " << trans.getOrigin().getY() << std::endl;
+                ball->getNode().resetToInitialState();
+                ball->getNode().scale(0.01f, 0.01f, 0.01f);
+                ball->move(
+                    trans.getOrigin().getX(),
+                    trans.getOrigin().getY(),
+                    trans.getOrigin().getZ()
+                    );
+            }
+    
+            // send the state of the paddle to the server
+            float pose[7];
+            pose[0] = paddle->getNode().getPosition().x;
+            pose[1] = paddle->getNode().getPosition().y;
+            pose[2] = paddle->getNode().getPosition().z;
+            pose[3] = paddle->getNode().getOrientation().w;
+            pose[4] = paddle->getNode().getOrientation().x;
+            pose[5] = paddle->getNode().getOrientation().y;
+            pose[6] = paddle->getNode().getOrientation().z;
+            netEnt->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
+        } else {
+            btTransform trans;
+            
+            // step the server's simulator
+            simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
+        
+            // send the state of the ball to the client
+            ball->body->getMotionState()->getWorldTransform(trans);
+            netEnt->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
+        
+            // get the state of the paddle from the client
+            float pose[7];
+            if (netEnt->recMsg(reinterpret_cast<char*>(pose))) {
+                paddle->getNode().setPosition(pose[0], pose[1], pose[2]);
+                paddle->getNode().setOrientation(pose[3], pose[4], pose[5], pose[6]);
+                paddle->updateTransform();
+            }
+        }
 
-	std::ostringstream stream;
-	stream << "score: " << target->wall;
-	p1score->setText(stream.str());
-	}
-
+        std::ostringstream stream;
+        stream << "score: " << target->wall;
+        p1score->setText(stream.str());
+    }
+    
     return true;
 }
 
@@ -379,12 +427,35 @@ extern "C" {
     int main(int argc, char *argv[])
 #endif
     {
-        if (argc == 2) {
-            startingFace = atoi(argv[1]);
+        if (argc < 2) {
+            printf("usage: %s {0 for client, 1 for server}\n", argv[0]); 
+            exit(1);
+        } 
+
+        int state = atoi(argv[1]);
+
+        if (state != 0 && state != 1) {
+            printf("usage: %s {0 for client, 1 for server}\n", argv[0]); 
+            exit(1);
         }
 
+        bool isClient = (state == 0);
+        
+        if (argc != 5) {
+            if (isClient) {
+                printf("usage: %s 0 server_address server_port our_port\n", argv[0]); 
+            } else {
+                printf("usage: %s 1 client_address client_port our_port\n", argv[0]); 
+            }
+            exit(1);
+        }
+        
+        char* their_address = argv[2];
+        int their_port = atoi(argv[3]);
+        int our_port = atoi(argv[4]);
+        
         // Create application object
-        Assignment3 app;
+        Assignment3 app(new UDPNetEnt(their_address, their_port, our_port), isClient);
 
         try {
             app.go();
