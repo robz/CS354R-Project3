@@ -32,7 +32,17 @@ class Assignment3 : public BaseApplication
 {
 protected:
     CEGUI::OgreRenderer* mRenderer;
-    CEGUI::Window *score;
+    CEGUI::Window *p1score;
+	CEGUI::Window *p2score;
+	CEGUI::Window *singlebtn;
+	CEGUI::Window *clientbtn;
+	CEGUI::Window *serverbtn;
+	CEGUI::Editbox *serverIP;
+	CEGUI::Editbox *cServerPort;
+	CEGUI::Editbox *cClientPort;
+	CEGUI::Editbox *clientIP;
+	CEGUI::Editbox *sServerPort;
+	CEGUI::Editbox *sClientPort;
     Simulator* simulator;
     Ball* ball;
     Box* box;
@@ -47,16 +57,21 @@ protected:
     virtual bool mouseMoved(const OIS::MouseEvent &arg);
     virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
     virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
-    
-    bool quit(const CEGUI::EventArgs &e);
+
+    virtual void createScene(void);
+	virtual void createFrameListener(void);
+    virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+ 
+	CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID);
+    bool singlePlayer(const CEGUI::EventArgs &e);
+	bool clientStart(const CEGUI::EventArgs &e);
+	bool serverStart(const CEGUI::EventArgs &e);
+	void destroyMenu(void);
+	char* CEGUIStringToString(CEGUI::String cestr);
 
 public:
     Assignment3(void);
     virtual ~Assignment3(void);
-
-protected:
-    virtual void createScene(void);
-    virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 };
 
 #endif // #ifndef __Assignment3_h_
