@@ -74,7 +74,7 @@ protected:
 	char* CEGUIStringToString(CEGUI::String cestr);
 
 public:
-    Assignment3(UDPNetEnt* netNet, bool isClient);
+    Assignment3();
     virtual ~Assignment3(void);
 };
 

@@ -17,13 +17,9 @@ This source file is part of the
 #include "Assignment3.h"
 
 //-------------------------------------------------------------------------------------
-Assignment3::Assignment3(UDPNetEnt* netEnt, bool isClient)
-: netEnt(netEnt), isClient(isClient)
+Assignment3::Assignment3()
 {
     simulator = NULL;
-    if (!isClient) {
-        simulator = new Simulator();
-    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -34,6 +30,10 @@ Assignment3::~Assignment3(void)
 
 int startingFace = 0;
 bool gameplay = false;
+int cPort = 55555;
+int sPort = 55554;
+char* sip;
+char* cip;
 
 //-------------------------------------------------------------------------------------
 void Assignment3::createScene(void)
@@ -81,27 +81,27 @@ void Assignment3::createScene(void)
 	serverIP = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SIP"));
 	serverIP->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	serverIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.26,0), CEGUI::UDim(0.47,0)));
-	serverIP->setText("SERVER IP");
+	serverIP->setText("lichtman");
     cServerPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","CSP"));
 	cServerPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	cServerPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.415,0), CEGUI::UDim(0.47,0)));
-	cServerPort->setText("SERVER PORT");
+	cServerPort->setText("5555");
 	cClientPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","CCP"));
 	cClientPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	cClientPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.57,0), CEGUI::UDim(0.47,0)));
-	cClientPort->setText("CLIENT PORT");
+	cClientPort->setText("5556");
 	clientIP = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","CIP"));
 	clientIP->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	clientIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.26,0), CEGUI::UDim(0.62,0)));
-	clientIP->setText("CLIENT IP");
+	clientIP->setText("lichtman");
 	sServerPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SSP"));
 	sServerPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	sServerPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.415,0), CEGUI::UDim(0.62,0)));
-	sServerPort->setText("SERVER PORT");
+	sServerPort->setText("5556");
 	sClientPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SCP"));
 	sClientPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	sClientPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.57,0), CEGUI::UDim(0.62,0)));
-	sClientPort->setText("CLIENT PORT");
+	sClientPort->setText("5555");
 
 	// add buttons to sheet
 	menuSheet->addChildWindow(singlebtn);
@@ -125,26 +125,7 @@ void Assignment3::createScene(void)
     // Set the scene's ambient light
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
  
-    // Create a scene
-    ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
-    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
-    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
-    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50, ball->body);
-
-    target->setPose(startingFace, 0, 0);
-    
-    if (!isClient) {
-        ball->addToSimulator();
-        box->addToSimulator();
-        paddle->addToSimulator();
-        paddle->setKinematic();
-        target->addToSimulator();
-        target->setKinematic();
-    }
-
-    //Setup player camera
-    (&(paddle->getNode()))->createChildSceneNode("camNode");
-    mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
+  
 
     // Create a Light and set its position
     Ogre::Light* light = mSceneMgr->createLight("MainLight");
@@ -304,15 +285,17 @@ bool Assignment3::keyPressed(const OIS::KeyEvent &arg)
 	sys.injectKeyDown(arg.key);
 	sys.injectChar(arg.text);
 
-    if (arg.key == OIS::KC_R) {
-        simulator->setGravity(simulator->gravity + 20.0);        
-    } else if (arg.key == OIS::KC_F) {
-        simulator->setGravity(simulator->gravity - 20.0);
-    } else if (arg.key == OIS::KC_X) {
-        simulator->soundOn = !(simulator->soundOn);
-    } else if (arg.key == OIS::KC_C) {
-        simulator->soundSystem->playMusic();
-    }
+	if (simulator) {
+			if (arg.key == OIS::KC_R) {
+					simulator->setGravity(simulator->gravity + 20.0);        
+			} else if (arg.key == OIS::KC_F) {
+					simulator->setGravity(simulator->gravity - 20.0);
+			} else if (arg.key == OIS::KC_X) {
+					simulator->soundOn = !(simulator->soundOn);
+			} else if (arg.key == OIS::KC_C) {
+					simulator->soundSystem->playMusic();
+			}
+	}
 	if (arg.key == OIS::KC_ESCAPE)
     {
         mShutDown = true;
@@ -371,18 +354,52 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
 
 bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 {
-	destroyMenu();
+	isClient = true;
 	CEGUI::WindowManager &mgr = CEGUI::WindowManager::getSingleton();
-
+	sPort = atoi(CEGUIStringToString(cServerPort->getText()));
+	cPort = atoi(CEGUIStringToString(cClientPort->getText()));
+	sip = CEGUIStringToString(serverIP->getText());
+	netEnt = new UDPNetEnt(sip, sPort, cPort);
+	// Create a scene
+    ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
+    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50, ball->body);
+    target->setPose(startingFace, 0, 0);
+    //Setup player camera
+    (&(paddle->getNode()))->createChildSceneNode("camNode");
+    mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
+	destroyMenu();
+	gameplay = true;
 	return true;
 }
 
 bool Assignment3::serverStart(const CEGUI::EventArgs &e)
 {
-	CEGUI::String sip = serverIP->getText();
-	char* str = CEGUIStringToString(sip);
-	int intstr = std::atoi(str);
+	isClient = false;
+	CEGUI::WindowManager &mgr = CEGUI::WindowManager::getSingleton();
+	sPort = atoi(CEGUIStringToString(sServerPort->getText()));
+	cPort = atoi(CEGUIStringToString(sClientPort->getText()));
+	cip = CEGUIStringToString(clientIP->getText());
+	netEnt = new UDPNetEnt(cip, sPort, cPort);
+	simulator = new Simulator();
+  // Create a scene
+    ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
+    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50, ball->body);
+    target->setPose(startingFace, 0, 0);
+    //Setup player camera
+    (&(paddle->getNode()))->createChildSceneNode("camNode");
+    mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
+	ball->addToSimulator();
+	box->addToSimulator();
+	paddle->addToSimulator();
+	paddle->setKinematic();
+	target->addToSimulator();
+	target->setKinematic();
 	destroyMenu();
+	gameplay = true;
 	return true;
 }
 
@@ -427,35 +444,8 @@ extern "C" {
     int main(int argc, char *argv[])
 #endif
     {
-        if (argc < 2) {
-            printf("usage: %s {0 for client, 1 for server}\n", argv[0]); 
-            exit(1);
-        } 
-
-        int state = atoi(argv[1]);
-
-        if (state != 0 && state != 1) {
-            printf("usage: %s {0 for client, 1 for server}\n", argv[0]); 
-            exit(1);
-        }
-
-        bool isClient = (state == 0);
-        
-        if (argc != 5) {
-            if (isClient) {
-                printf("usage: %s 0 server_address server_port our_port\n", argv[0]); 
-            } else {
-                printf("usage: %s 1 client_address client_port our_port\n", argv[0]); 
-            }
-            exit(1);
-        }
-        
-        char* their_address = argv[2];
-        int their_port = atoi(argv[3]);
-        int our_port = atoi(argv[4]);
-        
         // Create application object
-        Assignment3 app(new UDPNetEnt(their_address, their_port, our_port), isClient);
+        Assignment3 app;
 
         try {
             app.go();
