@@ -14,8 +14,10 @@ Box::Box(Ogre::String nym,
     Ogre::String wallTex = "", 
     Ogre::String floorTex = "") 
 {
-    mgr->getRootSceneNode()->createChildSceneNode(nym);
-    mgr->getSceneNode(nym)->setPosition(x, y, z);
+    if (mgr) {
+        mgr->getRootSceneNode()->createChildSceneNode(nym);
+        mgr->getSceneNode(nym)->setPosition(x, y, z);
+    }
 
     /*wall[0] = new Surface("floor", mgr, sim, 0, 0, 0, width, 0, depth);
     wall[1] = new Surface("ceiling", mgr, sim, 0, height, 0, width, 0, depth);

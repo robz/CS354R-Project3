@@ -16,6 +16,8 @@ GameObject::GameObject(Ogre::String nym, Ogre::SceneManager* mgr, Simulator* sim
         catch (std::exception& e) {
             rootNode = sceneMgr->getRootSceneNode()->createChildSceneNode(name);
         }
+    } else {
+        rootNode = NULL;
     }
 	
     shape = NULL;
@@ -33,7 +35,8 @@ void GameObject::updateTransform() {
 	tr.setOrigin(btVector3(pos.x, pos.y, pos.z));
 	Ogre::Quaternion qt = rootNode->getOrientation();
 	tr.setRotation(btQuaternion(qt.x, qt.y, qt.z, qt.w));
-	if(motionState){
+    
+    if(motionState){
 		motionState->updateTransform(tr);
 	}
 }
@@ -42,18 +45,22 @@ void GameObject::addToSimulator() {
 	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 	updateTransform();
 	motionState = new OgreMotionState(tr, rootNode);
-	//rigidbody is dynamic if and only if mass is non zero, otherwise static
-	if (mass != 0.0f) 
-		shape->calculateLocalInertia(mass, inertia);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, inertia);
-	rbInfo.m_restitution = this->restitution;
-    rbInfo.m_friction = this->friction;
-	body = new btRigidBody(rbInfo);
-    body->setUserPointer(this);
+	//motionState = new btDefaultMotionState(tr);
 
-    CollisionContext* context = new CollisionContext();
-    callback = new ContactSensorCallback(*body, *context);
-	simulator->addObject(this);
+    if (simulator) {
+        //rigidbody is dynamic if and only if mass is non zero, otherwise static
+        if (mass != 0.0f) 
+            shape->calculateLocalInertia(mass, inertia);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, inertia);
+        rbInfo.m_restitution = this->restitution;
+        rbInfo.m_friction = this->friction;
+        body = new btRigidBody(rbInfo);
+        body->setUserPointer(this);
+
+        CollisionContext* context = new CollisionContext();
+        callback = new ContactSensorCallback(*body, *context);
+        simulator->addObject(this);
+    }
 }
 
 btRigidBody* GameObject::getBody(){
