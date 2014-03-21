@@ -61,7 +61,6 @@ Client::Client(char* ipAddr, int port) {
 bool Client::recMsg(char* data) {
     if (SDLNet_UDP_Recv(UDPsd, p))
     {
-        printf("Success\n");
         /*
         printf("UDP Packet incoming\n");
         printf("\tChan:    %d\n", p->channel);
