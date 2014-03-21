@@ -1,14 +1,3 @@
-#include <btBulletDynamicsCommon.h>
-#include "BaseApplication.h"
-#include "Ball.h"
-#include "Box.h"
-#include "Simulator.h"
-#include "Surface.h"
-#include "Wall.h"
-#include "Target.h" 
-#include <CEGUI/CEGUI.h>
-#include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
-
 #include <SDL_net.h>
 
 class Server {

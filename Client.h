@@ -1,19 +1,23 @@
 #include <SDL_net.h>
 
-class Client {
+class UDPNetEnt {
 protected:
-    UDPsocket sd;
-    UDPpacket *p;
+    UDPsocket recSock;
+    UDPpacket *recPack;
+    
+    UDPsocket sendSock;
+    IPaddress sendIP;
+    UDPpacket *sendPack;
 
 public:
-    Client(int port);
-    ~Client();
+    UDPNetEnt(char* sendAddress, int sendPort, int recPort);
+    ~UDPNetEnt();
     
-    // returns success
-    bool recMsg(char* data);
+    bool recMsg(char* out_data); // returns success
+    void sendMsg(char* data, int len);
 };
 
-Client::Client(int port) {
+UDPNetEnt::UDPNetEnt(char* sendAddress, int sendPort, int recPort) {
     /* Initialize SDL_net */
     if (SDLNet_Init() < 0)
     {
@@ -22,14 +26,38 @@ Client::Client(int port) {
     }
  
     /* Open a socket */
-    if (!(sd = SDLNet_UDP_Open(port)))
+    if (!(recSock = SDLNet_UDP_Open(recPort)))
     {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         exit(EXIT_FAILURE);
     }
  
     /* Make space for the packet */
-    if (!(p = SDLNet_AllocPacket(512)))
+    if (!(recPack = SDLNet_AllocPacket(512)))
+    {
+        fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
+        exit(EXIT_FAILURE);
+    }
+    
+    /* Open a socket on random port */
+    if (!(sendSock = SDLNet_UDP_Open(0)))
+    {
+        fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
+        exit(EXIT_FAILURE);
+    }
+ 
+    /* Resolve server name  */
+    if (SDLNet_ResolveHost(&sendIP, sendAddress, sendPort) == -1)
+    {
+        fprintf(stderr, "SDLNet_ResolveHost(%s %d): %s\n", 
+            sendAddress, 
+            sendPort, 
+            SDLNet_GetError());
+        exit(EXIT_FAILURE);
+    }
+ 
+    /* Allocate memory for the packet */
+    if (!(sendPack = SDLNet_AllocPacket(512)))
     {
         fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
         exit(EXIT_FAILURE);
@@ -37,26 +65,31 @@ Client::Client(int port) {
 }
 
 // returns success
-bool Client::recMsg(char* data) {
-    if (SDLNet_UDP_Recv(sd, p))
+bool UDPNetEnt::recMsg(char* data) {
+    if (SDLNet_UDP_Recv(recSock, recPack))
     {
-        /*
-        printf("UDP Packet incoming\n");
-        printf("\tChan:    %d\n", p->channel);
-        printf("\tData:    %s\n", (char *)p->data);
-        printf("\tLen:     %d\n", p->len);
-        printf("\tMaxlen:  %d\n", p->maxlen);
-        printf("\tStatus:  %d\n", p->status);
-        printf("\tAddress: %x %x\n", p->address.host, p->address.port);
-        */
-        memcpy(data, (char*)p->data, p->len);
+        memcpy(data, (char*)recPack->data, recPack->len);
         return true;
     } else {
         return false;
     }
 }
 
-Client::~Client() {
-    SDLNet_FreePacket(p);
+void UDPNetEnt::sendMsg(char *data, int len) {
+    /* Set the destination host */
+    sendPack->address.host = sendIP.host;  
+    /* And destination port */
+    sendPack->address.port = sendIP.port;  
+
+    sendPack->len = len;
+    memcpy(sendPack->data, data, len);
+
+    /* This sets the p->channel */
+    SDLNet_UDP_Send(sendSock, -1, sendPack); 
+}
+
+UDPNetEnt::~UDPNetEnt() {
+    SDLNet_FreePacket(recPack);
+    SDLNet_FreePacket(sendPack);
     SDLNet_Quit();
 }

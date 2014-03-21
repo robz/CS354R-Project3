@@ -35,7 +35,7 @@ void GameObject::updateTransform() {
 	tr.setOrigin(btVector3(pos.x, pos.y, pos.z));
 	Ogre::Quaternion qt = rootNode->getOrientation();
 	tr.setRotation(btQuaternion(qt.x, qt.y, qt.z, qt.w));
-	// BREAKING EVERYTHING WHOOOO
+    
     if(motionState){
 		motionState->updateTransform(tr);
 	}
@@ -47,18 +47,20 @@ void GameObject::addToSimulator() {
 	motionState = new OgreMotionState(tr, rootNode);
 	//motionState = new btDefaultMotionState(tr);
 
-    //rigidbody is dynamic if and only if mass is non zero, otherwise static
-	if (mass != 0.0f) 
-		shape->calculateLocalInertia(mass, inertia);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, inertia);
-	rbInfo.m_restitution = this->restitution;
-    rbInfo.m_friction = this->friction;
-	body = new btRigidBody(rbInfo);
-    body->setUserPointer(this);
+    if (simulator) {
+        //rigidbody is dynamic if and only if mass is non zero, otherwise static
+        if (mass != 0.0f) 
+            shape->calculateLocalInertia(mass, inertia);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, shape, inertia);
+        rbInfo.m_restitution = this->restitution;
+        rbInfo.m_friction = this->friction;
+        body = new btRigidBody(rbInfo);
+        body->setUserPointer(this);
 
-    CollisionContext* context = new CollisionContext();
-    callback = new ContactSensorCallback(*body, *context);
-	simulator->addObject(this);
+        CollisionContext* context = new CollisionContext();
+        callback = new ContactSensorCallback(*body, *context);
+        simulator->addObject(this);
+    }
 }
 
 btRigidBody* GameObject::getBody(){

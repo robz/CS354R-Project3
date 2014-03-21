@@ -18,7 +18,6 @@ This source file is part of the
 #define __Assignment3_h_
 
 #include "Client.h"
-#include "Server.h"
 #include <btBulletDynamicsCommon.h>
 #include "BaseApplication.h"
 #include "Ball.h"
@@ -40,9 +39,10 @@ protected:
     Box* box;
     Surface* paddle;
     Target* target;
-    Client* client;
-    Server* server;
     
+    UDPNetEnt* netEnt;
+    bool isClient;
+
     // OIS::KeyListener
     virtual bool keyPressed(const OIS::KeyEvent &arg);
     virtual bool keyReleased(const OIS::KeyEvent &arg);
@@ -55,7 +55,7 @@ protected:
     bool quit(const CEGUI::EventArgs &e);
 
 public:
-    Assignment3(bool beClient, int port, char* address);
+    Assignment3(UDPNetEnt* netNet, bool isClient);
     virtual ~Assignment3(void);
 
 protected:
