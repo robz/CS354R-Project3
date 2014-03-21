@@ -2,30 +2,50 @@
 
 class Client {
 protected:
-    UDPsocket sd;
+    IPaddress ip; /* Server address */
+    UDPsocket UDPsd; /* Socket descriptor */
+    TCPsocket TCPsd;
     UDPpacket *p;
 
 public:
-    Client(int port);
+    Client(char* ipAddr, int port);
     ~Client();
     
     // returns success
     bool recMsg(char* data);
 };
 
-Client::Client(int port) {
+Client::Client(char* ipAddr, int port) {
     /* Initialize SDL_net */
     if (SDLNet_Init() < 0)
     {
         fprintf(stderr, "SDLNet_Init: %s\n", SDLNet_GetError());
         exit(EXIT_FAILURE);
+        //assert(false);
+    }
+
+    /* Resolve the host we are connecting to */
+    if (SDLNet_ResolveHost(&ip, ipAddr, port) < 0)
+    {
+        fprintf(stderr, "SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+        exit(EXIT_FAILURE);
+        //assert(false);
     }
  
-    /* Open a socket */
-    if (!(sd = SDLNet_UDP_Open(port)))
+    /* Open a connection with the IP provided (listen on the host's port) */
+    if (!(TCPsd = SDLNet_TCP_Open(&ip)))
     {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
         exit(EXIT_FAILURE);
+        //assert(false);
+    }
+
+    /* Open a socket on random port? */
+    if (!(UDPsd = SDLNet_UDP_Open(49153)))
+    {
+        fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
+        exit(EXIT_FAILURE);
+        //assert(false);
     }
  
     /* Make space for the packet */
@@ -33,13 +53,15 @@ Client::Client(int port) {
     {
         fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
         exit(EXIT_FAILURE);
+        //assert(false);
     }
 }
 
 // returns success
 bool Client::recMsg(char* data) {
-    if (SDLNet_UDP_Recv(sd, p))
+    if (SDLNet_UDP_Recv(UDPsd, p))
     {
+        printf("Success\n");
         /*
         printf("UDP Packet incoming\n");
         printf("\tChan:    %d\n", p->channel);

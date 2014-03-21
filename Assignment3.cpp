@@ -19,9 +19,9 @@ This source file is part of the
 #include <unistd.h>
 
 //-------------------------------------------------------------------------------------
-Assignment3::Assignment3(int port)
+Assignment3::Assignment3(char* ipAddr, int port)
 {
-    client = new Client(port);
+    client = new Client(ipAddr, port);
 }
 
 //-------------------------------------------------------------------------------------
@@ -220,7 +220,7 @@ bool Assignment3::quit(const CEGUI::EventArgs &e)
 }
 
 
-void runServer(int argc, char* argv[]) {
+void runServer(int port) {
     btBroadphaseInterface* broadphase = new btDbvtBroadphase();
 
     btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -255,15 +255,20 @@ void runServer(int argc, char* argv[]) {
     dynamicsWorld->addRigidBody(fallRigidBody);
 
 
-    Server server(argv[2], atoi(argv[3]));
+    static Server server(port);
     btTransform trans;
-    
+    static bool init = false;
+    if(!init){
+        server.awaitConnections();
+        init = true;
+    }
+
     for (int i = 0; i < 300; i++) {
             dynamicsWorld->stepSimulation(1/60.f,10);
 
             btTransform trans;
             fallRigidBody->getMotionState()->getWorldTransform(trans);
-            std::cout << "sphere height: " << trans.getOrigin().getY() << std::endl;
+            //std::cout << "sphere height: " << trans.getOrigin().getY() << std::endl;
         
             server.sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
             usleep(1000000/60);
@@ -321,12 +326,12 @@ extern "C" {
             exit(1);
         }
         
-        if (state == 0 && argc != 3) {
-            printf("usage: %s {0 for client} port\n", argv[0]); 
+        if (state == 0 && argc != 4) {
+            printf("usage: %s {0 for client} server_address server_port\n", argv[0]); 
             exit(1);
         } else if (state == 0) {
             // Create application object
-            Assignment3 app(atoi(argv[2]));
+            Assignment3 app(argv[2], atoi(argv[3]));
 
             try {
                 app.go();
@@ -340,12 +345,12 @@ extern "C" {
             }
         }
         
-        if (state == 1 && argc != 4) {
-            printf("usage: %s {1 for server} client_address client_port\n", argv[0]); 
+        if (state == 1 && argc != 3) {
+            printf("usage: %s {1 for server} server_port\n", argv[0]); 
             exit(1);
         } else if (state == 1) {
             while (true) {
-                runServer(argc, argv);
+                runServer(atoi(argv[2]));
             }
         }
         
