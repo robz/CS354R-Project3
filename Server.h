@@ -1,3 +1,6 @@
+#ifndef __Server_h_
+#define __Server_h_
+
 #include <btBulletDynamicsCommon.h>
 #include "BaseApplication.h"
 #include "Ball.h"
@@ -94,3 +97,5 @@ bool Server::recMsg(char* data){
         return ent->recMsg(data);
     return false;
 }
+
+#endif

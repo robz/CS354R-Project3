@@ -1,3 +1,6 @@
+#ifndef __Client_h_
+#define __Client_h_
+
 #include <SDL_net.h>
 
 class Client {
@@ -53,3 +56,5 @@ bool Client::recMsg(char* data){
 void Client::sendMsg(char *data, int len){
     ent->sendMsg(data, len);
 }
+
+#endif

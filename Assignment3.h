@@ -30,6 +30,7 @@ This source file is part of the
 #include "Server.h" 
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
+#include "ServerToClient.h"
 
 class Assignment3 : public BaseApplication
 {
@@ -75,6 +76,7 @@ protected:
 	bool serverStart(const CEGUI::EventArgs &e);
 	void destroyMenu(void);
 	char* CEGUIStringToString(CEGUI::String cestr);
+    ServerToClient* initServerToClient();
 
 public:
     Assignment3();

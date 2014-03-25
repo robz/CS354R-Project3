@@ -1,3 +1,6 @@
+#ifndef __UDPNetEnd_h_
+#define __UDPNetEnt_h_
+
 #include <SDL_net.h>
 
 class UDPNetEnt {
@@ -93,3 +96,5 @@ UDPNetEnt::~UDPNetEnt() {
     SDLNet_FreePacket(sendPack);
     SDLNet_Quit();
 }
+
+#endif

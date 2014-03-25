@@ -30,10 +30,11 @@ Assignment3::~Assignment3(void)
 
 int startingFace = 0;
 bool gameplay = false;
-int cPort = 55555;
-int sPort = 55554;
+int cPort = 49152;
+int sPort = 49152;
 char* sip;
 char* cip;
+enum sounds{NOSOUND, BALLTARGET, BALLWALL, BALLPADDLE};
 
 //-------------------------------------------------------------------------------------
 void Assignment3::createScene(void)
@@ -90,11 +91,11 @@ void Assignment3::createScene(void)
     cServerPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","CSP"));
 	cServerPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	cServerPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.415,0), CEGUI::UDim(0.47,0)));
-	cServerPort->setText("5555");
+	cServerPort->setText("49152");
 	cClientPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","CCP"));
 	cClientPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	cClientPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.57,0), CEGUI::UDim(0.47,0)));
-	cClientPort->setText("5556");
+	cClientPort->setText("49152");
 	clientIP = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","CIP"));
 	clientIP->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	clientIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.26,0), CEGUI::UDim(0.62,0)));
@@ -102,11 +103,11 @@ void Assignment3::createScene(void)
 	sServerPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SSP"));
 	sServerPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	sServerPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.415,0), CEGUI::UDim(0.62,0)));
-	sServerPort->setText("5556");
+	sServerPort->setText("49152");
 	sClientPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SCP"));
 	sClientPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	sClientPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.57,0), CEGUI::UDim(0.62,0)));
-	sClientPort->setText("5555");
+	sClientPort->setText("49152");
 
 	// add buttons to sheet
 	menuSheet->addChildWindow(singlebtn);
@@ -233,18 +234,47 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
         // get a packet from the server, then set the ball's position
         if (isClient) {
-            btTransform trans;
+            ServerToClient servData;
             
-            // get the state of the ball from the server
-            if (client->recMsg(reinterpret_cast<char*>(&trans))) {
-                std::cout << "y: " << trans.getOrigin().getY() << std::endl;
+            // get data from the server
+            if (client->recMsg(reinterpret_cast<char*>(&servData))) {
+                //std::cout << "y: " << trans[0].getOrigin().getY() << std::endl;
+                //update ball
                 ball->getNode().resetToInitialState();
                 ball->getNode().scale(0.01f, 0.01f, 0.01f);
+                btTransform trans = servData.getBall();
                 ball->move(
                     trans.getOrigin().getX(),
                     trans.getOrigin().getY(),
                     trans.getOrigin().getZ()
                     );
+
+                //update target
+                float* targPose = servData.getTarget();
+                target->getNode().setPosition(targPose[0], targPose[1], targPose[2]);
+                target->getNode().setOrientation(targPose[3], targPose[4], targPose[5], targPose[6]);
+                target->updateTransform();
+
+                //update server's paddle
+                /*float* padPose = servData.getPaddle();
+                paddle->getNode().setPosition(pose[0], pose[1], pose[2]);
+                paddle->getNode().setOrientation(pose[3], pose[4], pose[5], pose[6]);
+                paddle->updateTransform();*/
+
+                //play sounds (if any)
+                int sound = servData.getSound();
+                if(sound == BALLWALL)
+                    simulator->soundSystem->playWallHit();
+                else if(sound == BALLTARGET)
+                    simulator->soundSystem->playTargetHit();
+                else if(sound == BALLPADDLE)
+                    simulator->soundSystem->playRaquetHit();
+
+                //update score
+                int score = servData.getScore();
+                std::ostringstream stream;
+                stream << "score: " << score;
+                p1score->setText(stream.str());
             }
     
             // send the state of the paddle to the server
@@ -258,14 +288,18 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             pose[6] = paddle->getNode().getOrientation().z;
             client->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
         } else {
-            btTransform trans;
+            //btTransform trans; 
             server->awaitConnections();
             // step the server's simulator
             simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
         
             // send the state of the ball to the client
-            ball->body->getMotionState()->getWorldTransform(trans);
-            server->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
+            //ball->body->getMotionState()->getWorldTransform(trans);
+            //server->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
+            // send the state of the target to the client
+            ServerToClient* data = initServerToClient();
+            server->sendMsg(reinterpret_cast<char*>(data), sizeof(ServerToClient));
+            delete data;
         
             // get the state of the paddle from the client
             float pose[7];
@@ -276,12 +310,55 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             }
         }
 
-        std::ostringstream stream;
-        stream << "score: " << target->wall;
-        p1score->setText(stream.str());
+        if(!isClient){
+            std::ostringstream stream;
+            stream << "score: " << target->wall;
+            p1score->setText(stream.str());
+        }
     }
     
     return true;
+}
+
+ServerToClient* Assignment3::initServerToClient(){
+    ServerToClient* data = new ServerToClient();
+    //ball information
+    btTransform ballTrans;
+    ball->body->getMotionState()->getWorldTransform(ballTrans);
+
+    //target information 
+    float targPose[7];
+    targPose[0] = target->getNode().getPosition().x;
+    targPose[1] = target->getNode().getPosition().y;
+    targPose[2] = target->getNode().getPosition().z;
+    targPose[3] = target->getNode().getOrientation().w;
+    targPose[4] = target->getNode().getOrientation().x;
+    targPose[5] = target->getNode().getOrientation().y;
+    targPose[6] = target->getNode().getOrientation().z;
+
+    //paddle information
+    float padPose[7];
+    padPose[0] = paddle->getNode().getPosition().x;
+    padPose[1] = paddle->getNode().getPosition().y;
+    padPose[2] = paddle->getNode().getPosition().z;
+    padPose[3] = paddle->getNode().getOrientation().w;
+    padPose[4] = paddle->getNode().getOrientation().x;
+    padPose[5] = paddle->getNode().getOrientation().y;
+    padPose[6] = paddle->getNode().getOrientation().z;
+
+    //sound information
+    int sound = simulator->soundPlayed;
+
+    //score information?
+    int score = target->wall;
+
+    data->setSound(sound);
+    data->setScore(score);
+    data->setBall(ballTrans);
+    data->setTarget(targPose);
+    data->setPaddle(padPose);
+
+    return data;
 }
 
 bool Assignment3::keyPressed(const OIS::KeyEvent &arg)
@@ -357,14 +434,6 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
 	return true;
 }
 
-/*  static Server server(port);
-    btTransform trans;
-    static bool init = false;
-    if(!init){
-        server.awaitConnections();
-        init = true;
-    } */
-
 bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 {
 	isClient = true;
@@ -373,6 +442,7 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 	cPort = atoi(CEGUIStringToString(cClientPort->getText()));
 	sip = CEGUIStringToString(serverIP->getText());
     client = new Client(sip, sPort);
+    simulator = new Simulator();
 	// Create a scene
     ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");

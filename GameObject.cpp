@@ -90,6 +90,10 @@ void GameObject::rotate(Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Node::Tr
 	//rootNode->roll(Ogre::Degree(z), val_z);
 }
 
+/*void GameObject::rotateQuat(Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Real w){
+
+}*/
+
 Ogre::SceneNode& GameObject::getNode(){
 	return *(this->rootNode);
 }
