@@ -4,7 +4,7 @@ Robby Nevels
 Steven Wilken
 
 To Run
-1. execute ./makeit and then run ./assignment3
+1. execute ./buildit and then run ./assignment3
 2. If starting the server: enter the IP address and port of the client, as well as the port to listen to data incoming from the client, then hit the “Server” button
 3. Likewise, if starting the client: enter the IP address and port of the server, as well as the port to listen to data incoming from the server, then hit the “Client” button
 
