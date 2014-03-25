@@ -352,6 +352,14 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
 	return true;
 }
 
+/*  static Server server(port);
+    btTransform trans;
+    static bool init = false;
+    if(!init){
+        server.awaitConnections();
+        init = true;
+    } */
+
 bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 {
 	isClient = true;
@@ -446,7 +454,6 @@ extern "C" {
     {
         // Create application object
         Assignment3 app;
-
         try {
             app.go();
         } catch( Ogre::Exception& e ) {
