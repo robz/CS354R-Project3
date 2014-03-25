@@ -187,49 +187,49 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
 
 	if (gameplay) {
-        if (isClient) {
-            if(mKeyboard->isKeyDown(OIS::KC_Z) && z_time == 0.0){
-                paddle->rotate(180, 0.0, 0.0);
-                z_time += evt.timeSinceLastFrame;
+        Surface* paddle = (isClient) ? clientPaddle : serverPaddle;
+        
+        if(mKeyboard->isKeyDown(OIS::KC_Z) && z_time == 0.0){
+            paddle->rotate(180, 0.0, 0.0);
+            z_time += evt.timeSinceLastFrame;
+        }
+        if(z_time > 0.0 && z_time < 1.0)
+            z_time += evt.timeSinceLastFrame;
+        else
+            z_time = 0.0;
+        if(mKeyboard->isKeyDown(OIS::KC_LSHIFT)){
+            if(mKeyboard->isKeyDown(OIS::KC_W)){
+                paddle->move(0.0, PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
             }
-            if(z_time > 0.0 && z_time < 1.0)
-                z_time += evt.timeSinceLastFrame;
-            else
-                z_time = 0.0;
-            if(mKeyboard->isKeyDown(OIS::KC_LSHIFT)){
-                if(mKeyboard->isKeyDown(OIS::KC_W)){
-                    paddle->move(0.0, PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
-                }
-                if (mKeyboard->isKeyDown(OIS::KC_S)){
-                    paddle->move(0.0, -PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
-                }
+            if (mKeyboard->isKeyDown(OIS::KC_S)){
+                paddle->move(0.0, -PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
             }
-            else{
-                if(mKeyboard->isKeyDown(OIS::KC_W)){
-                    paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastFrame);
-                }
-                if (mKeyboard->isKeyDown(OIS::KC_S)){
-                    paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastFrame);
-                }
+        }
+        else{
+            if(mKeyboard->isKeyDown(OIS::KC_W)){
+                paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastFrame);
             }
-            if (mKeyboard->isKeyDown(OIS::KC_A)){
-                paddle->move(-PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
+            if (mKeyboard->isKeyDown(OIS::KC_S)){
+                paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastFrame);
             }
-            if (mKeyboard->isKeyDown(OIS::KC_D)){
-                paddle->move(PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
-            }
-            if (mKeyboard->isKeyDown(OIS::KC_Q)){
-                paddle->rotate(0.0, 0.0, PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
-            }
-            if (mKeyboard->isKeyDown(OIS::KC_E)){
-                paddle->rotate(0.0, 0.0, -PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
-            }
-            
-            Ogre::Real xMove = mMouse->getMouseState().X.rel;
-            Ogre::Real yMove = mMouse->getMouseState().Y.rel;
-            paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
-            paddle->updateTransform();
-        }        
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_A)){
+            paddle->move(-PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_D)){
+            paddle->move(PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_Q)){
+            paddle->rotate(0.0, 0.0, PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_E)){
+            paddle->rotate(0.0, 0.0, -PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
+        }
+        
+        Ogre::Real xMove = mMouse->getMouseState().X.rel;
+        Ogre::Real yMove = mMouse->getMouseState().Y.rel;
+        paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
+        paddle->updateTransform();
 
         // get a packet from the server, then set the ball's position
         if (isClient) {
@@ -238,9 +238,9 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             // get the state of the ball from the server
             if (netEnt->recMsg(reinterpret_cast<char*>(&trans))) {
                 std::cout << "y: " << trans.getOrigin().getY() << std::endl;
-                ball->getNode().resetToInitialState();
-                ball->getNode().scale(0.01f, 0.01f, 0.01f);
-                ball->move(
+                clientBall->getNode().resetToInitialState();
+                clientBall->getNode().scale(0.01f, 0.01f, 0.01f);
+                clientBall->move(
                     trans.getOrigin().getX(),
                     trans.getOrigin().getY(),
                     trans.getOrigin().getZ()
@@ -249,13 +249,13 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     
             // send the state of the paddle to the server
             float pose[7];
-            pose[0] = paddle->getNode().getPosition().x;
-            pose[1] = paddle->getNode().getPosition().y;
-            pose[2] = paddle->getNode().getPosition().z;
-            pose[3] = paddle->getNode().getOrientation().w;
-            pose[4] = paddle->getNode().getOrientation().x;
-            pose[5] = paddle->getNode().getOrientation().y;
-            pose[6] = paddle->getNode().getOrientation().z;
+            pose[0] = clientPaddle->getNode().getPosition().x;
+            pose[1] = clientPaddle->getNode().getPosition().y;
+            pose[2] = clientPaddle->getNode().getPosition().z;
+            pose[3] = clientPaddle->getNode().getOrientation().w;
+            pose[4] = clientPaddle->getNode().getOrientation().x;
+            pose[5] = clientPaddle->getNode().getOrientation().y;
+            pose[6] = clientPaddle->getNode().getOrientation().z;
             netEnt->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
         } else {
             btTransform trans;
@@ -264,15 +264,15 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
         
             // send the state of the ball to the client
-            ball->body->getMotionState()->getWorldTransform(trans);
+            clientBall->body->getMotionState()->getWorldTransform(trans);
             netEnt->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
         
             // get the state of the paddle from the client
             float pose[7];
             if (netEnt->recMsg(reinterpret_cast<char*>(pose))) {
-                paddle->getNode().setPosition(pose[0], pose[1], pose[2]);
-                paddle->getNode().setOrientation(pose[3], pose[4], pose[5], pose[6]);
-                paddle->updateTransform();
+                clientPaddle->getNode().setPosition(pose[0], pose[1], pose[2]);
+                clientPaddle->getNode().setOrientation(pose[3], pose[4], pose[5], pose[6]);
+                clientPaddle->updateTransform();
             }
         }
 
@@ -374,17 +374,20 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 	sip = CEGUIStringToString(serverIP->getText());
 	netEnt = new UDPNetEnt(sip, sPort, cPort);
 	// Create a scene
-    ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
-    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
-    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50, ball->body);
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
     target->setPose(startingFace, 0, 0);
+
+    clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
+    clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    
     //Setup player camera
-    (&(paddle->getNode()))->createChildSceneNode("camNode");
+    (&(clientPaddle->getNode()))->createChildSceneNode("camNode");
     mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
 	destroyMenu();
 	gameplay = true;
-	return true;
+	
+    return true;
 }
 
 bool Assignment3::serverStart(const CEGUI::EventArgs &e)
@@ -396,22 +399,35 @@ bool Assignment3::serverStart(const CEGUI::EventArgs &e)
 	cip = CEGUIStringToString(clientIP->getText());
 	netEnt = new UDPNetEnt(cip, sPort, cPort);
 	simulator = new Simulator();
-  // Create a scene
-    ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
+  
+    // Create a scene
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
-    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
-    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50, ball->body);
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
     target->setPose(startingFace, 0, 0);
+    
+    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Examples/RustySteel");
+    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    
+    clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
+    clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 40, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    
     //Setup player camera
-    (&(paddle->getNode()))->createChildSceneNode("camNode");
+    (&(serverPaddle->getNode()))->createChildSceneNode("camNode");
     mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
-	ball->addToSimulator();
+	
 	box->addToSimulator();
-	paddle->addToSimulator();
-	paddle->setKinematic();
 	target->addToSimulator();
 	target->setKinematic();
-	destroyMenu();
+	
+    clientBall->addToSimulator();
+	clientPaddle->addToSimulator();
+	clientPaddle->setKinematic();
+    
+    serverBall->addToSimulator();
+	serverPaddle->addToSimulator();
+	serverPaddle->setKinematic();
+    
+    destroyMenu();
 	gameplay = true;
 	return true;
 }

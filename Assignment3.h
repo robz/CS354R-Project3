@@ -44,11 +44,14 @@ protected:
 	CEGUI::Editbox *clientIP;
 	CEGUI::Editbox *sServerPort;
 	CEGUI::Editbox *sClientPort;
+
     Simulator* simulator;
-    Ball* ball;
     Box* box;
-    Surface* paddle;
     Target* target;
+    Ball* serverBall;
+    Surface* serverPaddle;
+    Ball* clientBall;
+    Surface* clientPaddle;
     
     UDPNetEnt* netEnt;
     bool isClient;

@@ -37,6 +37,10 @@ class GameObject {
 		void setKinematic();
 
         virtual void update() {}
+
+    protected:
+        bool isPaddle(Ogre::String& name);
+        bool isBall(Ogre::String& name);
 }; 
 
 #endif
