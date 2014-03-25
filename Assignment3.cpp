@@ -237,7 +237,6 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             
             // get the state of the ball from the server
             if (netEnt->recMsg(reinterpret_cast<char*>(&trans))) {
-                std::cout << "y: " << trans.getOrigin().getY() << std::endl;
                 clientBall->getNode().resetToInitialState();
                 clientBall->getNode().scale(0.01f, 0.01f, 0.01f);
                 clientBall->move(
