@@ -231,7 +231,7 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             btTransform trans;
             
             // get the state of the ball from the server
-            if (netEnt->recMsg(reinterpret_cast<char*>(&trans))) {
+            if (client->ent->recMsg(reinterpret_cast<char*>(&trans))) {
                 std::cout << "y: " << trans.getOrigin().getY() << std::endl;
                 ball->getNode().resetToInitialState();
                 ball->getNode().scale(0.01f, 0.01f, 0.01f);
@@ -251,20 +251,20 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             pose[4] = paddle->getNode().getOrientation().x;
             pose[5] = paddle->getNode().getOrientation().y;
             pose[6] = paddle->getNode().getOrientation().z;
-            netEnt->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
+            client->ent->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
         } else {
             btTransform trans;
-            
+            server->awaitConnections();
             // step the server's simulator
             simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
         
             // send the state of the ball to the client
             ball->body->getMotionState()->getWorldTransform(trans);
-            netEnt->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
+            server->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
         
             // get the state of the paddle from the client
             float pose[7];
-            if (netEnt->recMsg(reinterpret_cast<char*>(pose))) {
+            if (server->recMsg(reinterpret_cast<char*>(pose))) {
                 paddle->getNode().setPosition(pose[0], pose[1], pose[2]);
                 paddle->getNode().setOrientation(pose[3], pose[4], pose[5], pose[6]);
                 paddle->updateTransform();
@@ -367,7 +367,8 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 	sPort = atoi(CEGUIStringToString(cServerPort->getText()));
 	cPort = atoi(CEGUIStringToString(cClientPort->getText()));
 	sip = CEGUIStringToString(serverIP->getText());
-	netEnt = new UDPNetEnt(sip, sPort, cPort);
+    client = new Client(sip, sPort);
+	//netEnt = new UDPNetEnt(sip, sPort, cPort);
 	// Create a scene
     ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
@@ -389,7 +390,8 @@ bool Assignment3::serverStart(const CEGUI::EventArgs &e)
 	sPort = atoi(CEGUIStringToString(sServerPort->getText()));
 	cPort = atoi(CEGUIStringToString(sClientPort->getText()));
 	cip = CEGUIStringToString(clientIP->getText());
-	netEnt = new UDPNetEnt(cip, sPort, cPort);
+	//netEnt = new UDPNetEnt(cip, sPort, cPort);
+    server = new Server(sPort);
 	simulator = new Simulator();
   // Create a scene
     ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
@@ -408,6 +410,7 @@ bool Assignment3::serverStart(const CEGUI::EventArgs &e)
 	target->setKinematic();
 	destroyMenu();
 	gameplay = true;
+    printf("Server starting up...\n");
 	return true;
 }
 

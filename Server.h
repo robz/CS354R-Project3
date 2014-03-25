@@ -16,12 +16,15 @@ class Server {
 protected:
     TCPsocket TCPsd, TCPcsd;
     IPaddress srvadd, *remoteIP;
+    bool connect;
 
 public:
     UDPNetEnt* ent;
     Server(int serverPort);
     ~Server();
     void awaitConnections();
+    void sendMsg(char *data, int len);
+    bool recMsg(char* data);
 };
 
 Server::Server(int serverPort) {
@@ -48,6 +51,7 @@ Server::Server(int serverPort) {
         fprintf(stderr, "SDLNet_TCP_Open: %s\n", SDLNet_GetError());
         exit(EXIT_FAILURE);
     }
+    connect = false;
 }
 
 Server::~Server() {
@@ -56,9 +60,10 @@ Server::~Server() {
 }
 
 void Server::awaitConnections(){
-    bool connect = false;
-    while(!connect){
+    if(!connect){
+        printf("Awaiting connection...\n");
         if(TCPcsd = SDLNet_TCP_Accept(TCPsd)){
+            printf("Success\n");
             /*can now communicate with client using csd socket*/
 
             /* Get the remote address */
@@ -66,15 +71,26 @@ void Server::awaitConnections(){
                 /* Print the address, converting in the host format */
                 printf("Host connected: %x %d\n", SDLNet_Read32(&remoteIP->host), SDLNet_Read16(&remoteIP->port));
                 connect = true;
+                /* Resolve server name  */
+                /* hacky way to get IPaddress */
+                Uint8* addr = (Uint8*) &remoteIP->host;
+                char clientAddr[100];
+                sprintf(clientAddr, "%d.%d.%d.%d", addr[0], addr[1], addr[2], addr[3]);
+                ent = new UDPNetEnt(clientAddr, 49153, 32100);
             }
             else
                 fprintf(stderr, "SDLNet_TCP_GetPeerAddress: %s\n", SDLNet_GetError());
         }
-        /* Resolve server name  */
-        /* hacky way to get IPaddress */
-        Uint8* addr = (Uint8*) &remoteIP->host;
-        char clientAddr[100];
-        sprintf(clientAddr, "%d.%d.%d.%d", addr[0], addr[1], addr[2], addr[3]);
-        ent = new UDPNetEnt(clientAddr, 49153, 32100);
     }
+}
+
+void Server::sendMsg(char *data, int len){
+    if(connect)
+        ent->sendMsg(data, len);
+}
+
+bool Server::recMsg(char* data){
+    if(connect)
+        return ent->recMsg(data);
+    return false;
 }

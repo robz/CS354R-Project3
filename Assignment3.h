@@ -25,7 +25,9 @@ This source file is part of the
 #include "Simulator.h"
 #include "Surface.h"
 #include "Wall.h"
-#include "Target.h" 
+#include "Target.h"
+#include "Client.h"
+#include "Server.h" 
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
 
@@ -50,7 +52,8 @@ protected:
     Surface* paddle;
     Target* target;
     
-    UDPNetEnt* netEnt;
+    Server* server;
+    Client* client;
     bool isClient;
 
     // OIS::KeyListener
