@@ -236,7 +236,7 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             btTransform trans;
             
             // get the state of the ball from the server
-            if (client->ent->recMsg(reinterpret_cast<char*>(&trans))) {
+            if (client->recMsg(reinterpret_cast<char*>(&trans))) {
                 std::cout << "y: " << trans.getOrigin().getY() << std::endl;
                 ball->getNode().resetToInitialState();
                 ball->getNode().scale(0.01f, 0.01f, 0.01f);
@@ -256,7 +256,7 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             pose[4] = paddle->getNode().getOrientation().x;
             pose[5] = paddle->getNode().getOrientation().y;
             pose[6] = paddle->getNode().getOrientation().z;
-            client->ent->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
+            client->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
         } else {
             btTransform trans;
             server->awaitConnections();
@@ -373,7 +373,6 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 	cPort = atoi(CEGUIStringToString(cClientPort->getText()));
 	sip = CEGUIStringToString(serverIP->getText());
     client = new Client(sip, sPort);
-	//netEnt = new UDPNetEnt(sip, sPort, cPort);
 	// Create a scene
     ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
@@ -395,10 +394,9 @@ bool Assignment3::serverStart(const CEGUI::EventArgs &e)
 	sPort = atoi(CEGUIStringToString(sServerPort->getText()));
 	cPort = atoi(CEGUIStringToString(sClientPort->getText()));
 	cip = CEGUIStringToString(clientIP->getText());
-	//netEnt = new UDPNetEnt(cip, sPort, cPort);
     server = new Server(sPort);
 	simulator = new Simulator();
-  // Create a scene
+    // Create a scene
     ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
     paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");

@@ -9,6 +9,8 @@ public:
     UDPNetEnt* ent;
     Client(char* ipAddr, int port);
     ~Client();
+    bool Client::recMsg(char* data);
+    void UDPNetEnt::sendMsg(char *data, int len)
 };
 
 Client::Client(char* ipAddr, int port) {
@@ -42,4 +44,12 @@ Client::Client(char* ipAddr, int port) {
 Client::~Client() {
     SDLNet_Quit();
     delete ent;
+}
+
+bool Client::recMsg(char* data){
+    return ent->recMsg(data);
+}
+
+void UDPNetEnt::sendMsg(char *data, int len){
+    ent->sendMsg(data, len);
 }
