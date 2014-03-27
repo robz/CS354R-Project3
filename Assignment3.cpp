@@ -30,6 +30,7 @@ Assignment3::~Assignment3(void)
 
 int startingFace = 0;
 bool gameplay = false;
+bool singleplayer = false;
 int cPort = 49152;
 int sPort = 49152;
 char* sip;
@@ -300,35 +301,40 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             pose[6] = clientPaddle->getNode().getOrientation().z;
             client->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
         } else {
-            //btTransform trans; 
-            server->awaitConnections();
-            // step the server's simulator
-            simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
-        
-            // send the state of the ball to the client
-            //ball->body->getMotionState()->getWorldTransform(trans);
-            //server->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
-            // send the state of the target to the client
-            ServerToClient* data = initServerToClient();
-            server->sendMsg(reinterpret_cast<char*>(data), sizeof(ServerToClient));
-            delete data;
-        
-            // get the state of the paddle from the client
-            float pose[7];
-            if (server->recMsg(reinterpret_cast<char*>(pose))) {
-                clientPaddle->getNode().setPosition(pose[0], pose[1], pose[2]);
-                clientPaddle->getNode().setOrientation(pose[3], pose[4], pose[5], pose[6]);
-                clientPaddle->updateTransform();
+            if(!singleplayer){
+                //btTransform trans; 
+                server->awaitConnections();
+                // step the server's simulator
+                simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
+                // send the state of the ball to the client
+                //ball->body->getMotionState()->getWorldTransform(trans);
+                //server->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
+                // send the state of the target to the client
+                ServerToClient* data = initServerToClient();
+                server->sendMsg(reinterpret_cast<char*>(data), sizeof(ServerToClient));
+                delete data;
+            
+                // get the state of the paddle from the client
+                float pose[7];
+                if (server->recMsg(reinterpret_cast<char*>(pose))) {
+                    clientPaddle->getNode().setPosition(pose[0], pose[1], pose[2]);
+                    clientPaddle->getNode().setOrientation(pose[3], pose[4], pose[5], pose[6]);
+                    clientPaddle->updateTransform();
+                }
             }
+            else
+                simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
         }
 
         if(!isClient){
             std::ostringstream stream;
             stream << "score: " << serverBall->getScore();
             p1score->setText(stream.str());
-            stream.str("");
-            stream << "score: " << clientBall->getScore();
-            p2score->setText(stream.str());
+            if(!singleplayer){
+                stream.str("");
+                stream << "score: " << clientBall->getScore();
+                p2score->setText(stream.str());
+            }
         }
     }
     
@@ -450,11 +456,36 @@ bool Assignment3::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 
 bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
 {
-    gameplay = true;
+    isClient = false;
+    singleplayer = true;
 	CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
 	wmgr.destroyWindow(p2score);
-	destroyMenu();
-	return true;
+
+    simulator = new Simulator();
+  
+    // Create a scene
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
+    target->setPose(startingFace, 0, 0);
+    
+    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Examples/RustySteel");
+    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    
+    //Setup player camera
+    (&(serverPaddle->getNode()))->createChildSceneNode("camNode");
+    mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
+    
+    box->addToSimulator();
+    target->addToSimulator();
+    target->setKinematic();
+    
+    serverBall->addToSimulator();
+    serverPaddle->addToSimulator();
+    serverPaddle->setKinematic();
+    
+    destroyMenu();
+    gameplay = true;
+    return true;
 }
 
 bool Assignment3::clientStart(const CEGUI::EventArgs &e)
