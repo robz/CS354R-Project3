@@ -9,7 +9,7 @@ class ServerToClient{
 		btTransform serverBallTrans;
 		float targPose[7];
 		float padPose[7];
-		int score;
+		int score[2];
 		int sound;
 	public:
 		ServerToClient();
@@ -19,13 +19,13 @@ class ServerToClient{
 		void setServerBall(btTransform&);
 		void setTarget(float*);
 		void setPaddle(float*);
-		void setScore(int&);
+		void setScore(int*);
 		
         btTransform& getClientBall();
 		btTransform& getServerBall();
 		float* getTarget();
 		float* getServerPaddle();
-		int& getScore();
+		int* getScore();
 		int& getSound();
 };
 
@@ -56,8 +56,9 @@ void ServerToClient::setPaddle(float* pose){
     }
 }
 
-void ServerToClient::setScore(int& n){
-    score = n;
+void ServerToClient::setScore(int* n){
+    score[0] = n[0];
+    score[1] = n[1];
 }
 
 btTransform& ServerToClient::getClientBall(){
@@ -76,7 +77,7 @@ float* ServerToClient::getServerPaddle(){
     return padPose;
 }
 
-int& ServerToClient::getScore(){
+int* ServerToClient::getScore(){
     return score;
 }
 

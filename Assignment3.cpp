@@ -280,10 +280,13 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                     simulator->soundSystem->playRaquetHit();
 
                 //update score
-                int score = servData.getScore();
+                int* score = servData.getScore();
                 std::ostringstream stream;
-                stream << "score: " << score;
+                stream << "score: " << score[0];
                 p1score->setText(stream.str());
+                stream.str("");
+                stream << "score: " << score[1];
+                p2score->setText(stream.str());
             }
     
             // send the state of our paddle to the server
@@ -321,8 +324,11 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
         if(!isClient){
             std::ostringstream stream;
-            stream << "score: " << target->wall;
+            stream << "score: " << serverBall->getScore();
             p1score->setText(stream.str());
+            stream.str("");
+            stream << "score: " << clientBall->getScore();
+            p2score->setText(stream.str());
         }
     }
     
@@ -363,8 +369,10 @@ ServerToClient* Assignment3::initServerToClient(){
     //sound information
     int sound = simulator->soundPlayed;
 
-    //score information?
-    int score = target->wall;
+    //score information
+    int score[2];
+    score[0] = serverBall->getScore();
+    score[1] = clientBall->getScore();
 
     data->setSound(sound);
     data->setScore(score);

@@ -7,6 +7,7 @@
 class Ball : public GameObject {
 protected:
     bool hitFlag;
+    int score;
 
 public:
     Ball(
@@ -22,6 +23,7 @@ public:
         );
 
     virtual void update();
+    int& getScore();
 };
 
 #endif

@@ -41,6 +41,7 @@ Ball::Ball(
     shape = new btSphereShape(radius);
     mass = m;
     hitFlag = false;
+    score = 0;
 }
 
 void Ball::update() {
@@ -52,7 +53,7 @@ void Ball::update() {
                 simulator->soundSystem->playTargetHit();
                 simulator->soundPlayed = BALLTARGET;
             }
-
+            score++;
             Target* target = static_cast<Target*>(callback->ctxt.theObject);
             target->movePlacement();
         }
@@ -75,4 +76,8 @@ void Ball::update() {
             }
         }
     }
+}
+
+int& Ball::getScore(){
+    return score;
 }
