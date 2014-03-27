@@ -32,6 +32,8 @@ class GUI
 		bool makeServer(const CEGUI::EventArgs &e);
 		void destroyMenu(bool);
 		char* CEGUIStringToString(CEGUI::String cestr); 
+		void setSinglePlayerScore(int score);
+		void setMultiplayerScores(int player1, int player2);
 };
 
 #endif

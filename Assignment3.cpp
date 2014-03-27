@@ -30,7 +30,7 @@ Assignment3::~Assignment3(void)
 
 int startingFace = 0;
 bool gameplay = false;
-bool singleplayer = false;
+bool isSinglePlayer = false;
 int sPort = 49152;
 char* sip;
 enum sounds{NOSOUND, BALLTARGET, BALLWALL, BALLPADDLE};
@@ -274,14 +274,7 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
                 //update score
                 int* score = servData.getScore();
-                /*
-				std::ostringstream stream;
-                stream << "score: " << score[0];
-                p1score->setText(stream.str());
-                stream.str("");
-                stream << "score: " << score[1];
-                p2score->setText(stream.str());
-            	*/
+                gui->setMultiplayerScores(score[0], score[1]);
 			}
     
             // send the state of our paddle to the server
@@ -295,7 +288,7 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             pose[6] = clientPaddle->getNode().getOrientation().z;
             client->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
         } else {
-            if(!singleplayer){
+            if(!isSinglePlayer){
                 //btTransform trans; 
                 server->awaitConnections();
                 // step the server's simulator
@@ -320,18 +313,13 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                 simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
         }
 
-        /*
 		if(!isClient){
-            std::ostringstream stream;
-            stream << "score: " << serverBall->getScore();
-            p1score->setText(stream.str());
-            if(!singleplayer){
-                stream.str("");
-                stream << "score: " << clientBall->getScore();
-                p2score->setText(stream.str());
-            }
+    		if (isSinglePlayer) {
+				gui->setSinglePlayerScore(serverBall->getScore());
+			} else {
+				gui->setMultiplayerScores(serverBall->getScore(), clientBall->getScore());
+			}
         }
-    	*/
 	}
     
     return true;
@@ -453,7 +441,7 @@ bool Assignment3::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
 {
     isClient = false;
-    singleplayer = true;
+    isSinglePlayer = true;
 	//CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
 	//wmgr.destroyWindow(p2score);
 

@@ -125,3 +125,19 @@ char* GUI::CEGUIStringToString(CEGUI::String cestr)
 	newstr[cestr.size()] = 0;
 	return newstr;
 }
+
+void GUI::setSinglePlayerScore(int score) {
+	std::ostringstream stream;
+	stream << "score: " << score;
+	p1score->setText(stream.str());
+}
+
+void GUI::setMultiplayerScores(int player1, int player2) {
+	std::ostringstream stream;
+	stream << "server score: " << player1;
+	p1score->setText(stream.str());
+	stream.str("");
+	stream << "client score: " << player2;
+	p2score->setText(stream.str());
+}
+
