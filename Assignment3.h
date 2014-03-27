@@ -37,25 +37,6 @@ class Assignment3 : public BaseApplication
 {
 protected:
 	GUI* gui;
-/*
-    CEGUI::OgreRenderer* mRenderer;
-    CEGUI::Window *p1score;
-	CEGUI::Window *p2score;
-	CEGUI::Window *singlebtn;
-	CEGUI::Window *clientbtn;
-	CEGUI::Window *serverbtn;
-	CEGUI::Editbox *serverIP;
-<<<<<<< HEAD
-	CEGUI::Editbox *serverPort;
-=======
-	CEGUI::Editbox *cServerPort;
-	CEGUI::Editbox *cClientPort;
-	CEGUI::Editbox *clientIP;
-	CEGUI::Editbox *sServerPort;
-	CEGUI::Editbox *sClientPort;
-
->>>>>>> d0da45cc17ea19c559425bb24c7c71f5a20a5645
-*/
     Simulator* simulator;
     Box* box;
     Target* target;
@@ -78,7 +59,6 @@ protected:
     virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
     virtual void createScene(void);
-	virtual void createFrameListener(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
  
 	CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID);

@@ -40,120 +40,14 @@ void Assignment3::createScene(void)
 	CEGUI::Event::Subscriber* spSub = new CEGUI::Event::Subscriber(&Assignment3::singlePlayer, this);
 	CEGUI::Event::Subscriber* clientSub = new CEGUI::Event::Subscriber(&Assignment3::clientStart, this);
 	CEGUI::Event::Subscriber* serverSub = new CEGUI::Event::Subscriber(&Assignment3::serverStart, this);
-	//c = &Assignment3::clientStart();
 	gui = new GUI(spSub, clientSub, serverSub);
-	//CEGUI::Event::Subscriber* s = new CEGUI::Event::Subscriber(&Assignment3::singlePlayer, this);
-	//gui->spBTN->subscribeEvent(CEGUI::PushButton::EventClicked, s);
-//	gui->clientBTN->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Assignment3::clientStart, this));
-//	gui->serverBTN->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Assignment3::serverStart, this));
-
-/*
-	// Initialize CEGUI
-    mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
-	// Set CEGUI resource groups
-    CEGUI::Imageset::setDefaultResourceGroup("Imagesets");
-    CEGUI::Font::setDefaultResourceGroup("Fonts");
-    CEGUI::Scheme::setDefaultResourceGroup("Schemes");
-    CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
-    CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
-	//Set the CEGUI skin
-    CEGUI::SchemeManager::getSingleton().create("TaharezLook.scheme");
-	CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
-
-	// create window manager and sheet
-    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-    CEGUI::Window *menuSheet = wmgr.createWindow("DefaultWindow", "GUI/Sheet");
-
-	// create buttons
-    p1score = wmgr.createWindow("TaharezLook/Button", "UI/Score1");
-	p2score = wmgr.createWindow("TaharezLook/Button", "UI/Score2");
-	singlebtn = wmgr.createWindow("TaharezLook/Button", "Menu/SingleButton");
-	clientbtn = wmgr.createWindow("TaharezLook/Button", "Menu/ClientButton");
-	serverbtn = wmgr.createWindow("TaharezLook/Button", "Menu/SeverButton");
-
-	// set buttons sizes and locations
-	singlebtn->setText("SINGLE PLAYER");
-	singlebtn->setSize(CEGUI::UVector2(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.05, 0)));
-	singlebtn->setPosition(CEGUI::UVector2(CEGUI::UDim(0.4,0), CEGUI::UDim(0.3, 0)));
-	clientbtn->setText("CLIENT");
-	clientbtn->setSize(CEGUI::UVector2(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.05, 0)));
-	clientbtn->setPosition(CEGUI::UVector2(CEGUI::UDim(0.4,0), CEGUI::UDim(0.4, 0)));
-	serverbtn->setText("SERVER");
-	serverbtn->setSize(CEGUI::UVector2(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.05, 0)));
-	serverbtn->setPosition(CEGUI::UVector2(CEGUI::UDim(0.4,0), CEGUI::UDim(0.5, 0)));
-    p1score->setText("PLAYER 1");
-    p1score->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-	p2score->setText("PLAYER 2");
-	p2score->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
-	p2score->setPosition(CEGUI::UVector2(CEGUI::UDim(0.85,0), CEGUI::UDim(0, 0)));	
-
-    // find the hostname of this machine
-    char hostname[1024];
-    hostname[1023] = '\0';
-    gethostname(hostname, 1023);
-
-	// create text fields for IP addresses and ports
-	serverIP = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SIP"));
-	serverIP->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
-	serverIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.32,0), CEGUI::UDim(0.65,0)));
-	serverIP->setText(hostname);
-	
-	serverPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SPORT"));
-	serverPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
-	serverPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.52,0), CEGUI::UDim(0.65,0)));
-	serverPort->setText("55554");
-
-	// add buttons to sheet
-	menuSheet->addChildWindow(singlebtn);
-	menuSheet->addChildWindow(clientbtn);
-	menuSheet->addChildWindow(serverbtn);
-	menuSheet->addChildWindow(p1score);
-	menuSheet->addChildWindow(p2score);
-	menuSheet->addChildWindow(serverIP);
-	menuSheet->addChildWindow(serverPort);
-    CEGUI::System::getSingleton().setGUISheet(menuSheet);
-
-	// button events
-	singlebtn->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Assignment3::singlePlayer, this));
-	clientbtn->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Assignment3::clientStart, this));
-	serverbtn->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Assignment3::serverStart, this));
-*/
-    // Set the scene's ambient light
+	   
+	// Set the scene's ambient light
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
- 
   
-
     // Create a Light and set its position
     Ogre::Light* light = mSceneMgr->createLight("MainLight");
     light->setPosition(10.0f, 10.0f, 10.0f);
-}
-
-void Assignment3::createFrameListener(void) {
-	BaseApplication::createFrameListener();
-   /* Ogre::LogManager::getSingletonPtr()->logMessage("*** Initializing OIS ***");
-    OIS::ParamList pl;
-    size_t windowHnd = 0;
-    std::ostringstream windowHndStr;
-
-    mWindow->getCustomAttribute("WINDOW", &windowHnd);
-    windowHndStr << windowHnd;
-    pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
-
-    mInputManager = OIS::InputManager::createInputSystem( pl );
-
-    mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject( OIS::OISKeyboard, true ));
-    mMouse = static_cast<OIS::Mouse*>(mInputManager->createInputObject( OIS::OISMouse, true ));
-
-    mMouse->setEventCallback(this);
-    mKeyboard->setEventCallback(this);
-
-    //Set initial mouse clipping size
-    windowResized(mWindow);
-
-    //Register as a Window listener
-    Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
-
-    mRoot->addFrameListener(this);*/
 }
 
 float PADDLE_X_SPEED = 60.0f,
@@ -443,8 +337,6 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
 {
     isClient = false;
     isSinglePlayer = true;
-	//CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-	//wmgr.destroyWindow(p2score);
 
     simulator = new Simulator();
   
@@ -485,7 +377,7 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 
 		// Create a scene
 		box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
-		target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
+		target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 20);
 		target->setPose(startingFace, 0, 0);
 
 		serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Game/P1ball");
@@ -506,18 +398,14 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 bool Assignment3::serverStart(const CEGUI::EventArgs &e)
 {
 	isClient = false;
-	
-	//CEGUI::WindowManager &mgr = CEGUI::WindowManager::getSingleton();
-	//sPort = atoi(CEGUIStringToString(serverPort->getText()));
 	sPort = gui->getPort();
-	//netEnt = new UDPNetEnt(cip, sPort, cPort);
     server = new Server(sPort);
 	
     simulator = new Simulator();
   
     // Create a scene
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
-    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 20);
     target->setPose(startingFace, 0, 0);
     
     serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Game/P1ball");
