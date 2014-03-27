@@ -27,13 +27,15 @@ This source file is part of the
 #include "Wall.h"
 #include "Target.h"
 #include "Client.h"
-#include "Server.h" 
+#include "Server.h"
+#include "GUI.h"
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
 
 class Assignment3 : public BaseApplication
 {
 protected:
+	GUI* gui;
     CEGUI::OgreRenderer* mRenderer;
     CEGUI::Window *p1score;
 	CEGUI::Window *p2score;
@@ -41,11 +43,7 @@ protected:
 	CEGUI::Window *clientbtn;
 	CEGUI::Window *serverbtn;
 	CEGUI::Editbox *serverIP;
-	CEGUI::Editbox *cServerPort;
-	CEGUI::Editbox *cClientPort;
-	CEGUI::Editbox *clientIP;
-	CEGUI::Editbox *sServerPort;
-	CEGUI::Editbox *sClientPort;
+	CEGUI::Editbox *serverPort;
     Simulator* simulator;
     Ball* ball;
     Box* box;
