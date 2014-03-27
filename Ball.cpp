@@ -69,11 +69,11 @@ void Ball::update() {
                 simulator->soundPlayed = BALLWALL;
             }
         }
-        else {
-            //nothing was hit
-            if (simulator->soundOn) {
-                simulator->soundPlayed = NOSOUND;
-            }
+    }
+    else {
+        //nothing was hit
+        if (simulator->soundOn) {
+            simulator->soundPlayed = NOSOUND;
         }
     }
 }
