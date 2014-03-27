@@ -3,7 +3,6 @@
 #include "Ball.h"
 #include "Target.h"
 
-enum sounds{NOSOUND, BALLTARGET, BALLWALL, BALLPADDLE};
 
 Ball::Ball(
     Ogre::String nym, 
@@ -57,12 +56,18 @@ void Ball::update() {
             Target* target = static_cast<Target*>(callback->ctxt.theObject);
             target->movePlacement();
         }
-        else if (isPaddle(objName)) {
+        else if (objName == "clientpaddle") {
             if (simulator->soundOn) {
-                simulator->soundSystem->playRaquetHit();
-                simulator->soundPlayed = BALLPADDLE;
+                simulator->soundSystem->playP2Hit();
+                simulator->soundPlayed = CLIENTBALLPADDLE;
             }
-        }
+		}
+		else if (objName == "serverpaddle") {
+			if (simulator->soundOn) {
+				simulator->soundSystem->playRaquetHit();
+				simulator->soundPlayed = SERVERBALLPADDLE;
+        	}
+		}
         else if (isBox(objName)){
             if (simulator->soundOn) {
                 simulator->soundSystem->playWallHit();

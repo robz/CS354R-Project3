@@ -4,6 +4,7 @@
 #include "Simulator.h"
 #include <Ogre.h>
 
+enum sounds{NOSOUND, BALLTARGET, BALLWALL, SERVERBALLPADDLE, CLIENTBALLPADDLE};
 class Ball : public GameObject {
 protected:
     bool hitFlag;
@@ -14,11 +15,11 @@ public:
         Ogre::String nym, 
         Ogre::SceneManager* mgr, 
         Simulator* sim, 
-        float radius, 
-        float m, 
+        Ogre::Real radius, 
+        Ogre::Real m, 
         Ogre::Vector3 pos, 
-        float restitution, 
-        float friction,
+        Ogre::Real restitution, 
+        Ogre::Real friction,
         Ogre::String
         );
 

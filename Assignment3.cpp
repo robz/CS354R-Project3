@@ -33,7 +33,6 @@ bool gameplay = false;
 bool isSinglePlayer = false;
 int sPort = 49152;
 char* sip;
-enum sounds{NOSOUND, BALLTARGET, BALLWALL, BALLPADDLE};
 
 //-------------------------------------------------------------------------------------
 void Assignment3::createScene(void)
@@ -268,8 +267,10 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                         simulator->soundSystem->playWallHit();
                     else if(sound == BALLTARGET)
                         simulator->soundSystem->playTargetHit();
-                    else if(sound == BALLPADDLE)
-                        simulator->soundSystem->playRaquetHit();
+                    else if(sound == CLIENTBALLPADDLE)
+                        simulator->soundSystem->playP2Hit();
+					else if (sound == SERVERBALLPADDLE)
+						simulator->soundSystem->playRaquetHit();
                 }
 
                 //update score
@@ -448,12 +449,12 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
     simulator = new Simulator();
   
     // Create a scene
-    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
     target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 20);
     target->setPose(startingFace, 0, 0);
     
-    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Examples/RustySteel");
-    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Game/P1ball");
+    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P1paddle");
     
     //Setup player camera
     (&(serverPaddle->getNode()))->createChildSceneNode("camNode");
@@ -482,15 +483,15 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
     simulator = new Simulator();
 	
     // Create a scene
-    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
     target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
     target->setPose(startingFace, 0, 0);
     
-    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Examples/RustySteel");
-    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Game/P1ball");
+    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P1paddle");
 
-    clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
-    clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Game/P2ball");
+    clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P2paddle");
     
     //Setup player camera
     (&(clientPaddle->getNode()))->createChildSceneNode("camNode");
@@ -514,15 +515,15 @@ bool Assignment3::serverStart(const CEGUI::EventArgs &e)
     simulator = new Simulator();
   
     // Create a scene
-    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
     target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
     target->setPose(startingFace, 0, 0);
     
-    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Examples/RustySteel");
-    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Game/P1ball");
+    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P1paddle");
     
-    clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
-    clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 40, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Game/P2ball");
+    clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 40, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P2paddle");
     
     //Setup player camera
     (&(serverPaddle->getNode()))->createChildSceneNode("camNode");

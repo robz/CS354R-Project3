@@ -14,6 +14,7 @@ SoundSystem::SoundSystem()
     wallHit = Mix_LoadWAV("media/sound/wallHit.wav");
     raquetHit = Mix_LoadWAV("media/sound/raquetHit.wav");
     targetHit = Mix_LoadWAV("media/sound/targetHit.wav");
+	p2Hit = Mix_LoadWAV("media/sound/p2grunt.wav");
 }
 
 /* Play the sounds */
@@ -42,4 +43,9 @@ void SoundSystem::playRaquetHit(void)
 void SoundSystem::playTargetHit(void)
 {
     Mix_PlayChannel(-1, targetHit, 0);
+}
+
+void SoundSystem::playP2Hit(void)
+{
+	Mix_PlayChannel(-1, p2Hit, 0);
 }
