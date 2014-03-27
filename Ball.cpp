@@ -63,7 +63,7 @@ void Ball::update() {
                 simulator->soundPlayed = BALLPADDLE;
             }
         }
-        else if (objName == "mybox"){
+        else if (isBox(objName)){
             if (simulator->soundOn) {
                 simulator->soundSystem->playWallHit();
                 simulator->soundPlayed = BALLWALL;

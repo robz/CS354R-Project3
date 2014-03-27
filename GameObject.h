@@ -41,6 +41,7 @@ class GameObject {
     protected:
         bool isPaddle(Ogre::String& name);
         bool isBall(Ogre::String& name);
+        bool isBox(Ogre::String& name);
 }; 
 
 #endif

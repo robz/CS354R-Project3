@@ -99,10 +99,14 @@ Ogre::SceneNode& GameObject::getNode(){
 }
 
 bool GameObject::isPaddle(Ogre::String& name) {
-    return name == "clientPaddle" || name == "serverPaddle";
+    return name == "clientpaddle" || name == "serverpaddle";
 }
 
 bool GameObject::isBall(Ogre::String& name) {
-    return name == "clientBall" || name == "serverBall";
+    return name == "clientball" || name == "serverball";
+}
+
+bool GameObject::isBox(Ogre::String& name) {
+	return name == "ceiling" || name == "WallPosXNode" || name == "WallNegXNode" || name == "WallPosZNode" || name == "WallNegZNode" || name == "floor";
 }
 
