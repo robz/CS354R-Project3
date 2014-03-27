@@ -479,27 +479,28 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 	sPort = gui->getPort();
 	sip = gui->getIP();
     client = new Client(sip, sPort);
-    
-    simulator = new Simulator();
-	
-    // Create a scene
-    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
-    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
-    target->setPose(startingFace, 0, 0);
-    
-    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Game/P1ball");
-    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P1paddle");
 
-    clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Game/P2ball");
-    clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P2paddle");
-    
-    //Setup player camera
-    (&(clientPaddle->getNode()))->createChildSceneNode("camNode");
-    mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
-	gui->destroyMenu(false);
-	gameplay = true;
-	
-    return true;
+	if (client->serverFound) {
+		simulator = new Simulator();
+
+		// Create a scene
+		box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
+		target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
+		target->setPose(startingFace, 0, 0);
+
+		serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Game/P1ball");
+		serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P1paddle");
+
+		clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Game/P2ball");
+		clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P2paddle");
+
+		//Setup player camera
+		(&(clientPaddle->getNode()))->createChildSceneNode("camNode");
+		mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
+		gui->destroyMenu(false);
+		gameplay = true;
+	}
+	return true;
 }
 
 bool Assignment3::serverStart(const CEGUI::EventArgs &e)
