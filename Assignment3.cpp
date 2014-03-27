@@ -33,7 +33,6 @@ bool gameplay = false;
 bool isSinglePlayer = false;
 int sPort = 49152;
 char* sip;
-enum sounds{NOSOUND, BALLTARGET, BALLWALL, BALLPADDLE};
 
 //-------------------------------------------------------------------------------------
 void Assignment3::createScene(void)
@@ -268,8 +267,10 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                         simulator->soundSystem->playWallHit();
                     else if(sound == BALLTARGET)
                         simulator->soundSystem->playTargetHit();
-                    else if(sound == BALLPADDLE)
-                        simulator->soundSystem->playRaquetHit();
+                    else if(sound == CLIENTBALLPADDLE)
+                        simulator->soundSystem->playP2Hit();
+					else if (sound == SERVERBALLPADDLE)
+						simulator->soundSystem->playRaquetHit();
                 }
 
                 //update score
