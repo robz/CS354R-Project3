@@ -98,3 +98,11 @@ Ogre::SceneNode& GameObject::getNode(){
 	return *(this->rootNode);
 }
 
+bool GameObject::isPaddle(Ogre::String& name) {
+    return name == "clientPaddle" || name == "serverPaddle";
+}
+
+bool GameObject::isBall(Ogre::String& name) {
+    return name == "clientBall" || name == "serverBall";
+}
+

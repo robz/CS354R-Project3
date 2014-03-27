@@ -56,7 +56,7 @@ void Ball::update() {
             Target* target = static_cast<Target*>(callback->ctxt.theObject);
             target->movePlacement();
         }
-        else if (objName == "mypaddle") {                
+        else if (isPaddle(objName)) {
             if (simulator->soundOn) {
                 simulator->soundSystem->playRaquetHit();
                 simulator->soundPlayed = BALLPADDLE;

@@ -42,8 +42,7 @@ Server::Server(int serverPort) {
     /* Resolve server name  */
     if (SDLNet_ResolveHost(&srvadd, NULL, serverPort) == -1)
     {
-        fprintf(stderr, "SDLNet_ResolveHost(%s %d): %s\n", 
-            NULL, 
+        fprintf(stderr, "SDLNet_ResolveHost(NULL %d): %s\n", 
             serverPort, 
             SDLNet_GetError());
         exit(EXIT_FAILURE);
