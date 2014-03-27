@@ -30,16 +30,24 @@ Assignment3::~Assignment3(void)
 
 int startingFace = 0;
 bool gameplay = false;
-bool singleplayer = false;
-int cPort = 49152;
+bool isSinglePlayer = false;
 int sPort = 49152;
 char* sip;
-char* cip;
-enum sounds{NOSOUND, BALLTARGET, BALLWALL, BALLPADDLE};
 
 //-------------------------------------------------------------------------------------
 void Assignment3::createScene(void)
 {
+	CEGUI::Event::Subscriber* spSub = new CEGUI::Event::Subscriber(&Assignment3::singlePlayer, this);
+	CEGUI::Event::Subscriber* clientSub = new CEGUI::Event::Subscriber(&Assignment3::clientStart, this);
+	CEGUI::Event::Subscriber* serverSub = new CEGUI::Event::Subscriber(&Assignment3::serverStart, this);
+	//c = &Assignment3::clientStart();
+	gui = new GUI(spSub, clientSub, serverSub);
+	//CEGUI::Event::Subscriber* s = new CEGUI::Event::Subscriber(&Assignment3::singlePlayer, this);
+	//gui->spBTN->subscribeEvent(CEGUI::PushButton::EventClicked, s);
+//	gui->clientBTN->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Assignment3::clientStart, this));
+//	gui->serverBTN->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Assignment3::serverStart, this));
+
+/*
 	// Initialize CEGUI
     mRenderer = &CEGUI::OgreRenderer::bootstrapSystem();
 	// Set CEGUI resource groups
@@ -72,7 +80,7 @@ void Assignment3::createScene(void)
 	clientbtn->setPosition(CEGUI::UVector2(CEGUI::UDim(0.4,0), CEGUI::UDim(0.4, 0)));
 	serverbtn->setText("SERVER");
 	serverbtn->setSize(CEGUI::UVector2(CEGUI::UDim(0.18, 0), CEGUI::UDim(0.05, 0)));
-	serverbtn->setPosition(CEGUI::UVector2(CEGUI::UDim(0.4,0), CEGUI::UDim(0.55, 0)));
+	serverbtn->setPosition(CEGUI::UVector2(CEGUI::UDim(0.4,0), CEGUI::UDim(0.5, 0)));
     p1score->setText("PLAYER 1");
     p1score->setSize(CEGUI::UVector2(CEGUI::UDim(0.15, 0), CEGUI::UDim(0.05, 0)));
 	p2score->setText("PLAYER 2");
@@ -87,28 +95,13 @@ void Assignment3::createScene(void)
 	// create text fields for IP addresses and ports
 	serverIP = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SIP"));
 	serverIP->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
-	serverIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.26,0), CEGUI::UDim(0.47,0)));
+	serverIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.32,0), CEGUI::UDim(0.65,0)));
 	serverIP->setText(hostname);
-    cServerPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","CSP"));
-	cServerPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
-	cServerPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.415,0), CEGUI::UDim(0.47,0)));
-	cServerPort->setText("49152");
-	cClientPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","CCP"));
-	cClientPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
-	cClientPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.57,0), CEGUI::UDim(0.47,0)));
-	cClientPort->setText("49152");
-	clientIP = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","CIP"));
-	clientIP->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
-	clientIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.26,0), CEGUI::UDim(0.62,0)));
-	clientIP->setText(hostname);
-	sServerPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SSP"));
-	sServerPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
-	sServerPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.415,0), CEGUI::UDim(0.62,0)));
-	sServerPort->setText("49152");
-	sClientPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SCP"));
-	sClientPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
-	sClientPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.57,0), CEGUI::UDim(0.62,0)));
-	sClientPort->setText("49152");
+	
+	serverPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SPORT"));
+	serverPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
+	serverPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.52,0), CEGUI::UDim(0.65,0)));
+	serverPort->setText("55554");
 
 	// add buttons to sheet
 	menuSheet->addChildWindow(singlebtn);
@@ -117,18 +110,14 @@ void Assignment3::createScene(void)
 	menuSheet->addChildWindow(p1score);
 	menuSheet->addChildWindow(p2score);
 	menuSheet->addChildWindow(serverIP);
-	menuSheet->addChildWindow(cServerPort);
-	menuSheet->addChildWindow(cClientPort);
-	menuSheet->addChildWindow(clientIP);
-	menuSheet->addChildWindow(sServerPort);
-	menuSheet->addChildWindow(sClientPort);
+	menuSheet->addChildWindow(serverPort);
     CEGUI::System::getSingleton().setGUISheet(menuSheet);
 
 	// button events
 	singlebtn->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Assignment3::singlePlayer, this));
 	clientbtn->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Assignment3::clientStart, this));
 	serverbtn->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&Assignment3::serverStart, this));
-
+*/
     // Set the scene's ambient light
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
  
@@ -278,19 +267,16 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                         simulator->soundSystem->playWallHit();
                     else if(sound == BALLTARGET)
                         simulator->soundSystem->playTargetHit();
-                    else if(sound == BALLPADDLE)
-                        simulator->soundSystem->playRaquetHit();
+                    else if(sound == CLIENTBALLPADDLE)
+                        simulator->soundSystem->playP2Hit();
+					else if (sound == SERVERBALLPADDLE)
+						simulator->soundSystem->playRaquetHit();
                 }
 
                 //update score
                 int* score = servData.getScore();
-                std::ostringstream stream;
-                stream << "score: " << score[0];
-                p1score->setText(stream.str());
-                stream.str("");
-                stream << "score: " << score[1];
-                p2score->setText(stream.str());
-            }
+                gui->setMultiplayerScores(score[0], score[1]);
+			}
     
             // send the state of our paddle to the server
             float pose[7];
@@ -303,7 +289,7 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             pose[6] = clientPaddle->getNode().getOrientation().z;
             client->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
         } else {
-            if(!singleplayer){
+            if(!isSinglePlayer){
                 //btTransform trans; 
                 server->awaitConnections();
                 // step the server's simulator
@@ -328,17 +314,14 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                 simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
         }
 
-        if(!isClient){
-            std::ostringstream stream;
-            stream << "score: " << serverBall->getScore();
-            p1score->setText(stream.str());
-            if(!singleplayer){
-                stream.str("");
-                stream << "score: " << clientBall->getScore();
-                p2score->setText(stream.str());
-            }
+		if(!isClient){
+    		if (isSinglePlayer) {
+				gui->setSinglePlayerScore(serverBall->getScore());
+			} else {
+				gui->setMultiplayerScores(serverBall->getScore(), clientBall->getScore());
+			}
         }
-    }
+	}
     
     return true;
 }
@@ -459,9 +442,9 @@ bool Assignment3::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
 {
     isClient = false;
-    singleplayer = true;
-	CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-	wmgr.destroyWindow(p2score);
+    isSinglePlayer = true;
+	//CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+	//wmgr.destroyWindow(p2score);
 
     simulator = new Simulator();
   
@@ -485,7 +468,7 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
     serverPaddle->addToSimulator();
     serverPaddle->setKinematic();
     
-    destroyMenu();
+	gui->destroyMenu(true);
     gameplay = true;
     return true;
 }
@@ -493,11 +476,8 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
 bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 {
 	isClient = true;
-	CEGUI::WindowManager &mgr = CEGUI::WindowManager::getSingleton();
-	
-    sPort = atoi(CEGUIStringToString(cServerPort->getText()));
-	cPort = atoi(CEGUIStringToString(cClientPort->getText()));
-	sip = CEGUIStringToString(serverIP->getText());
+	sPort = gui->getPort();
+	sip = gui->getIP();
     client = new Client(sip, sPort);
     
     simulator = new Simulator();
@@ -516,7 +496,7 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
     //Setup player camera
     (&(clientPaddle->getNode()))->createChildSceneNode("camNode");
     mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
-	destroyMenu();
+	gui->destroyMenu(false);
 	gameplay = true;
 	
     return true;
@@ -525,11 +505,11 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 bool Assignment3::serverStart(const CEGUI::EventArgs &e)
 {
 	isClient = false;
-	CEGUI::WindowManager &mgr = CEGUI::WindowManager::getSingleton();
 	
-    sPort = atoi(CEGUIStringToString(sServerPort->getText()));
-	cPort = atoi(CEGUIStringToString(sClientPort->getText()));
-	cip = CEGUIStringToString(clientIP->getText());
+	//CEGUI::WindowManager &mgr = CEGUI::WindowManager::getSingleton();
+	//sPort = atoi(CEGUIStringToString(serverPort->getText()));
+	sPort = gui->getPort();
+	//netEnt = new UDPNetEnt(cip, sPort, cPort);
     server = new Server(sPort);
 	
     simulator = new Simulator();
@@ -561,36 +541,10 @@ bool Assignment3::serverStart(const CEGUI::EventArgs &e)
 	serverPaddle->addToSimulator();
 	serverPaddle->setKinematic();
     
-    destroyMenu();
+	gui->destroyMenu(false);
 	gameplay = true;
     printf("Server starting up...\n");
 	return true;
-}
-
-void Assignment3::destroyMenu()
-{
-    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-	wmgr.destroyWindow(singlebtn);
-	wmgr.destroyWindow(clientbtn);
-	wmgr.destroyWindow(serverbtn);
-	wmgr.destroyWindow(serverIP);
-	wmgr.destroyWindow(cServerPort);
-	wmgr.destroyWindow(cClientPort);
-	wmgr.destroyWindow(clientIP);
-	wmgr.destroyWindow(sServerPort);
-	wmgr.destroyWindow(sClientPort);
-	CEGUI::MouseCursor::getSingleton().hide();
-}
-
-char * Assignment3::CEGUIStringToString(CEGUI::String cestr)
-{
-	char * newstr = (char *) malloc((cestr.size()+1) * sizeof(char));
-	memset(newstr,0xFF,cestr.size()+1);
-	for(int i = 0; i < cestr.size(); i++) {
-		newstr[i] &= cestr[i];
-	}
-	newstr[cestr.size()] = 0;
-	return newstr;
 }
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

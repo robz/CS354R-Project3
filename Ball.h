@@ -4,6 +4,7 @@
 #include "Simulator.h"
 #include <Ogre.h>
 
+enum sounds{NOSOUND, BALLTARGET, BALLWALL, SERVERBALLPADDLE, CLIENTBALLPADDLE};
 class Ball : public GameObject {
 protected:
     bool hitFlag;

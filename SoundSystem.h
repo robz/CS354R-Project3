@@ -16,13 +16,14 @@ protected:
     Mix_Chunk *wallHit;
     Mix_Chunk *raquetHit;
     Mix_Chunk *targetHit;
-
+	Mix_Chunk *p2Hit;
 public:
     SoundSystem(void);
     void playMusic(void);
     void playWallHit(void);
     void playRaquetHit(void);
     void playTargetHit(void);
+	void playP2Hit(void);
 };
 
 #endif //#ifndef __SoundSystem_h_
