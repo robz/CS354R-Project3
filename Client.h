@@ -1,3 +1,6 @@
+#ifndef __Client_h_
+#define __Client_h_
+
 #include <SDL_net.h>
 
 class Client {
@@ -9,6 +12,8 @@ public:
     UDPNetEnt* ent;
     Client(char* ipAddr, int port);
     ~Client();
+    bool recMsg(char* data);
+    void sendMsg(char *data, int len);
 };
 
 Client::Client(char* ipAddr, int port) {
@@ -43,3 +48,13 @@ Client::~Client() {
     SDLNet_Quit();
     delete ent;
 }
+
+bool Client::recMsg(char* data){
+    return ent->recMsg(data);
+}
+
+void Client::sendMsg(char *data, int len){
+    ent->sendMsg(data, len);
+}
+
+#endif

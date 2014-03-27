@@ -11,10 +11,9 @@ Target::Target(
     Ogre::Real boxWidth, 
     Ogre::Real boxHeight, 
     Ogre::Real boxDepth,
-    Ogre::Real radius,
-    btCollisionObject* ballObject
+    Ogre::Real radius
     )
-: GameObject(nym, mgr, sim, .25, .1), radius(radius), boxWidth(boxWidth), boxHeight(boxHeight), boxDepth(boxDepth), ballObject(ballObject)
+: GameObject(nym, mgr, sim, .25, .1), radius(radius), boxWidth(boxWidth), boxHeight(boxHeight), boxDepth(boxDepth)
 {
     Ogre::ManualObject* circle = mgr->createManualObject("Circle");
     circle->begin("BaseWhite", Ogre::RenderOperation::OT_TRIANGLE_LIST);

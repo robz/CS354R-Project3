@@ -90,7 +90,23 @@ void GameObject::rotate(Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Node::Tr
 	//rootNode->roll(Ogre::Degree(z), val_z);
 }
 
+/*void GameObject::rotateQuat(Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Real w){
+
+}*/
+
 Ogre::SceneNode& GameObject::getNode(){
 	return *(this->rootNode);
+}
+
+bool GameObject::isPaddle(Ogre::String& name) {
+    return name == "clientpaddle" || name == "serverpaddle";
+}
+
+bool GameObject::isBall(Ogre::String& name) {
+    return name == "clientball" || name == "serverball";
+}
+
+bool GameObject::isBox(Ogre::String& name) {
+	return name == "ceiling" || name == "WallPosXNode" || name == "WallNegXNode" || name == "WallPosZNode" || name == "WallNegZNode" || name == "floor";
 }
 

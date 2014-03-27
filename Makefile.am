@@ -1,4 +1,4 @@
-noinst_HEADERS = Assignment3.h Ball.h BaseApplication.h GameObject.h GUI.h Simulator.h OgreMotionState.h Box.h ContactSensorCallback.h Surface.h SoundSystem.h Wall.h Target.h UDPNetEnt.h Server.h Client.h
+noinst_HEADERS = Assignment3.h Ball.h BaseApplication.h GameObject.h GUI.h Simulator.h OgreMotionState.h Box.h ContactSensorCallback.h Surface.h SoundSystem.h Wall.h Target.h UDPNetEnt.h Server.h Client.h ServerToClient.h
 
 bin_PROGRAMS = assignment3
 assignment3_CPPFLAGS = -I$(top_srcdir)

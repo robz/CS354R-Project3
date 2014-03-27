@@ -31,11 +31,13 @@ This source file is part of the
 #include "GUI.h"
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
+#include "ServerToClient.h"
 
 class Assignment3 : public BaseApplication
 {
 protected:
 	GUI* gui;
+/*
     CEGUI::OgreRenderer* mRenderer;
     CEGUI::Window *p1score;
 	CEGUI::Window *p2score;
@@ -43,12 +45,24 @@ protected:
 	CEGUI::Window *clientbtn;
 	CEGUI::Window *serverbtn;
 	CEGUI::Editbox *serverIP;
+<<<<<<< HEAD
 	CEGUI::Editbox *serverPort;
+=======
+	CEGUI::Editbox *cServerPort;
+	CEGUI::Editbox *cClientPort;
+	CEGUI::Editbox *clientIP;
+	CEGUI::Editbox *sServerPort;
+	CEGUI::Editbox *sClientPort;
+
+>>>>>>> d0da45cc17ea19c559425bb24c7c71f5a20a5645
+*/
     Simulator* simulator;
-    Ball* ball;
     Box* box;
-    Surface* paddle;
     Target* target;
+    Ball* serverBall;
+    Surface* serverPaddle;
+    Ball* clientBall;
+    Surface* clientPaddle;
     
     Server* server;
     Client* client;
@@ -71,8 +85,7 @@ protected:
     bool singlePlayer(const CEGUI::EventArgs &e);
 	bool clientStart(const CEGUI::EventArgs &e);
 	bool serverStart(const CEGUI::EventArgs &e);
-	void destroyMenu(void);
-	char* CEGUIStringToString(CEGUI::String cestr);
+    ServerToClient* initServerToClient();
 
 public:
     Assignment3();

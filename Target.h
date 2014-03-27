@@ -13,7 +13,6 @@ class Target : public GameObject {
         Ogre::Real boxHeight; 
         Ogre::Real boxDepth;
         Ogre::ManualObject* circle;
-        btCollisionObject* ballObject;
 
     public: 
         int wall;
@@ -28,8 +27,7 @@ class Target : public GameObject {
             Ogre::Real boxWidth, 
             Ogre::Real boxHeight, 
             Ogre::Real boxDepth,
-            Ogre::Real radius,
-            btCollisionObject* ballObject
+            Ogre::Real radius
             );
         
         void movePlacement(void);

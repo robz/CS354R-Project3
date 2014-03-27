@@ -39,8 +39,11 @@ Surface::Surface(Ogre::String nym,
 }
 
 void Surface::update() {
-    if (callback->ctxt.hit)
-        if (simulator->soundOn)
-            if (name == "mypaddle" && callback->ctxt.theObject->name == "myball")
-                ;//simulator->soundSystem->playRaquetHit();
+    if (callback->ctxt.hit) {
+        if (simulator->soundOn) {
+            if (isPaddle(name) && isBall(callback->ctxt.theObject->name)) {
+                //simulator->soundSystem->playRaquetHit();
+            }
+        }
+    }
 }

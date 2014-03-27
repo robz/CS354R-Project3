@@ -29,10 +29,11 @@ Assignment3::~Assignment3(void)
 
 
 int startingFace = 0;
-bool gametypeChosen = false;
 bool gameplay = false;
-int sPort = 55554;
+bool singleplayer = false;
+int sPort = 49152;
 char* sip;
+enum sounds{NOSOUND, BALLTARGET, BALLWALL, BALLPADDLE};
 
 //-------------------------------------------------------------------------------------
 void Assignment3::createScene(void)
@@ -97,6 +98,7 @@ void Assignment3::createScene(void)
 	serverIP->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	serverIP->setPosition(CEGUI::UVector2(CEGUI::UDim(0.32,0), CEGUI::UDim(0.65,0)));
 	serverIP->setText(hostname);
+	
 	serverPort = static_cast<CEGUI::Editbox*>(wmgr.createWindow("TaharezLook/Editbox","SPORT"));
 	serverPort->setSize(CEGUI::UVector2(CEGUI::UDim(0.15,0), CEGUI::UDim(0.05,0)));
 	serverPort->setPosition(CEGUI::UVector2(CEGUI::UDim(0.52,0), CEGUI::UDim(0.65,0)));
@@ -177,101 +179,211 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
     CEGUI::System::getSingleton().injectTimePulse(evt.timeSinceLastFrame);
 
 	if (gameplay) {
-        if (isClient) {
-            if(mKeyboard->isKeyDown(OIS::KC_Z) && z_time == 0.0){
-                paddle->rotate(180, 0.0, 0.0);
-                z_time += evt.timeSinceLastFrame;
+        Surface* paddle = (isClient) ? clientPaddle : serverPaddle;
+        
+        if(mKeyboard->isKeyDown(OIS::KC_Z) && z_time == 0.0){
+            paddle->rotate(180, 0.0, 0.0);
+            z_time += evt.timeSinceLastFrame;
+        }
+        if(z_time > 0.0 && z_time < 1.0)
+            z_time += evt.timeSinceLastFrame;
+        else
+            z_time = 0.0;
+        if(mKeyboard->isKeyDown(OIS::KC_LSHIFT)){
+            if(mKeyboard->isKeyDown(OIS::KC_W)){
+                paddle->move(0.0, PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
             }
-            if(z_time > 0.0 && z_time < 1.0)
-                z_time += evt.timeSinceLastFrame;
-            else
-                z_time = 0.0;
-            if(mKeyboard->isKeyDown(OIS::KC_LSHIFT)){
-                if(mKeyboard->isKeyDown(OIS::KC_W)){
-                    paddle->move(0.0, PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
-                }
-                if (mKeyboard->isKeyDown(OIS::KC_S)){
-                    paddle->move(0.0, -PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
-                }
+            if (mKeyboard->isKeyDown(OIS::KC_S)){
+                paddle->move(0.0, -PADDLE_Y_SPEED * evt.timeSinceLastFrame, 0.0);
             }
-            else{
-                if(mKeyboard->isKeyDown(OIS::KC_W)){
-                    paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastFrame);
-                }
-                if (mKeyboard->isKeyDown(OIS::KC_S)){
-                    paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastFrame);
-                }
+        }
+        else{
+            if(mKeyboard->isKeyDown(OIS::KC_W)){
+                paddle->move(0.0, 0.0, -PADDLE_Z_SPEED * evt.timeSinceLastFrame);
             }
-            if (mKeyboard->isKeyDown(OIS::KC_A)){
-                paddle->move(-PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
+            if (mKeyboard->isKeyDown(OIS::KC_S)){
+                paddle->move(0.0, 0.0, PADDLE_Z_SPEED * evt.timeSinceLastFrame);
             }
-            if (mKeyboard->isKeyDown(OIS::KC_D)){
-                paddle->move(PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
-            }
-            if (mKeyboard->isKeyDown(OIS::KC_Q)){
-                paddle->rotate(0.0, 0.0, PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
-            }
-            if (mKeyboard->isKeyDown(OIS::KC_E)){
-                paddle->rotate(0.0, 0.0, -PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
-            }
-            
-            Ogre::Real xMove = mMouse->getMouseState().X.rel;
-            Ogre::Real yMove = mMouse->getMouseState().Y.rel;
-            paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
-            paddle->updateTransform();
-        }        
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_A)){
+            paddle->move(-PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_D)){
+            paddle->move(PADDLE_X_SPEED * evt.timeSinceLastFrame, 0.0, 0.0);
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_Q)){
+            paddle->rotate(0.0, 0.0, PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
+        }
+        if (mKeyboard->isKeyDown(OIS::KC_E)){
+            paddle->rotate(0.0, 0.0, -PADDLE_ROT_SPEED * evt.timeSinceLastFrame);
+        }
+        
+        Ogre::Real xMove = mMouse->getMouseState().X.rel;
+        Ogre::Real yMove = mMouse->getMouseState().Y.rel;
+        paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
+        paddle->updateTransform();
 
         // get a packet from the server, then set the ball's position
         if (isClient) {
-            btTransform trans;
+            ServerToClient servData;
             
-            // get the state of the ball from the server
-            if (client->ent->recMsg(reinterpret_cast<char*>(&trans))) {
-                std::cout << "y: " << trans.getOrigin().getY() << std::endl;
-                ball->getNode().resetToInitialState();
-                ball->getNode().scale(0.01f, 0.01f, 0.01f);
-                ball->move(
-                    trans.getOrigin().getX(),
-                    trans.getOrigin().getY(),
-                    trans.getOrigin().getZ()
+            // get data from the server
+            if (client->recMsg(reinterpret_cast<char*>(&servData))) {
+                // update our (client's) ball from server
+                btTransform& cbTrans = servData.getClientBall();
+                clientBall->getNode().resetToInitialState();
+                clientBall->getNode().scale(0.01f, 0.01f, 0.01f);
+                clientBall->move(
+                    cbTrans.getOrigin().getX(),
+                    cbTrans.getOrigin().getY(),
+                    cbTrans.getOrigin().getZ()
                     );
-            }
+
+                // update our (client's) ball from server
+                btTransform& sbTrans = servData.getServerBall();
+                serverBall->getNode().resetToInitialState();
+                serverBall->getNode().scale(0.01f, 0.01f, 0.01f);
+                serverBall->move(
+                    sbTrans.getOrigin().getX(),
+                    sbTrans.getOrigin().getY(),
+                    sbTrans.getOrigin().getZ()
+                    );
+
+                // update server player's paddle
+                float* padPose = servData.getServerPaddle();
+                serverPaddle->getNode().setPosition(padPose[0], padPose[1], padPose[2]);
+                serverPaddle->getNode().setOrientation(padPose[3], padPose[4], padPose[5], padPose[6]);
+                serverPaddle->updateTransform();
+                
+                // update target from server
+                float* targPose = servData.getTarget();
+                target->getNode().setPosition(targPose[0], targPose[1], targPose[2]);
+                target->getNode().setOrientation(targPose[3], targPose[4], targPose[5], targPose[6]);
+                target->updateTransform();
+
+                //play sounds (if any)
+                if(simulator->soundOn){
+                    int sound = servData.getSound();
+                    if(sound == BALLWALL)
+                        simulator->soundSystem->playWallHit();
+                    else if(sound == BALLTARGET)
+                        simulator->soundSystem->playTargetHit();
+                    else if(sound == BALLPADDLE)
+                        simulator->soundSystem->playRaquetHit();
+                }
+
+                //update score
+                int* score = servData.getScore();
+                /*
+				std::ostringstream stream;
+                stream << "score: " << score[0];
+                p1score->setText(stream.str());
+                stream.str("");
+                stream << "score: " << score[1];
+                p2score->setText(stream.str());
+            	*/
+			}
     
-            // send the state of the paddle to the server
+            // send the state of our paddle to the server
             float pose[7];
-            pose[0] = paddle->getNode().getPosition().x;
-            pose[1] = paddle->getNode().getPosition().y;
-            pose[2] = paddle->getNode().getPosition().z;
-            pose[3] = paddle->getNode().getOrientation().w;
-            pose[4] = paddle->getNode().getOrientation().x;
-            pose[5] = paddle->getNode().getOrientation().y;
-            pose[6] = paddle->getNode().getOrientation().z;
-            client->ent->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
+            pose[0] = clientPaddle->getNode().getPosition().x;
+            pose[1] = clientPaddle->getNode().getPosition().y;
+            pose[2] = clientPaddle->getNode().getPosition().z;
+            pose[3] = clientPaddle->getNode().getOrientation().w;
+            pose[4] = clientPaddle->getNode().getOrientation().x;
+            pose[5] = clientPaddle->getNode().getOrientation().y;
+            pose[6] = clientPaddle->getNode().getOrientation().z;
+            client->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
         } else {
-            btTransform trans;
-            server->awaitConnections();
-            // step the server's simulator
-            simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
-        
-            // send the state of the ball to the client
-            ball->body->getMotionState()->getWorldTransform(trans);
-            server->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
-        
-            // get the state of the paddle from the client
-            float pose[7];
-            if (server->recMsg(reinterpret_cast<char*>(pose))) {
-                paddle->getNode().setPosition(pose[0], pose[1], pose[2]);
-                paddle->getNode().setOrientation(pose[3], pose[4], pose[5], pose[6]);
-                paddle->updateTransform();
+            if(!singleplayer){
+                //btTransform trans; 
+                server->awaitConnections();
+                // step the server's simulator
+                simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
+                // send the state of the ball to the client
+                //ball->body->getMotionState()->getWorldTransform(trans);
+                //server->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
+                // send the state of the target to the client
+                ServerToClient* data = initServerToClient();
+                server->sendMsg(reinterpret_cast<char*>(data), sizeof(ServerToClient));
+                delete data;
+            
+                // get the state of the paddle from the client
+                float pose[7];
+                if (server->recMsg(reinterpret_cast<char*>(pose))) {
+                    clientPaddle->getNode().setPosition(pose[0], pose[1], pose[2]);
+                    clientPaddle->getNode().setOrientation(pose[3], pose[4], pose[5], pose[6]);
+                    clientPaddle->updateTransform();
+                }
             }
+            else
+                simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
         }
 
-        //std::ostringstream stream;
-        //stream << "P1 score: " << target->wall;
-        //p1score->setText(stream.str());
-    }
+        /*
+		if(!isClient){
+            std::ostringstream stream;
+            stream << "score: " << serverBall->getScore();
+            p1score->setText(stream.str());
+            if(!singleplayer){
+                stream.str("");
+                stream << "score: " << clientBall->getScore();
+                p2score->setText(stream.str());
+            }
+        }
+    	*/
+	}
     
     return true;
+}
+
+ServerToClient* Assignment3::initServerToClient(){
+    ServerToClient* data = new ServerToClient();
+    
+    //server ball information
+    btTransform serverBallTrans;
+    serverBall->body->getMotionState()->getWorldTransform(serverBallTrans);
+
+    //client ball information
+    btTransform clientBallTrans;
+    clientBall->body->getMotionState()->getWorldTransform(clientBallTrans);
+
+    //target information 
+    float targPose[7];
+    targPose[0] = target->getNode().getPosition().x;
+    targPose[1] = target->getNode().getPosition().y;
+    targPose[2] = target->getNode().getPosition().z;
+    targPose[3] = target->getNode().getOrientation().w;
+    targPose[4] = target->getNode().getOrientation().x;
+    targPose[5] = target->getNode().getOrientation().y;
+    targPose[6] = target->getNode().getOrientation().z;
+
+    //server paddle information
+    float padPose[7];
+    padPose[0] = serverPaddle->getNode().getPosition().x;
+    padPose[1] = serverPaddle->getNode().getPosition().y;
+    padPose[2] = serverPaddle->getNode().getPosition().z;
+    padPose[3] = serverPaddle->getNode().getOrientation().w;
+    padPose[4] = serverPaddle->getNode().getOrientation().x;
+    padPose[5] = serverPaddle->getNode().getOrientation().y;
+    padPose[6] = serverPaddle->getNode().getOrientation().z;
+
+    //sound information
+    int sound = simulator->soundPlayed;
+
+    //score information
+    int score[2];
+    score[0] = serverBall->getScore();
+    score[1] = clientBall->getScore();
+
+    data->setSound(sound);
+    data->setScore(score);
+    data->setServerBall(serverBallTrans);
+    data->setClientBall(clientBallTrans);
+    data->setTarget(targPose);
+    data->setPaddle(padPose);
+
+    return data;
 }
 
 bool Assignment3::keyPressed(const OIS::KeyEvent &arg)
@@ -340,94 +452,110 @@ bool Assignment3::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 
 bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
 {
-    gameplay = true;
-//	CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-//	wmgr.destroyWindow(p2score);
-	gui->destroyMenu(true);
-}
+    isClient = false;
+    singleplayer = true;
+	//CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
+	//wmgr.destroyWindow(p2score);
 
-/*  static Server server(port);
-    btTransform trans;
-    static bool init = false;
-    if(!init){
-        server.awaitConnections();
-        init = true;
-    } */
+    simulator = new Simulator();
+  
+    // Create a scene
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
+    target->setPose(startingFace, 0, 0);
+    
+    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Examples/RustySteel");
+    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    
+    //Setup player camera
+    (&(serverPaddle->getNode()))->createChildSceneNode("camNode");
+    mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
+    
+    box->addToSimulator();
+    target->addToSimulator();
+    target->setKinematic();
+    
+    serverBall->addToSimulator();
+    serverPaddle->addToSimulator();
+    serverPaddle->setKinematic();
+    
+	gui->destroyMenu(true);
+    gameplay = true;
+    return true;
+}
 
 bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 {
 	isClient = true;
-	/*
-	CEGUI::WindowManager &mgr = CEGUI::WindowManager::getSingleton();
-	sPort = atoi(CEGUIStringToString(serverPort->getText()));
-	sip = CEGUIStringToString(serverIP->getText());*/
 	sPort = gui->getPort();
 	sip = gui->getIP();
     client = new Client(sip, sPort);
-	//netEnt = new UDPNetEnt(sip, sPort, cPort);
-	// Create a scene
-    ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
+    
+    simulator = new Simulator();
+	
+    // Create a scene
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
-    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
-    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50, ball->body);
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
     target->setPose(startingFace, 0, 0);
+    
+    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Examples/RustySteel");
+    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+
+    clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
+    clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    
     //Setup player camera
-    (&(paddle->getNode()))->createChildSceneNode("camNode");
+    (&(clientPaddle->getNode()))->createChildSceneNode("camNode");
     mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
 	gui->destroyMenu(false);
 	gameplay = true;
+	
+    return true;
 }
 
 bool Assignment3::serverStart(const CEGUI::EventArgs &e)
 {
 	isClient = false;
+	
 	//CEGUI::WindowManager &mgr = CEGUI::WindowManager::getSingleton();
 	//sPort = atoi(CEGUIStringToString(serverPort->getText()));
 	sPort = gui->getPort();
 	//netEnt = new UDPNetEnt(cip, sPort, cPort);
     server = new Server(sPort);
-	simulator = new Simulator();
-  // Create a scene
-    ball = new Ball("myball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
+	
+    simulator = new Simulator();
+  
+    // Create a scene
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/Frost");
-    paddle = new Surface("mypaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
-    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50, ball->body);
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 50);
     target->setPose(startingFace, 0, 0);
+    
+    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Examples/RustySteel");
+    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    
+    clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Examples/RustySteel");
+    clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 40, 10.0, 10.0, 2.5, 0.25, 0.1, "Examples/BumpyMetal");
+    
     //Setup player camera
-    (&(paddle->getNode()))->createChildSceneNode("camNode");
+    (&(serverPaddle->getNode()))->createChildSceneNode("camNode");
     mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
-	ball->addToSimulator();
+	
 	box->addToSimulator();
-	paddle->addToSimulator();
-	paddle->setKinematic();
 	target->addToSimulator();
 	target->setKinematic();
+	
+    clientBall->addToSimulator();
+	clientPaddle->addToSimulator();
+	clientPaddle->setKinematic();
+    
+    serverBall->addToSimulator();
+	serverPaddle->addToSimulator();
+	serverPaddle->setKinematic();
+    
 	gui->destroyMenu(false);
 	gameplay = true;
     printf("Server starting up...\n");
 	return true;
-}
-
-void Assignment3::destroyMenu()
-{
-    CEGUI::WindowManager &wmgr = CEGUI::WindowManager::getSingleton();
-	wmgr.destroyWindow(singlebtn);
-	wmgr.destroyWindow(clientbtn);
-	wmgr.destroyWindow(serverbtn);
-	wmgr.destroyWindow(serverIP);
-	wmgr.destroyWindow(serverPort);
-	CEGUI::MouseCursor::getSingleton().hide();
-}
-
-char * Assignment3::CEGUIStringToString(CEGUI::String cestr)
-{
-	char * newstr = (char *) malloc((cestr.size()+1) * sizeof(char));
-	memset(newstr,0xFF,cestr.size()+1);
-	for(int i = 0; i < cestr.size(); i++) {
-		newstr[i] &= cestr[i];
-	}
-	newstr[cestr.size()] = 0;
-	return newstr;
 }
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
