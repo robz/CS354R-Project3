@@ -202,14 +202,20 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                 //play sounds (if any)
                if(simulator->soundOn){
                     int sound = servData.getSound();
-                    if(sound == BALLWALL)
+                    if(sound == BALLWALL) {
                         simulator->soundSystem->playWallHit();
-                    else if(sound == BALLTARGET)
+                    } else if(sound == BALLTARGET) {
                         simulator->soundSystem->playTargetHit();
-                    else if(sound == CLIENTBALLPADDLE)
+                    } else if(sound == CLIENTBALLPADDLE) {
                         simulator->soundSystem->playP2Hit();
-					else if (sound == SERVERBALLPADDLE)
+                        //std::cout << "playing CLIENTBALLPADDLE" << std::endl;
+					} else if (sound == SERVERBALLPADDLE) {
 						simulator->soundSystem->playRaquetHit();
+                    } else if (sound == NOSOUND) {
+						simulator->soundSystem->resetFlags();
+                    } else {
+                        std::cout << "WHAT THE FUCK SOUND IS THAT" << std::endl;
+                    }
                 }
 
                 //update score
@@ -231,6 +237,7 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                 // send the state of the target to the client
                 ServerToClient* data = initServerToClient();
                 server->sendMsg(reinterpret_cast<char*>(data), sizeof(ServerToClient));
+                simulator->soundPlayed = NOSOUND;
                 delete data;
             
                 // get the state of the paddle from the client

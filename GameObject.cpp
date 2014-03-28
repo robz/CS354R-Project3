@@ -59,6 +59,7 @@ void GameObject::addToSimulator() {
 
         CollisionContext* context = new CollisionContext();
         callback = new ContactSensorCallback(*body, *context);
+        
         simulator->addObject(this);
     }
 }

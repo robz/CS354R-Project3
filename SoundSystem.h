@@ -17,9 +17,12 @@ protected:
     Mix_Chunk *raquetHit;
     Mix_Chunk *targetHit;
 	Mix_Chunk *p2Hit;
+    int flags;
+
 public:
     SoundSystem(void);
     void playMusic(void);
+    void resetFlags(void);
     void playWallHit(void);
     void playRaquetHit(void);
     void playTargetHit(void);

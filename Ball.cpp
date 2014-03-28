@@ -69,7 +69,8 @@ void Ball::update() {
         	}
 		}
         else if (isBox(objName)){
-			simulator->soundPlayed = BALLWALL;
+			std::cout << "playing BALLWALL" << std::endl;
+            simulator->soundPlayed = BALLWALL;
             if (simulator->soundOn) {
                 simulator->soundSystem->playWallHit();
             }
@@ -77,7 +78,6 @@ void Ball::update() {
     }
     else {
         //nothing was hit
-		simulator->soundPlayed = NOSOUND;
     }
 }
 
