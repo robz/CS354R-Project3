@@ -28,6 +28,7 @@ This source file is part of the
 #include "Target.h"
 #include "Client.h"
 #include "Server.h"
+#include "Heli.h"
 #include "GUI.h"
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
@@ -46,9 +47,8 @@ protected:
     Surface* serverPaddle;
     Ball* clientBall;
     Surface* clientPaddle;
-
-    ClientToServerData clientData;
-    
+    Heli* heli;
+    ClientToServerData clientData; 
     Server* server;
     Client* client;
     bool isClient;
