@@ -46,6 +46,7 @@ Target::Target(
     shape = new btCylinderShape(btVector3(radius, 5.0, radius)); 
 
     wall = 0;
+    movePlacement();
 }
 
 void Target::setPose(int wall, float xOffset, float yOffset) {
@@ -69,7 +70,7 @@ void Target::setPose(int wall, float xOffset, float yOffset) {
         pitch = (wall == 4) ? 90 : 90;
     }
 
-    y += boxHeight/2.0;
+    y += boxHeight/2.0 + 10;
 
     rootNode->resetToInitialState();
     move(x, y, z);
@@ -78,5 +79,8 @@ void Target::setPose(int wall, float xOffset, float yOffset) {
 }
 
 void Target::movePlacement(void) {
-    setPose((wall++)%6, 0, 0);
+    float xOffset = 0, yOffset = 0;
+    xOffset = rand()%50 - 25; 
+    yOffset = rand()%50 - 25; 
+    setPose((wall++)%6, xOffset, yOffset);
 }

@@ -33,30 +33,13 @@ This source file is part of the
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
 #include "ServerToClient.h"
+#include "ClientToServer.h"
 
 class Assignment3 : public BaseApplication
 {
 protected:
 	GUI* gui;
-/*
-    CEGUI::OgreRenderer* mRenderer;
-    CEGUI::Window *p1score;
-	CEGUI::Window *p2score;
-	CEGUI::Window *singlebtn;
-	CEGUI::Window *clientbtn;
-	CEGUI::Window *serverbtn;
-	CEGUI::Editbox *serverIP;
-<<<<<<< HEAD
-	CEGUI::Editbox *serverPort;
-=======
-	CEGUI::Editbox *cServerPort;
-	CEGUI::Editbox *cClientPort;
-	CEGUI::Editbox *clientIP;
-	CEGUI::Editbox *sServerPort;
-	CEGUI::Editbox *sClientPort;
-
->>>>>>> d0da45cc17ea19c559425bb24c7c71f5a20a5645
-*/
+    Ogre::ManualObject* manualInd;
     Simulator* simulator;
     Box* box;
     Target* target;
@@ -65,7 +48,7 @@ protected:
     Ball* clientBall;
     Surface* clientPaddle;
     Heli* heli;
-    
+    ClientToServerData clientData; 
     Server* server;
     Client* client;
     bool isClient;
@@ -80,7 +63,6 @@ protected:
     virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
     virtual void createScene(void);
-	virtual void createFrameListener(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
  
 	CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID);
@@ -88,7 +70,8 @@ protected:
 	bool clientStart(const CEGUI::EventArgs &e);
 	bool serverStart(const CEGUI::EventArgs &e);
     ServerToClient* initServerToClient();
-
+    void updateIndicator(Ball* ball);
+    
 public:
     Assignment3();
     virtual ~Assignment3(void);

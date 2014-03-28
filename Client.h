@@ -10,6 +10,7 @@ protected:
 
 public:
     UDPNetEnt* ent;
+	bool serverFound;
     Client(char* ipAddr, int port);
     ~Client();
     bool recMsg(char* data);
@@ -18,10 +19,12 @@ public:
 
 Client::Client(char* ipAddr, int port) {
     /* Initialize SDL_net */
+	serverFound = true;
     if (SDLNet_Init() < 0)
     {
         fprintf(stderr, "SDLNet_Init: %s\n", SDLNet_GetError());
-        exit(EXIT_FAILURE);
+		serverFound = false;
+        //exit(EXIT_FAILURE);
         //assert(false);
     }
 
@@ -29,7 +32,8 @@ Client::Client(char* ipAddr, int port) {
     if (SDLNet_ResolveHost(&ip, ipAddr, port) < 0)
     {
         fprintf(stderr, "SDLNet_ResolveHost: %s\n", SDLNet_GetError());
-        exit(EXIT_FAILURE);
+		serverFound = false;
+        //exit(EXIT_FAILURE);
         //assert(false);
     }
  
@@ -37,11 +41,13 @@ Client::Client(char* ipAddr, int port) {
     if (!(TCPsd = SDLNet_TCP_Open(&ip)))
     {
         fprintf(stderr, "SDLNet_UDP_Open: %s\n", SDLNet_GetError());
-        exit(EXIT_FAILURE);
+        //exit(EXIT_FAILURE);
+		serverFound = false;
         //assert(false);
     }
-
-    ent = new UDPNetEnt(ipAddr, 32100, 49153);
+	if (serverFound) {
+    	ent = new UDPNetEnt(ipAddr, 32100, 49153);
+	}
 }
 
 Client::~Client() {

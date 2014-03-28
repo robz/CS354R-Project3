@@ -140,4 +140,3 @@ void GUI::setMultiplayerScores(int player1, int player2) {
 	stream << "client score: " << player2;
 	p2score->setText(stream.str());
 }
-
