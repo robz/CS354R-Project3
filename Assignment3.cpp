@@ -155,7 +155,7 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                 target->updateTransform();
 
                 //play sounds (if any)
-                if(simulator->soundOn){
+               if(simulator->soundOn){
                     int sound = servData.getSound();
                     if(sound == BALLWALL)
                         simulator->soundSystem->playWallHit();
@@ -216,7 +216,6 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 			}
         }
 	}
-    
     return true;
 }
 
