@@ -159,11 +159,15 @@ void Assignment3::createFrameListener(void) {
 float PADDLE_X_SPEED = 60.0f,
       PADDLE_Y_SPEED = 60.0f,
       PADDLE_Z_SPEED = 60.0f,
-      PADDLE_ROT_SPEED = 30.0f;
+      PADDLE_ROT_SPEED = 30.0f,
+      HELI_SPEED = 60.0f;
 
 bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
     static Ogre::Real z_time = 0.0;
+    static Ogre::Real heli_time = 0.0;
+    static bool heli_init = false;
+    static int rotate_time = 0;
 
     if(mWindow->isClosed())
         return false;
@@ -179,6 +183,26 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 
 	if (gameplay) {
         Surface* paddle = (isClient) ? clientPaddle : serverPaddle;
+        if(heli_time < 10.0){
+            heli_time+= evt.timeSinceLastFrame;
+        }
+        else{
+            if(!heli_init){
+                heli = new Heli("dachoppa", mSceneMgr, simulator, 2.0, 1.0, Ogre::Vector3(0.0, -10.0, 100.0), 0.9, 0.1, "");
+                heli_init = true;
+            }
+            if(heli_time < 12.0){
+                heli->move(0.0,HELI_SPEED * evt.timeSinceLastFrame,0.0);
+                heli_time += evt.timeSinceLastFrame;
+            }
+            else if(heli_time < 100.0);
+                if(rotate_time < 5){
+                    //heli->rotate(0.0,-30.0/5.0,0.0);
+                    rotate_time++;
+                }
+                heli->move(0.0,0.0,-HELI_SPEED * evt.timeSinceLastFrame);
+                heli_time += evt.timeSinceLastFrame;
+        }
         
         if(mKeyboard->isKeyDown(OIS::KC_Z) && z_time == 0.0){
             paddle->rotate(180, 0.0, 0.0);
