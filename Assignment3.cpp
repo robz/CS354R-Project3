@@ -67,7 +67,7 @@ void Assignment3::createScene(void)
 
     for (int i = 0; i < 7; i++) {
         Ogre::Vector3 point = indPoints[i];
-        // point.z = -1000;
+        point.z = -1000;
         manualInd->position(point);
     }
     for (int i = 0; i < 7; i++) {
