@@ -32,6 +32,7 @@ This source file is part of the
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
 #include "ServerToClient.h"
+#include "ClientToServer.h"
 
 class Assignment3 : public BaseApplication
 {
@@ -45,6 +46,8 @@ protected:
     Surface* serverPaddle;
     Ball* clientBall;
     Surface* clientPaddle;
+
+    ClientToServerData clientData;
     
     Server* server;
     Client* client;

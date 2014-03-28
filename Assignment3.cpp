@@ -99,7 +99,7 @@ float PADDLE_X_SPEED = 60.0f,
       PADDLE_ROT_SPEED = 30.0f;
 
 bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
-
+    
     static Ogre::Real z_time = 0.0;
 
     if(mWindow->isClosed())
@@ -218,35 +218,28 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 			}
     
             // send the state of our paddle to the server
-            float pose[7];
-            pose[0] = clientPaddle->getNode().getPosition().x;
-            pose[1] = clientPaddle->getNode().getPosition().y;
-            pose[2] = clientPaddle->getNode().getPosition().z;
-            pose[3] = clientPaddle->getNode().getOrientation().w;
-            pose[4] = clientPaddle->getNode().getOrientation().x;
-            pose[5] = clientPaddle->getNode().getOrientation().y;
-            pose[6] = clientPaddle->getNode().getOrientation().z;
-            client->sendMsg(reinterpret_cast<char*>(pose), sizeof(pose));
+            clientData.paddlePos = clientPaddle->getNode().getPosition();
+            clientData.paddleOrient = clientPaddle->getNode().getOrientation();
+            client->sendMsg(reinterpret_cast<char*>(&clientData), sizeof(clientData));
+            clientData.gravityChange = 0;
         } else {
             if(!isSinglePlayer){
                 //btTransform trans; 
                 server->awaitConnections();
                 // step the server's simulator
                 simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
-                // send the state of the ball to the client
-                //ball->body->getMotionState()->getWorldTransform(trans);
-                //server->sendMsg(reinterpret_cast<char*>(&trans), sizeof(btTransform));
                 // send the state of the target to the client
                 ServerToClient* data = initServerToClient();
                 server->sendMsg(reinterpret_cast<char*>(data), sizeof(ServerToClient));
                 delete data;
             
                 // get the state of the paddle from the client
-                float pose[7];
-                if (server->recMsg(reinterpret_cast<char*>(pose))) {
-                    clientPaddle->getNode().setPosition(pose[0], pose[1], pose[2]);
-                    clientPaddle->getNode().setOrientation(pose[3], pose[4], pose[5], pose[6]);
+                ClientToServerData cdata;
+                if (server->recMsg(reinterpret_cast<char*>(&cdata))) {
+                    clientPaddle->getNode().setPosition(cdata.paddlePos);
+                    clientPaddle->getNode().setOrientation(cdata.paddleOrient);
                     clientPaddle->updateTransform();
+                    simulator->setGravity(simulator->gravity + cdata.gravityChange); 
                 }
             }
             else {
@@ -349,10 +342,18 @@ bool Assignment3::keyPressed(const OIS::KeyEvent &arg)
 
 	if (simulator) {
 			if (arg.key == OIS::KC_R) {
-					simulator->setGravity(simulator->gravity + 20.0);        
-			} else if (arg.key == OIS::KC_F) {
-					simulator->setGravity(simulator->gravity - 20.0);
-			} else if (arg.key == OIS::KC_X) {
+		        if (isClient) {
+                    clientData.gravityChange = 20; 
+                } else {
+                    simulator->setGravity(simulator->gravity + 20.0); 
+			    }
+            } else if (arg.key == OIS::KC_F) {
+			    if (isClient) {
+                    clientData.gravityChange = -20; 
+                } else {
+            		simulator->setGravity(simulator->gravity - 20.0);
+			    }
+            } else if (arg.key == OIS::KC_X) {
 					simulator->soundOn = !(simulator->soundOn);
 			} else if (arg.key == OIS::KC_C) {
 					simulator->soundSystem->playMusic();
