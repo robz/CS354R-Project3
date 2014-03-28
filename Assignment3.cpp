@@ -159,6 +159,8 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
         paddle->rotate(-xMove*0.1, -yMove*0.1, 0.0, Ogre::Node::TS_WORLD);
         paddle->updateTransform();
 
+        updateIndicator((isClient) ? clientBall : serverBall);
+        
         // get a packet from the server, then set the ball's position
         if (isClient) {
             ServerToClient servData;
@@ -249,32 +251,6 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             }
             else {
                 simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
-                
-                bool isBallVisible = mCamera->isVisible(
-                    Ogre::Sphere(serverBall->getNode().getPosition(), 1.0)
-                    );
-                if (!isBallVisible) {
-                    Ogre::Vector3 world_point = serverBall->getNode().getPosition();
-                    Ogre::Vector3 screen_point = mCamera->getProjectionMatrix() * (mCamera->getViewMatrix() * world_point);  
-                    
-                    float angle = atan2(screen_point.x, screen_point.y);
-
-                    manualInd->beginUpdate(0);
-                    Ogre::Quaternion rot(Ogre::Radian(-angle + M_PI/2.0), Ogre::Vector3::UNIT_Z);
-                    for (int i = 0; i < 7; i++) {
-                        manualInd->position(rot * indPoints[i]);
-                    }
-                    manualInd->end();
-                } else {
-                    manualInd->beginUpdate(0);
-                    for (int i = 0; i < 7; i++) {
-                        Ogre::Vector3 point = indPoints[i];
-                        point.z = -1000;
-                        manualInd->position(point);
-                    }
-                    manualInd->end();
-
-                }
             } 
         }
 
@@ -288,6 +264,32 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 	}
     
     return true;
+}
+
+void Assignment3::updateIndicator(Ball* ball) {
+    Ogre::Vector3 world_point = ball->getNode().getPosition();
+
+    bool isBallVisible = mCamera->isVisible(Ogre::Sphere(world_point, 1.0));
+    if (!isBallVisible) {
+        Ogre::Vector3 screen_point = mCamera->getProjectionMatrix() * (mCamera->getViewMatrix() * world_point);  
+        
+        float angle = atan2(screen_point.x, screen_point.y);
+
+        manualInd->beginUpdate(0);
+        Ogre::Quaternion rot(Ogre::Radian(-angle + M_PI/2.0), Ogre::Vector3::UNIT_Z);
+        for (int i = 0; i < 7; i++) {
+            manualInd->position(rot * indPoints[i]);
+        }
+        manualInd->end();
+    } else {
+        manualInd->beginUpdate(0);
+        for (int i = 0; i < 7; i++) {
+            Ogre::Vector3 point = indPoints[i];
+            point.z = -1000;
+            manualInd->position(point);
+        }
+        manualInd->end();
+    }
 }
 
 ServerToClient* Assignment3::initServerToClient(){

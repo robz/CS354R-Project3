@@ -67,7 +67,8 @@ protected:
 	bool clientStart(const CEGUI::EventArgs &e);
 	bool serverStart(const CEGUI::EventArgs &e);
     ServerToClient* initServerToClient();
-
+    void updateIndicator(Ball* ball);
+    
 public:
     Assignment3();
     virtual ~Assignment3(void);
