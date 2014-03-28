@@ -17,6 +17,7 @@ Ball::Ball(
     ) 
 : GameObject(nym, mgr, sim, restitution, friction)
 {
+	nym = nym;
     if (mgr) {
         geom = mgr->createEntity(name, "sphere.mesh");
         if(tex != "")
@@ -69,10 +70,10 @@ void Ball::update() {
         	}
 		}
         else if (isBox(objName)){
-			std::cout << "playing BALLWALL" << std::endl;
-            simulator->soundPlayed = BALLWALL;
+			simulator->soundPlayed = (this->nym == "serverball") ? BALL1WALL : BALL2WALL;
             if (simulator->soundOn) {
-                simulator->soundSystem->playWallHit();
+				int b = (this->nym == "serverball") ? 1 : 2;
+                simulator->soundSystem->playWallHit(b);
             }
         }
     }

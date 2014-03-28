@@ -13,7 +13,7 @@ SoundSystem::SoundSystem()
     Mix_PlayMusic(music, -1);
 
     // allocate 16 mixing channels
-    Mix_AllocateChannels(16);
+    Mix_AllocateChannels(24);
 
     // Load the sound effects
     wallHit = Mix_LoadWAV("media/sound/wallHit.wav");
@@ -39,37 +39,26 @@ void SoundSystem::resetFlags(void) {
     flags = NOSOUND;
 }
 
-void SoundSystem::playWallHit(void)
+void SoundSystem::playWallHit(int ball)
 {
-    if (flags != BALLWALL) {
-        Mix_PlayChannel(-1, wallHit, 0);
-    }
-    flags = BALLWALL; 
+	if (Mix_Playing(ball) == 0)
+    	Mix_PlayChannel(ball, wallHit, 0);
 }
 
 void SoundSystem::playRaquetHit(void)
 {
-    if (flags != SERVERBALLPADDLE) {
-        static int count = 0;
-        if (-1 == Mix_PlayChannel(-1, raquetHit, 0)) {
-            std::cout << count++ << " play raquet hit failed!!!!!! :(" << std::endl;
-        }
-    }
-    flags = SERVERBALLPADDLE;
+	if (Mix_Playing(3) == 0)
+    	Mix_PlayChannel(3, raquetHit, 0);
 }
 
 void SoundSystem::playTargetHit(void)
 {
-    if (flags != BALLTARGET) {
-        Mix_PlayChannel(-1, targetHit, 0);
-    }
-    flags = BALLTARGET;
+	if (Mix_Playing(4) == 0)
+    	Mix_PlayChannel(4, targetHit, 0);
 }
 
 void SoundSystem::playP2Hit(void)
 {
-    if (flags != CLIENTBALLPADDLE) {
-        Mix_PlayChannel(-1, p2Hit, 0);
-    }
-    flags = CLIENTBALLPADDLE;
+	if (Mix_Playing(5) == 0)
+    	Mix_PlayChannel(5, p2Hit, 0);
 }

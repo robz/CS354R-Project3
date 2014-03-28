@@ -23,7 +23,7 @@ public:
     SoundSystem(void);
     void playMusic(void);
     void resetFlags(void);
-    void playWallHit(void);
+    void playWallHit(int);
     void playRaquetHit(void);
     void playTargetHit(void);
 	void playP2Hit(void);

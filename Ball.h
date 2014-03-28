@@ -4,11 +4,12 @@
 #include "Simulator.h"
 #include <Ogre.h>
 
-enum sounds{NOSOUND, BALLTARGET, BALLWALL, SERVERBALLPADDLE, CLIENTBALLPADDLE};
+enum sounds{NOSOUND, BALLTARGET, BALL1WALL, BALL2WALL, SERVERBALLPADDLE, CLIENTBALLPADDLE};
 class Ball : public GameObject {
 protected:
     bool hitFlag;
     int score;
+	Ogre::String nym;
 
 public:
     Ball(

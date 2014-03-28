@@ -226,13 +226,14 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                 //play sounds (if any)
                if(simulator->soundOn){
                     int sound = servData.getSound();
-                    if(sound == BALLWALL) {
-                        simulator->soundSystem->playWallHit();
-                    } else if(sound == BALLTARGET) {
+                    if(sound == BALL1WALL) {
+                        simulator->soundSystem->playWallHit(1);
+                    } else if (sound == BALL2WALL) {
+						simulator->soundSystem->playWallHit(2);
+					} else if(sound == BALLTARGET) {
                         simulator->soundSystem->playTargetHit();
                     } else if(sound == CLIENTBALLPADDLE) {
                         simulator->soundSystem->playP2Hit();
-                        //std::cout << "playing CLIENTBALLPADDLE" << std::endl;
 					} else if (sound == SERVERBALLPADDLE) {
 						simulator->soundSystem->playRaquetHit();
                     } else if (sound == NOSOUND) {
