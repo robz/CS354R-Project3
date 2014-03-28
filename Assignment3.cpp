@@ -27,6 +27,17 @@ Assignment3::~Assignment3(void)
 {
 }
 
+float indoffset = .5;
+
+Ogre::Vector3 indPoints[7] = {
+    Ogre::Vector3(0.0+indoffset, 0.05, 0.0),
+    Ogre::Vector3(0.3+indoffset, 0.05, 0.0),
+    Ogre::Vector3(0.3+indoffset, 0.1, 0.0),
+    Ogre::Vector3(0.4+indoffset, 0.0, 0.0),
+    Ogre::Vector3(0.3+indoffset, -0.1, 0.0),
+    Ogre::Vector3(0.3+indoffset, -0.05, 0.0),
+    Ogre::Vector3(0.0+indoffset, -0.05, 0.0)
+};
 
 int startingFace = 0;
 bool gameplay = false;
@@ -44,7 +55,39 @@ void Assignment3::createScene(void)
 	   
 	// Set the scene's ambient light
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
-  
+
+    // Create a manual object for 2D
+    manualInd = mSceneMgr->createManualObject("manual");
+     
+    // Use identity view/projection matrices
+    manualInd->setUseIdentityProjection(true);
+    manualInd->setUseIdentityView(true);
+     
+    manualInd->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
+
+    for (int i = 0; i < 7; i++) {
+        Ogre::Vector3 point = indPoints[i];
+        // point.z = -1000;
+        manualInd->position(point);
+    }
+    for (int i = 0; i < 7; i++) {
+        manualInd->index(i);
+    }
+    manualInd->index(0);
+     
+    manualInd->end();
+     
+    // Use infinite AAB to always stay visible
+    Ogre::AxisAlignedBox aabInf;
+    aabInf.setInfinite();
+    manualInd->setBoundingBox(aabInf);
+     
+    // Render just before overlays
+    manualInd->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY - 1);
+     
+    // Attach to scene
+    mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(manualInd);
+
     // Create a Light and set its position
     Ogre::Light* light = mSceneMgr->createLight("MainLight");
     light->setPosition(10.0f, 10.0f, 10.0f);
@@ -204,8 +247,35 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                     clientPaddle->updateTransform();
                 }
             }
-            else
+            else {
                 simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
+                
+                bool isBallVisible = mCamera->isVisible(
+                    Ogre::Sphere(serverBall->getNode().getPosition(), 1.0)
+                    );
+                if (!isBallVisible) {
+                    Ogre::Vector3 world_point = serverBall->getNode().getPosition();
+                    Ogre::Vector3 screen_point = mCamera->getProjectionMatrix() * (mCamera->getViewMatrix() * world_point);  
+                    
+                    float angle = atan2(screen_point.x, screen_point.y);
+
+                    manualInd->beginUpdate(0);
+                    Ogre::Quaternion rot(Ogre::Radian(-angle + M_PI/2.0), Ogre::Vector3::UNIT_Z);
+                    for (int i = 0; i < 7; i++) {
+                        manualInd->position(rot * indPoints[i]);
+                    }
+                    manualInd->end();
+                } else {
+                    manualInd->beginUpdate(0);
+                    for (int i = 0; i < 7; i++) {
+                        Ogre::Vector3 point = indPoints[i];
+                        point.z = -1000;
+                        manualInd->position(point);
+                    }
+                    manualInd->end();
+
+                }
+            } 
         }
 
 		if(!isClient){
@@ -339,7 +409,7 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
     isSinglePlayer = true;
 
     simulator = new Simulator();
-  
+ 
     // Create a scene
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
     target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 20);

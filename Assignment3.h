@@ -37,6 +37,7 @@ class Assignment3 : public BaseApplication
 {
 protected:
 	GUI* gui;
+    Ogre::ManualObject* manualInd;
     Simulator* simulator;
     Box* box;
     Target* target;
