@@ -32,11 +32,13 @@ This source file is part of the
 #include <CEGUI/CEGUI.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
 #include "ServerToClient.h"
+#include "ClientToServer.h"
 
 class Assignment3 : public BaseApplication
 {
 protected:
 	GUI* gui;
+    Ogre::ManualObject* manualInd;
     Simulator* simulator;
     Box* box;
     Target* target;
@@ -44,6 +46,8 @@ protected:
     Surface* serverPaddle;
     Ball* clientBall;
     Surface* clientPaddle;
+
+    ClientToServerData clientData;
     
     Server* server;
     Client* client;
@@ -66,7 +70,8 @@ protected:
 	bool clientStart(const CEGUI::EventArgs &e);
 	bool serverStart(const CEGUI::EventArgs &e);
     ServerToClient* initServerToClient();
-
+    void updateIndicator(Ball* ball);
+    
 public:
     Assignment3();
     virtual ~Assignment3(void);
