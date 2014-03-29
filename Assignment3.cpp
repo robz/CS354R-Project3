@@ -437,6 +437,32 @@ bool Assignment3::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 	return true;
 }
 
+void Assignment3::createSceneObjects() {
+    srand (time(NULL));
+
+    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
+    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 20);
+    target->setPose(startingFace, 0, 0);
+    
+    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, 
+        Ogre::Vector3(rand()%100 - 50, rand()%100+25, rand()%100 - 50), 
+        .9f, .1f, "Game/P1ball");
+    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 
+            rand()%100 - 50, rand()%100+25, rand()%100 - 50,
+            10.0, 10.0, 2.5, 0.25, 0.1, "Game/P1paddle");
+		
+    if (!isSinglePlayer) {
+        clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, 
+            Ogre::Vector3(rand()%100 - 50, rand()%100+25, rand()%100 - 50), 
+            .9f, .1f, "Game/P2ball");
+		clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 
+            rand()%100 - 50, rand()%100+25, rand()%100 - 50,
+            10.0, 10.0, 2.5, 0.25, 0.1, "Game/P2paddle");
+    }
+
+    heli = new Heli("dachoppa", mSceneMgr, simulator, 3.0, 1.0, Ogre::Vector3(0.0, 0.0, 45.0), 0.9, 0.1, "Game/Helicopter");
+}
+
 bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
 {
     isClient = false;
@@ -445,15 +471,8 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
     simulator = new Simulator();
  
     // Create a scene
-    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
-    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 20);
-    target->setPose(startingFace, 0, 0);
-    
-    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Game/P1ball");
-    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P1paddle");
-
-    heli = new Heli("dachoppa", mSceneMgr, simulator, 3.0, 1.0, Ogre::Vector3(0.0, 0.0, 45.0), 0.9, 0.1, "Game/Helicopter");
-    
+    createSceneObjects();   
+ 
     //Setup player camera
     (&(serverPaddle->getNode()))->createChildSceneNode("camNode");
     mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);
@@ -485,17 +504,7 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 		simulator = new Simulator();
 
 		// Create a scene
-		box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
-		target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 20);
-		target->setPose(startingFace, 0, 0);
-
-		serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Game/P1ball");
-		serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P1paddle");
-
-		clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Game/P2ball");
-		clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P2paddle");
-
-        heli = new Heli("dachoppa", mSceneMgr, simulator, 3.0, 1.0, Ogre::Vector3(0.0, 0.0, 45.0), 0.9, 0.1, "Game/Helicopter");
+        createSceneObjects();
 
 		//Setup player camera
 		(&(clientPaddle->getNode()))->createChildSceneNode("camNode");
@@ -515,18 +524,8 @@ bool Assignment3::serverStart(const CEGUI::EventArgs &e)
     simulator = new Simulator();
   
     // Create a scene
-    box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
-    target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 20);
-    target->setPose(startingFace, 0, 0);
-    
-    serverBall = new Ball("serverball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 70.0, 0), .9f, .1f, "Game/P1ball");
-    serverPaddle = new Surface("serverpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P1paddle");
-    
-    clientBall = new Ball("clientball", mSceneMgr, simulator, 1.0, 1.0, Ogre::Vector3(0, 100.0, 0), .9f, .1f, "Game/P2ball");
-    clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 40, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P2paddle");
-
-    heli = new Heli("dachoppa", mSceneMgr, simulator, 3.0, 1.0, Ogre::Vector3(0.0, 0.0, 45.0), 0.9, 0.1, "Game/Helicopter");
-    
+    createSceneObjects();   
+ 
     //Setup player camera
     (&(serverPaddle->getNode()))->createChildSceneNode("camNode");
     mSceneMgr->getSceneNode("camNode")->attachObject(mCamera);

@@ -71,6 +71,7 @@ protected:
 	bool serverStart(const CEGUI::EventArgs &e);
     ServerToClient* initServerToClient();
     void updateIndicator(Ball* ball);
+    void createSceneObjects(void);
     
 public:
     Assignment3();
