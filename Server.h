@@ -63,9 +63,8 @@ Server::~Server() {
 
 void Server::awaitConnections(){
     if(!connect){
-        printf("Awaiting connection...\n");
         if(TCPcsd = SDLNet_TCP_Accept(TCPsd)){
-            printf("Success\n");
+            printf("Connection success\n");
             /*can now communicate with client using csd socket*/
 
             /* Get the remote address */
