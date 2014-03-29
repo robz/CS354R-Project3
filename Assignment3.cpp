@@ -204,10 +204,10 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                 target->updateTransform();
 
                 //update helicopter from server
-                float* heliPose = servData.getHeli();
+                /*float* heliPose = servData.getHeli();
                 heli->getNode().setPosition(heliPose[0], heliPose[1], heliPose[2]);
                 heli->setPropRot(heliPose[3], heliPose[4], heliPose[5], heliPose[6]);
-                heli->updateTransform();
+                heli->updateTransform();*/
 
                 //play sounds (if any)
                if(simulator->soundOn){
@@ -240,14 +240,14 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
             client->sendMsg(reinterpret_cast<char*>(&clientData), sizeof(clientData));
             clientData.gravityChange = 0;
         } else {
-
-            heli->animate(evt.timeSinceLastFrame);
-            
             if(!isSinglePlayer){
                 //btTransform trans; 
                 server->awaitConnections();
                 // step the server's simulator
-                simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
+                if(server->connect){
+                    heli->animate(evt.timeSinceLastFrame);
+                    simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
+                }
                 // send the state of the target to the client
                 ServerToClient* data = initServerToClient();
                 server->sendMsg(reinterpret_cast<char*>(data), sizeof(ServerToClient));
@@ -275,7 +275,11 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 				gui->setMultiplayerScores(serverBall->getScore(), clientBall->getScore());
 			}
         }
+
+        if(isClient || isSinglePlayer)
+                heli->animate(evt.timeSinceLastFrame);
 	}
+
     return true;
 }
 
@@ -337,14 +341,14 @@ ServerToClient* Assignment3::initServerToClient(){
     padPose[6] = serverPaddle->getNode().getOrientation().z;
 
     //helicopter information
-    float heliPose[7];
+    /*float heliPose[7];
     heliPose[0] = heli->getNode().getPosition().x;
     heliPose[1] = heli->getNode().getPosition().y;
     heliPose[2] = heli->getNode().getPosition().z;
     heliPose[3] = heli->getProp()->getNode().getOrientation().w;
     heliPose[4] = heli->getProp()->getNode().getOrientation().x;
     heliPose[5] = heli->getProp()->getNode().getOrientation().y;
-    heliPose[6] = heli->getProp()->getNode().getOrientation().z;
+    heliPose[6] = heli->getProp()->getNode().getOrientation().z;*/
 
     //sound information
     int sound = simulator->soundPlayed;
@@ -360,7 +364,7 @@ ServerToClient* Assignment3::initServerToClient(){
     data->setClientBall(clientBallTrans);
     data->setTarget(targPose);
     data->setPaddle(padPose);
-    data->setHeli(heliPose);
+    //data->setHeli(heliPose);
 
     return data;
 }
@@ -496,6 +500,9 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 		clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P2paddle");
 
         heli = new Heli("dachoppa", mSceneMgr, simulator, 3.0, 1.0, Ogre::Vector3(0.0, 0.0, 45.0), 0.9, 0.1, "Game/Helicopter");
+
+        heli->addToSimulator();
+        heli->setKinematic();
 
 		//Setup player camera
 		(&(clientPaddle->getNode()))->createChildSceneNode("camNode");

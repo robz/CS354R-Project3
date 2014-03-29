@@ -7,7 +7,7 @@ class ServerToClient{
 	protected:
 		btTransform clientBallTrans;
 		btTransform serverBallTrans;
-		float heliPose[7];
+		//float heliPose[7];
 		float targPose[7];
 		float padPose[7];
 		int score[2];
@@ -20,14 +20,14 @@ class ServerToClient{
 		void setServerBall(btTransform&);
 		void setTarget(float*);
 		void setPaddle(float*);
-		void setHeli(float*);
+		//void setHeli(float*);
 		void setScore(int*);
 		
         btTransform& getClientBall();
 		btTransform& getServerBall();
 		float* getTarget();
 		float* getServerPaddle();
-		float* getHeli();
+		//float* getHeli();
 		int* getScore();
 		int& getSound();
 };
@@ -59,11 +59,11 @@ void ServerToClient::setPaddle(float* pose){
     }
 }
 
-void ServerToClient::setHeli(float* pose){
+/*void ServerToClient::setHeli(float* pose){
     for(int i = 0; i < 7; i++){
         heliPose[i] = pose[i];
     }
-}
+}*/
 
 void ServerToClient::setScore(int* n){
     score[0] = n[0];
@@ -86,9 +86,9 @@ float* ServerToClient::getServerPaddle(){
     return padPose;
 }
 
-float* ServerToClient::getHeli(){
+/*float* ServerToClient::getHeli(){
 	return heliPose;
-}
+}*/
 
 int* ServerToClient::getScore(){
     return score;
