@@ -1,5 +1,7 @@
 #include "Heli.h"
 
+extern float HELI_SPEED;
+
 Heli::Heli(
     Ogre::String nym, 
     Ogre::SceneManager* mgr, 
@@ -11,28 +13,67 @@ Heli::Heli(
     Ogre::Real friction,
     Ogre::String tex = ""
     ) 
-: GameObject(nym, mgr, sim, restitution, friction)
 {
-    if (mgr) {
-        geom = mgr->createEntity(name, "helichassis.mesh");
-        if(tex != "")
-            geom->setMaterialName(tex);
-        geom->setCastShadows(false);
-        rootNode->attachObject(geom);
+    rootNode = mgr->getRootSceneNode()->createChildSceneNode(nym);
+    rootNode->setPosition(pos);
+    fullMove = false;
 
-        // sphere starts at 100 units radius
-        rootNode->scale(
-            scale,
-            scale,
-            scale
-            );
+    Ogre::Vector3 org(0.0, 0.0, 0.0);
+    chass = new HeliChass(nym, mgr, sim, scale, m, org, restitution, friction, tex);
+    Ogre::Vector3 off(0.0 * scale, 5.0 * scale, 2.5 * scale);
+    prop = new HeliProp(nym, mgr, sim, scale, m, off, restitution, friction, tex);
+}
 
-        rootNode->setPosition(pos);
-    } else {
-        // updateTransform aint gonna work so we have to set the transform ourselves
-        tr.setOrigin(btVector3(pos.x, pos.y, pos.z));
-    }
+void Heli::addToSimulator(){
+    chass->addToSimulator();
+    prop->addToSimulator();
+}
 
-    shape = new btSphereShape(scale);
-    mass = m;
+void Heli::setKinematic(){
+    chass->setKinematic();
+    prop->setKinematic();
+}
+
+void Heli::move(Ogre::Real x, Ogre::Real y, Ogre::Real z){
+    rootNode->translate(x, y, z);
+}
+
+void Heli::spin(Ogre::Real t){
+    prop->spin(t);
+}
+
+void Heli::animate(Ogre::Real t){
+    spin(t);
+        if(fullMove == false){
+            move(0, t * HELI_SPEED, 0);
+            if(getY() > 130)
+                fullMove = true;
+        }
+        else {
+            move(0, -t * HELI_SPEED, 0);
+            if(getY() < 10)
+                fullMove = false;
+        }
+    updateTransform();
+}
+
+Ogre::SceneNode& Heli::getNode(){
+    return *rootNode;
+}
+
+Ogre::Real Heli::getY(){
+    return rootNode->getPosition().y;
+}
+
+GameObject* Heli::getProp(){
+    return prop;
+}
+
+void Heli::setPropRot(Ogre::Real x, Ogre::Real y, Ogre::Real z, Ogre::Real w){
+    prop->getNode().setOrientation(x, y, z, w);
+}
+
+void Heli::updateTransform(){
+    chass->updateTransform();
+    prop->updateTransform();
 }

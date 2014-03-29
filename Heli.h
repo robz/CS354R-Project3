@@ -3,9 +3,15 @@
 
 #include "Simulator.h"
 #include <Ogre.h>
+#include "HeliChass.h"
+#include "HeliProp.h"
 
-class Heli : public GameObject {
+class Heli {
 protected:
+    HeliChass* chass;
+    HeliProp* prop;
+    Ogre::SceneNode* rootNode;
+    bool fullMove;
 public:
     Heli(
         Ogre::String nym, 
@@ -18,6 +24,16 @@ public:
         Ogre::Real friction,
         Ogre::String
         );
+    void addToSimulator();
+    void setKinematic();
+    void move(Ogre::Real, Ogre::Real, Ogre::Real);
+    void spin(Ogre::Real);
+    void animate(Ogre::Real);
+    void updateTransform();
+    void setPropRot(Ogre::Real, Ogre::Real, Ogre::Real, Ogre::Real);
+    Ogre::SceneNode& getNode();
+    GameObject* getProp();
+    Ogre::Real getY();
 };
 
 #endif

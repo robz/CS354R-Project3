@@ -28,7 +28,7 @@ class GameObject {
 		btCollisionShape* shape;
 		
         GameObject(Ogre::String, Ogre::SceneManager*, Simulator*, Ogre::Real, Ogre::Real);
-		void updateTransform();
+		virtual void updateTransform();
 		void addToSimulator();
 		btRigidBody* getBody();
 		void move(Ogre::Real, Ogre::Real, Ogre::Real);
