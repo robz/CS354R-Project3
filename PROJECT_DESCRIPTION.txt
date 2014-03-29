@@ -1,34 +1,35 @@
-Assignment 2 User Manual
-
 Team 7
-Robby Nevels
 Thomas Custer
+Robby Nevels
 Steven Wilken
 
-DESCRIPTION:
-We have made a game that involves hitting a ball into targets placed on the walls of a cube. The user controls a paddle with the mouse and keyboard in order to hit the wall. We rely on SDL mixer in order to play background music and collision sound effects. 
+Slip Days Used: 2
 
-Overall, we successfully completed what we set out to do, aside from a couple of unresolved issues. The first is that we had to enlarge the hitbox of the walls in order to ensure that the ball doesn’t fly through them. We’re not sure how better to fix this problem. The second issue arose when we tried to change the alpha value of the floor and the paddle textures. For some odd reason, yellow and black diagonal stripes appeared as soon as we made the shapes transparent. We decided to keep this odd feature for aesthetic value.
+DESCRIPTION OF ARCHITECTURE:
+The game is now both single player and two player. We used the same architecture from our previous project to handle the physics and graphics. On a two player game, the physics are computed on the host’s machine and the information is conveyed to the client over the network. The client’s machine sends messages to the server to let it know where the client has moved their paddle.
 
-To run the program, simply run the “buildit” executable, and then run the “assignment2” executable.
+HOW TO RUN:
+First build the game with the buildit executable, and then run it using the assignment3 executable. After launching the game, choose which mode you would like to play (single player, client, or server). Clicking Single Player will start a an offline game with just yourself. Clicking Client will connect you to the host machine running the game as a server with the input IP address and port number, if there is a server running there, and you will play as Player 2 in a multiplayer game. Clicking Server will start a multiplayer game with you as Player 1 and your machine as the host server using the input port number.
 
 CONTROLS:
 Mouse/WASD - move paddle
+Z - turn paddle 180 degrees
+Shift - Strafe
 R - turn gravity up
 F - turn gravity down
 X - turn off sound effects
 C - turn off music
 
 GOAL:
-Try to hit the ball into the target circle to increase your score. The faster you hit the ball into the target, the more points you get for the hit.
+Try to hit the ball into the target circle to increase your score. The faster you hit the ball into the target, the more points you get for the hit. For multiplayer, each player has their own ball which is color coordinated with their paddle, and they must try to hit their ball into the targets before the other player does. The same scoring rules apply.
 
 PROJECT UPDATE:
 Better than planned:
--Background music was added
--Ability to change gravity was implemented
+Helicopter obstacle added
+Added an indicator to help find your ball when you lose sight of it
+Fixed transparency issues
 
 Worse than planned:
--The hitboxes could use work
--Paddle can move through walls
--No helicopter obstacle :(
+Client and server don’t check to see if the connection was lost they just continue to send packets
+
 
