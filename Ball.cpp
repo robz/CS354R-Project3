@@ -85,3 +85,36 @@ void Ball::update() {
 int& Ball::getScore(){
     return score;
 }
+
+void Ball::stepParticle(Ogre::ParticleSystem* ps){
+
+   /*const float maxDist  = 250.0; 
+   const float mirrorDist = maxDist*0.99; 
+   const float dimFactor = 0.8*0.005*0.005;    
+   const float maxDist2 = maxDist*maxDist; 
+   const Ogre::Vector3& ballPos = rootNode->getPosition(); 
+ 
+   Ogre::ParticleIterator pit = ps->_getIterator(); 
+ 
+   while (!pit.end()) 
+   {
+      printf("Updating particle\n");
+      Ogre::Particle* particle = pit.getNext(); 
+      Ogre::Vector3& pos = particle->position; 
+      particle->timeToLive = 999999.0f; 
+      Ogre::Vector3 pDir = pos-ballPos; 
+      float dist = pDir.squaredLength(); 
+      float dim = dist*dimFactor; 
+      particle->setDimensions(dim, dim); 
+ 
+      if (dist > maxDist2) { 
+         pDir.normalise(); 
+         Ogre::Vector3 p = ballPos-pDir*mirrorDist;       
+         particle->position = p; 
+      } 
+   }*/
+}
+
+void Ball::attachParticle(Ogre::ParticleSystem* ps){
+    rootNode->attachObject(ps);
+}

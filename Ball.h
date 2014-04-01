@@ -26,6 +26,8 @@ public:
 
     virtual void update();
     int& getScore();
+    void stepParticle(Ogre::ParticleSystem*);
+    void attachParticle(Ogre::ParticleSystem*);
 };
 
 #endif

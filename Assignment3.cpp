@@ -264,6 +264,7 @@ bool Assignment3::frameRenderingQueued(const Ogre::FrameEvent& evt) {
                 }
             }
             else {
+                //serverBall->stepParticle(mParticleSystem);
                 simulator->stepSimulation(evt.timeSinceLastFrame, 10, 1/60.0f);
             } 
         }
@@ -443,7 +444,9 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
     isSinglePlayer = true;
 
     simulator = new Simulator();
- 
+    //printf("why\n");
+    Ogre::ParticleSystem* p1Trail = mSceneMgr->createParticleSystem("p1Particle", "Game/P1Trail");
+    //printf("????\n");
     // Create a scene
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
     target = new Target("mytarget", mSceneMgr, simulator, 0, 0, 0, 130, 130, 130, 20);
@@ -463,6 +466,7 @@ bool Assignment3::singlePlayer(const CEGUI::EventArgs &e)
     target->setKinematic();
     
     serverBall->addToSimulator();
+    serverBall->attachParticle(p1Trail);
     serverPaddle->addToSimulator();
     serverPaddle->setKinematic();
 
@@ -483,6 +487,8 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 
 	if (client->serverFound) {
 		simulator = new Simulator();
+        Ogre::ParticleSystem* p1Trail = mSceneMgr->createParticleSystem("p1Particle", "Game/P1Trail");
+        Ogre::ParticleSystem* p2Trail = mSceneMgr->createParticleSystem("p2Particle", "Game/P2Trail");
 
 		// Create a scene
 		box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
@@ -496,6 +502,9 @@ bool Assignment3::clientStart(const CEGUI::EventArgs &e)
 		clientPaddle = new Surface("clientpaddle", mSceneMgr, simulator, 0, 75.0, 20, 10.0, 10.0, 2.5, 0.25, 0.1, "Game/P2paddle");
 
         heli = new Heli("dachoppa", mSceneMgr, simulator, 3.0, 1.0, Ogre::Vector3(0.0, 0.0, 45.0), 0.9, 0.1, "Game/Helicopter");
+
+        serverBall->attachParticle(p1Trail);
+        clientBall->attachParticle(p2Trail);
 
 		//Setup player camera
 		(&(clientPaddle->getNode()))->createChildSceneNode("camNode");
@@ -513,6 +522,8 @@ bool Assignment3::serverStart(const CEGUI::EventArgs &e)
     server = new Server(sPort);
 	
     simulator = new Simulator();
+    Ogre::ParticleSystem* p1Trail = mSceneMgr->createParticleSystem("p1Particle", "Game/P1Trail");
+    Ogre::ParticleSystem* p2Trail = mSceneMgr->createParticleSystem("p2Particle", "Game/P2Trail");
   
     // Create a scene
     box = new Box("mybox", mSceneMgr, simulator, 0, 0, 0, 150.0, 150.0, 150.0, 0.9, 0.1, "Examples/Rockwall", "Examples/BeachStones");
@@ -536,12 +547,15 @@ bool Assignment3::serverStart(const CEGUI::EventArgs &e)
 	target->setKinematic();
 	
     clientBall->addToSimulator();
+    clientBall->attachParticle(p2Trail);
 	clientPaddle->addToSimulator();
 	clientPaddle->setKinematic();
     
     serverBall->addToSimulator();
+    serverBall->attachParticle(p1Trail);
 	serverPaddle->addToSimulator();
 	serverPaddle->setKinematic();
+
 
     heli->addToSimulator();
     heli->setKinematic();
